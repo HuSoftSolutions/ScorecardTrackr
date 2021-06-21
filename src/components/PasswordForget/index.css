@@ -1,0 +1,22 @@
+.pf-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1em;
+  }
+
+  .pf-card {
+    flex:1;
+  }
+  
+  
+  
+  @media screen and (max-width: 500px) {
+    .pf-container {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      flex: 1;
+    }
+  }
+  

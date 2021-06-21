@@ -1,0 +1,16 @@
+.navigation,
+.navigation a.nav-link,
+.navigation .navbar-brand,
+.navigation .navbar-text {
+  background-color: rgb(46, 46, 46);
+  color: white !important;
+}
+
+.navigation {
+    min-height: 70px !important;
+}
+
+.navbar-brand {
+  margin-left: 1em;
+  margin-right: 1em;
+}

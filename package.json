@@ -1,0 +1,36 @@
+{
+  "name": "scorecard",
+  "version": "0.2.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "firebase": "^8.6.1",
+    "react": "^16.0.0",
+    "react-bootstrap": "^1.6.1",
+    "react-dom": "^16.0.0",
+    "react-loading": "^2.0.3",
+    "react-phone-number-input": "^3.1.23",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "react-tooltip": "^4.2.21",
+    "recompose": "^0.30.0"
+  },
+  "scripts": {
+    "start": "env-cmd -f .env.dev react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build:dev": "env-cmd -f .env.dev npm run build && firebase deploy --only hosting -P dev",
+    "build:prod": "env-cmd -f .env.prod npm run build && firebase deploy --only hosting -P prod"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
+  }
+}

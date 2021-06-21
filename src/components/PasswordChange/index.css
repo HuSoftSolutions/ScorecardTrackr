@@ -1,0 +1,23 @@
+.pc-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 2em;
+    margin-top: 2em;
+  }
+  
+  .pc-card {
+    border-width: 0px;
+    padding: 1em;
+  }
+  
+  @media screen and (max-width: 500px) {
+    .pc-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex: 1;
+    }
+  }
+  

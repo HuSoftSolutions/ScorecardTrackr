@@ -1,0 +1,42 @@
+.ap-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1em;
+}
+
+.ap-card {
+  border-width: 0px;
+  padding: 1em;
+  width: "100%";
+}
+
+.sign-in-methods {
+  border: 0px;
+}
+
+.sign-in-methods .list-group-item {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+}
+
+.body {
+  display: flex;
+  flex-direction: row;
+}
+
+.list-group-item {
+  border: 0px;
+  background-color: transparent;
+}
+
+@media screen and (max-width: 500px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .body form {
+    width: 100%;
+  }
+}
