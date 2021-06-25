@@ -25,7 +25,7 @@ export default function MatchTable(props) {
             default:
               break;
           }
-        } else {
+        } else if (holeObj.hole == lastHole) {
           p1matchTotal = null;
         }
       }
@@ -116,17 +116,17 @@ export default function MatchTable(props) {
 
   const getMatchTotal = (match, rowArray) => {
     let totals = [],
-    matchTotal = 0;
+      matchTotal = 0;
 
-      totals.push(
-        getMatchPlayScoreTotal(
-          match.firstPlayerIndex,
-          match.secondPlayerIndex,
-          rowArray,
-          undefined,
-          true,
-        ),
-      );
+    totals.push(
+      getMatchPlayScoreTotal(
+        match.firstPlayerIndex,
+        match.secondPlayerIndex,
+        rowArray,
+        undefined,
+        true,
+      ),
+    );
     match.presses.map((press, index) => {
       if (press) {
         totals.push(
@@ -140,9 +140,28 @@ export default function MatchTable(props) {
         );
       }
     });
+    totals.map((total) => (matchTotal += total));
+    return getMatchtotalResult(
+      matchTotal,
+      match.firstPlayerIndex,
+      match.secondPlayerIndex,
+    );
+  };
+
+  const getMatchtotalResult = (p1Total, p1, p2) => {
+    let p1Name = state.activeRound.players[p1].name,
+      p2Name = state.activeRound.players[p2].name;
     debugger;
-totals.map((total)=> matchTotal += total);
-return getMatchPlayResult(matchTotal);
+    switch (true) {
+      case p1Total < 0:
+        return `${p2Name} is UP ${Math.abs(p1Total)}`;
+      case p1Total > 0:
+        return `${p1Name} is UP ${p1Total}`;
+      case p1Total === 0:
+        return 'AS';
+      default:
+        return '';
+    }
   };
 
   const getLastCompletedHole = (match) => {
@@ -182,12 +201,12 @@ return getMatchPlayResult(matchTotal);
   };
 
   const initiatePress = (match, matchIndex) => {
-      debugger;
+    debugger;
     let lastHolecompleted = getLastCompletedHole(match),
       activeRoundCopy = state.activeRound,
       pressesCopy = [...activeRoundCopy.matches[matchIndex].presses];
-      pressesCopy[lastHolecompleted] = true;
-      activeRoundCopy.matches[matchIndex].presses = pressesCopy;
+    pressesCopy[lastHolecompleted] = true;
+    activeRoundCopy.matches[matchIndex].presses = pressesCopy;
     dispatch({
       type: 'update-active-round',
       roundInfo: activeRoundCopy,
@@ -211,14 +230,14 @@ return getMatchPlayResult(matchTotal);
     return (
       <React.Fragment>
         <tr>
-          <td>
+          <td style={{ maxWidth: '85px' }}>
             {match.name}
             {showPressButton(match) ? (
               <Button
                 variant="success"
                 size="sm"
                 onClick={() => initiatePress(match, index)}
-                className='pressButton'
+                className="pressButton"
               >
                 Press
               </Button>

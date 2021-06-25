@@ -5,9 +5,8 @@
   padding: 1em;
 }
 
-
 .new-match-container {
-  margin-bottom: 2em;
+  margin: auto;
 }
 
 .history-container {
@@ -16,5 +15,4 @@
 
 .match-type-container {
   display: flex;
-
 }
