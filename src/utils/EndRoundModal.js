@@ -15,7 +15,6 @@ export default function EndRoundModal(props) {
   };
 
   const confirmClickHandler = () => {
-      debugger;
     if (props.modalDetails.roundValid) {
         dispatch({
             type: 'update-active-round-length',

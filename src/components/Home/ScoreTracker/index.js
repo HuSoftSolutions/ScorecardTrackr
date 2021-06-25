@@ -84,7 +84,6 @@ export default function Scoretracker(props) {
 
   const endCurrentRound = () => {
     let currentRound = state.activeRound;
-    debugger;
     dispatch({
       type: 'round-history--set',
       roundHistory: currentRound,

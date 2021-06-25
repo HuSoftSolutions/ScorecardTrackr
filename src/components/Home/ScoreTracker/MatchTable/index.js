@@ -151,7 +151,6 @@ export default function MatchTable(props) {
   const getMatchtotalResult = (p1Total, p1, p2) => {
     let p1Name = state.activeRound.players[p1].name,
       p2Name = state.activeRound.players[p2].name;
-    debugger;
     switch (true) {
       case p1Total < 0:
         return `${p2Name} is UP ${Math.abs(p1Total)}`;
@@ -189,8 +188,8 @@ export default function MatchTable(props) {
 
   const showPressButton = (match) => {
     const players = [...state.activeRound.players],
-      lastHolecompleted = getLastCompletedHole(match),
-      p1Score =
+      lastHolecompleted = getLastCompletedHole(match);
+      let p1Score =
         players[match.firstPlayerIndex].scorecard[lastHolecompleted],
       p2Score =
         players[match.secondPlayerIndex].scorecard[lastHolecompleted],
@@ -201,7 +200,6 @@ export default function MatchTable(props) {
   };
 
   const initiatePress = (match, matchIndex) => {
-    debugger;
     let lastHolecompleted = getLastCompletedHole(match),
       activeRoundCopy = state.activeRound,
       pressesCopy = [...activeRoundCopy.matches[matchIndex].presses];
@@ -293,7 +291,7 @@ export default function MatchTable(props) {
           <tr>
             <td>Total</td>
             {rowData.map((row) => (
-              <td></td>
+              <td key={row}></td>
             ))}
             <td>{getMatchTotal(match, rowData)}</td>
           </tr>
@@ -303,11 +301,12 @@ export default function MatchTable(props) {
   };
 
   return props.holeArray.map((holes, index) =>
-    state.activeRound.matches.map((match, matchIndex) => (
-      <Table striped bordered hover variant="dark" size="sm">
+    state.activeRound.matches.map((match, matchIndex) => {
+      return (
+      <Table striped bordered hover variant="dark" size="sm" >
         <thead>{TableHeader(holes)}</thead>
         <tbody>{TableBody(holes, match, matchIndex)}</tbody>
       </Table>
-    )),
+    )}),
   );
 }

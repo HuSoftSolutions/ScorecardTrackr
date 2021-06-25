@@ -139,6 +139,7 @@ export default function NewMatchModal(props) {
             playerCount={players.length}
             onChangePlayerName={playerNameChange}
             onRemovePlayer={removePlayer}
+            key={index}
           />
         ))}
       </Modal.Body>

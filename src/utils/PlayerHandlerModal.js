@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store.js';
-import {
-  Button,
-  Modal,
-} from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import PlayerComponent from '../components/Home/Players/index';
 
 export default function Edit_AddPlayerModal(props) {
@@ -20,6 +17,20 @@ export default function Edit_AddPlayerModal(props) {
         (player, index) => index != props.playerToEdit.index,
       );
     activeRoundCopy.players = newPlayerArray;
+    if (state.activeRound.matchType == 1) {
+      let matchCopy = activeRoundCopy.matches.filter(
+        (match) =>
+          match.firstPlayerIndex != props.playerToEdit.index &&
+          match.secondPlayerIndex != props.playerToEdit.index,
+      );
+      matchCopy.map((match, index) => {
+        if (match.firstPlayerIndex > props.playerToEdit.index) matchCopy[index].firstPlayerIndex -= 1;
+        if (match.secondPlayerIndex > props.playerToEdit.index) matchCopy[index].secondPlayerIndex -= 1;
+
+      });
+      activeRoundCopy.matches = matchCopy;
+    }
+
     dispatch({
       type: 'update-active-round',
       roundInfo: activeRoundCopy,
@@ -82,7 +93,9 @@ export default function Edit_AddPlayerModal(props) {
       </Modal.Header>
       <Modal.Body>
         <PlayerComponent
-          player={newPlayer.name != null ? newPlayer : props.playerToEdit}
+          player={
+            newPlayer.name != null ? newPlayer : props.playerToEdit
+          }
           pIndex={props.playerToEdit.index}
           playerCount={1}
           onChangePlayerName={playerNameChange}
