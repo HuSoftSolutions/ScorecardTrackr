@@ -36,6 +36,7 @@ const INITIAL_STATE = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'round-history--set':
+      console.log(action.type, action.roundHistory);
       return {
         ...state,
         roundHistory: action.roundHistory,
@@ -45,6 +46,12 @@ const reducer = (state, action) => {
         return {
           ...state,
           activeRound: action.roundInfo,
+        };
+        case 'update-active-round-length':
+        console.log(action.type, action.roundLength);
+        return {
+          ...state,
+          activeRoundLength: action.roundLength,
         };
   }
 };

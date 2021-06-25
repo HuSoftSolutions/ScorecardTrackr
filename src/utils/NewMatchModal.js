@@ -45,6 +45,11 @@ export default function NewMatchModal(props) {
     props.hide();
   };
 
+  const resetLocalState = () => {
+    setPlayers([{ name: '' }]);
+    setType(0);
+  }
+
   const startActiveRound = () => {
     const pressArray = [
       false,
@@ -86,6 +91,7 @@ export default function NewMatchModal(props) {
       type: 'update-active-round',
       roundInfo: activeRound,
     });
+    resetLocalState();
     props.startRound();
   };
 

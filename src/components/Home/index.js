@@ -11,9 +11,13 @@ const HomePage = (props) => {
   const [showMatchModal, toggleMatchModal] = useState(false);
   const [newMatchStarted, toggleScoreComponent] = useState(false);
 
+  const endRound = () => {
+    toggleScoreComponent(false);
+  }
+
   return (
     <div className="page-container">
-     {newMatchStarted ? <Scoretracker endRound/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
+     {newMatchStarted ? <Scoretracker endRound={endRound}/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
 
       {/* <RoundHistory /> */}
       <NewMatchModal

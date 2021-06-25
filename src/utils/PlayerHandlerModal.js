@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { useStore } from '../store.js';
 import {
   Button,
-  ButtonGroup,
-  ToggleButtonGroup,
-  ToggleButton,
   Modal,
 } from 'react-bootstrap';
 import PlayerComponent from '../components/Home/Players/index';
@@ -79,7 +76,7 @@ export default function Edit_AddPlayerModal(props) {
   };
 
   return (
-    <Modal show={props.show}>
+    <Modal show={props.show} hide={props.hide}>
       <Modal.Header>
         <Modal.Title>{props.addOrEdit} Player</Modal.Title>
       </Modal.Header>
