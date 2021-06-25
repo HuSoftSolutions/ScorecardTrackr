@@ -85,7 +85,7 @@ export default function Edit_AddPlayerModal(props) {
       </Modal.Header>
       <Modal.Body>
         <PlayerComponent
-          player={newPlayer.name ? newPlayer : props.playerToEdit}
+          player={newPlayer.name != null ? newPlayer : props.playerToEdit}
           pIndex={props.playerToEdit.index}
           playerCount={1}
           onChangePlayerName={playerNameChange}
@@ -96,13 +96,13 @@ export default function Edit_AddPlayerModal(props) {
           Cancel
         </Button>
         {props.addOrEdit !== 'Add' ? (
-          <Button variant="secondary" onClick={removePlayer}>
+          <Button variant="danger" onClick={removePlayer}>
             Remove Player
           </Button>
         ) : null}
         <Button
           variant="primary"
-          disabled={newPlayer.name ? false : true}
+          disabled={newPlayer.name != null ? false : true}
           onClick={savePlayer}
         >
           Save Changes

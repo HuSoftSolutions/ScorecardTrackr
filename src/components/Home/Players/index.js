@@ -23,7 +23,7 @@ export default function Players(props) {
             </InputGroup.Text>
           </InputGroup.Prepend>
             <Form.Control
-                // className={`${props.largeInput ? "eightyPercentWidth" : "playerInput"}`}
+                className="playerInput"
                 onChange={({ target }) => props.onChangePlayerName(target.value, props.pIndex)}
                 aria-describedby="playerNames"
                 aria-label="Username"

@@ -29,6 +29,7 @@ export default function NewMatchModal(props) {
       newPlayerArray = playerArray.filter(
         (player, index) => index != playerIndex,
       );
+      if (newPlayerArray.length < 2) setType(0);
     setPlayers(newPlayerArray);
   };
 
@@ -120,6 +121,7 @@ export default function NewMatchModal(props) {
               setType(1);
             }}
             variant={type === 1 ? 'primary' : 'dark'}
+            disabled={players.length > 1 ? false : true}
           >
             Match
           </Button>
@@ -133,19 +135,21 @@ export default function NewMatchModal(props) {
             onRemovePlayer={removePlayer}
           />
         ))}
-        <AddNewPlayerButton onClick={() => addPlayer()} />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onCancel}>
+      <AddNewPlayerButton onClick={() => addPlayer()} />
+        <Button variant="secondary" size='sm' onClick={onCancel}>
           Cancel
         </Button>
         <Button
           variant="primary"
+          size='sm'
           disabled={!validateMatchDetails()}
           onClick={startActiveRound}
         >
           Start Round
         </Button>
+        
       </Modal.Footer>
     </Modal>
   );

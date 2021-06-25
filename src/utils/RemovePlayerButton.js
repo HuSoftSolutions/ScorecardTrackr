@@ -6,6 +6,7 @@ export default function RemovePlayerButton(props) {
     <div className="new-match-container">
       <Button
         onClick={props.onClick}
+        size='sm'
       >
         X
       </Button>
