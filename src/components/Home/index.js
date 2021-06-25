@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import { compose } from 'recompose';
-import { Button, Table } from 'react-bootstrap';
 import { withAuthorization, withEmailVerification } from '../Session';
 import NewMatchModal from '../../utils/NewMatchModal';
-import RoundHistory from '../RoundHistory';
+import Scoretracker from './ScoreTracker/index';
+// import RoundHistory from '../RoundHistory';
 import StartNewMatchButton from '../../utils/StartNewMatchButton';
 import './index.css';
 
 const HomePage = (props) => {
   const [showMatchModal, toggleMatchModal] = useState(false);
+  const [newMatchStarted, toggleScoreComponent] = useState(false);
 
   return (
     <div className="page-container">
-      <StartNewMatchButton toggle={() => toggleMatchModal(true)} />
+     {newMatchStarted ? <Scoretracker endRound/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
+
       {/* <RoundHistory /> */}
       <NewMatchModal
         show={showMatchModal}
+        startRound={() => {toggleScoreComponent(true); toggleMatchModal(false);}}
         hide={() => toggleMatchModal(false)}
       />
+
     </div>
   );
 };

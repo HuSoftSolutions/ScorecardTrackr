@@ -1,0 +1,16 @@
+.buttonDiv {
+    display: inline-grid;
+    float: right;
+}
+
+.buttonPadding {
+    margin-bottom: 5px;;
+}
+
+.cellWidth {
+    width: 80px;
+}
+
+.pressButton {
+float: right;
+}
