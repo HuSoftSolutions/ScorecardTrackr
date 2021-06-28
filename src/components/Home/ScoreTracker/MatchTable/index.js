@@ -140,7 +140,14 @@ export default function MatchTable(props) {
         );
       }
     });
-    totals.map((total) => (matchTotal += total));
+    totals.map((total) => {
+      if (total > 0) {
+        matchTotal += 1;
+      }
+      if (total < 0) {
+        matchTotal -= 1;
+      }
+    });
     return getMatchtotalResult(
       matchTotal,
       match.firstPlayerIndex,
@@ -189,7 +196,7 @@ export default function MatchTable(props) {
   const showPressButton = (match) => {
     const players = [...state.activeRound.players],
       lastHolecompleted = getLastCompletedHole(match);
-      let p1Score =
+    let p1Score =
         players[match.firstPlayerIndex].scorecard[lastHolecompleted],
       p2Score =
         players[match.secondPlayerIndex].scorecard[lastHolecompleted],
@@ -303,10 +310,11 @@ export default function MatchTable(props) {
   return props.holeArray.map((holes, index) =>
     state.activeRound.matches.map((match, matchIndex) => {
       return (
-      <Table striped bordered hover variant="dark" size="sm" >
-        <thead>{TableHeader(holes)}</thead>
-        <tbody>{TableBody(holes, match, matchIndex)}</tbody>
-      </Table>
-    )}),
+        <Table striped bordered hover variant="dark" size="sm">
+          <thead>{TableHeader(holes)}</thead>
+          <tbody>{TableBody(holes, match, matchIndex)}</tbody>
+        </Table>
+      );
+    }),
   );
 }
