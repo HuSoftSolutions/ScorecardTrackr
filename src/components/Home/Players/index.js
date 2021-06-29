@@ -24,6 +24,7 @@ export default function Players(props) {
           </InputGroup.Prepend>
             <Form.Control
                 className="playerInput"
+                autoFocus
                 onChange={({ target }) => props.onChangePlayerName(target.value, props.pIndex)}
                 aria-describedby="playerNames"
                 aria-label="Username"

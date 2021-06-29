@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../store.js';
 import { Button, Modal } from 'react-bootstrap';
 import PlayerComponent from '../components/Home/Players/index';
+import * as CONSTANTS from '../constants/misc';
 
 export default function Edit_AddPlayerModal(props) {
   const { state, dispatch } = useStore();
@@ -24,9 +25,10 @@ export default function Edit_AddPlayerModal(props) {
           match.secondPlayerIndex != props.playerToEdit.index,
       );
       matchCopy.map((match, index) => {
-        if (match.firstPlayerIndex > props.playerToEdit.index) matchCopy[index].firstPlayerIndex -= 1;
-        if (match.secondPlayerIndex > props.playerToEdit.index) matchCopy[index].secondPlayerIndex -= 1;
-
+        if (match.firstPlayerIndex > props.playerToEdit.index)
+          matchCopy[index].firstPlayerIndex -= 1;
+        if (match.secondPlayerIndex > props.playerToEdit.index)
+          matchCopy[index].secondPlayerIndex -= 1;
       });
       activeRoundCopy.matches = matchCopy;
     }
@@ -40,6 +42,7 @@ export default function Edit_AddPlayerModal(props) {
 
   const savePlayer = () => {
     let playersArray = [...state.activeRound.players],
+      matchesArray = [...state.activeRound.matches],
       updatedActiveRound = state.activeRound;
     if (playersArray.length === props.playerToEdit.index) {
       playersArray.push({ name: newPlayer.name, scorecard: [] });
@@ -49,23 +52,17 @@ export default function Edit_AddPlayerModal(props) {
     updatedActiveRound.players = playersArray;
 
     if (state.activeRound.matchType === 1) {
-      const pressArray = [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-      ];
+      let defaultPressArray = [[...CONSTANTS.defaultPressArray]];
       let matches = [];
       for (let i = 0; i < playersArray.length; i++) {
         for (let j = i + 1; j < playersArray.length; j++) {
+          let existingPresses = matchesArray.find(
+            (m) =>
+              m.firstPlayerIndex === i && m.secondPlayerIndex === j,
+          );
           matches.push({
             name: `${playersArray[i].name} vs. ${playersArray[j].name}`,
-            presses: pressArray,
+            presses: existingPresses ? existingPresses.presses : defaultPressArray,
             firstPlayerIndex: i,
             secondPlayerIndex: j,
           });

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { useStore } from '../store.js';
-import {
-  Button,
-  ButtonGroup,
-  ToggleButtonGroup,
-  ToggleButton,
-  Modal,
-} from 'react-bootstrap';
+import { Button, ButtonGroup, Modal } from 'react-bootstrap';
 import Round from '../classes/Round.js';
+import * as CONSTANTS from '../constants/misc';
 import PlayerComponent from '../components/Home/Players/index';
 import AddNewPlayerButton from './AddNewPlayerButton.js';
 import './index.css';
@@ -29,7 +24,7 @@ export default function NewMatchModal(props) {
       newPlayerArray = playerArray.filter(
         (player, index) => index != playerIndex,
       );
-      if (newPlayerArray.length < 2) setType(0);
+    if (newPlayerArray.length < 2) setType(0);
     setPlayers(newPlayerArray);
   };
 
@@ -48,22 +43,14 @@ export default function NewMatchModal(props) {
   const resetLocalState = () => {
     setPlayers([{ name: '' }]);
     setType(0);
-  }
+  };
 
   const startActiveRound = () => {
-    const pressArray = [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ];
     let playerArray = [...players],
-      matches = [];
+      matches = [],
+      pressArray = [];
+    const defaultPress = [...CONSTANTS.defaultPressArray];
+    pressArray.push(defaultPress);
 
     if (type === 1) {
       for (let i = 0; i < players.length; i++) {
@@ -72,7 +59,7 @@ export default function NewMatchModal(props) {
             name: `${players[i].name} vs. ${players[j].name}`,
             presses: pressArray,
             firstPlayerIndex: i,
-            secondPlayerIndex: j
+            secondPlayerIndex: j,
           });
         }
       }
@@ -85,7 +72,7 @@ export default function NewMatchModal(props) {
       startDate: new Date(),
       players: playerArray,
       matchType: type,
-      matches: matches
+      matches: matches,
     };
     dispatch({
       type: 'update-active-round',
@@ -144,19 +131,18 @@ export default function NewMatchModal(props) {
         ))}
       </Modal.Body>
       <Modal.Footer>
-      <AddNewPlayerButton onClick={() => addPlayer()} />
-        <Button variant="secondary" size='sm' onClick={onCancel}>
+        <AddNewPlayerButton onClick={() => addPlayer()} />
+        <Button variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
         <Button
           variant="primary"
-          size='sm'
+          size="sm"
           disabled={!validateMatchDetails()}
           onClick={startActiveRound}
         >
           Start Round
         </Button>
-        
       </Modal.Footer>
     </Modal>
   );

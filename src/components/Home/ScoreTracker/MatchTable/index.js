@@ -127,18 +127,20 @@ export default function MatchTable(props) {
         true,
       ),
     );
-    match.presses.map((press, index) => {
-      if (press) {
-        totals.push(
-          getMatchPlayScoreTotal(
-            match.firstPlayerIndex,
-            match.secondPlayerIndex,
-            rowArray,
-            index,
-            true,
-          ),
-        );
-      }
+    match.presses.map((presses, pressIndex) => {
+      presses.map((press, index) => {
+        if (press) {
+          totals.push(
+            getMatchPlayScoreTotal(
+              match.firstPlayerIndex,
+              match.secondPlayerIndex,
+              rowArray,
+              index,
+              true,
+            ),
+          );
+        }
+      });
     });
     totals.map((total) => {
       if (total > 0) {
@@ -193,25 +195,37 @@ export default function MatchTable(props) {
     return lastHole;
   };
 
-  const showPressButton = (match) => {
+  const showPressButton = (match, rowArrayIndex) => {
+    // debugger;
     const players = [...state.activeRound.players],
       lastHolecompleted = getLastCompletedHole(match);
+    const roundCompleteCheck =
+      lastHolecompleted % 9 == 0 ? false : true;
+    const alreadyPressed = roundCompleteCheck
+      ? match.presses[rowArrayIndex][lastHolecompleted]
+      : true;
     let p1Score =
         players[match.firstPlayerIndex].scorecard[lastHolecompleted],
       p2Score =
         players[match.secondPlayerIndex].scorecard[lastHolecompleted],
       comparison = p1Score - p2Score,
-      compareCheck = comparison > 0 || comparison < 0 ? true : false,
-      alreadyPressed = match.presses[lastHolecompleted];
-    return compareCheck && !alreadyPressed;
+      compareCheck = comparison > 0 || comparison < 0 ? true : false;
+    return compareCheck && !alreadyPressed && roundCompleteCheck;
   };
 
-  const initiatePress = (match, matchIndex) => {
-    let lastHolecompleted = getLastCompletedHole(match),
-      activeRoundCopy = state.activeRound,
-      pressesCopy = [...activeRoundCopy.matches[matchIndex].presses];
-    pressesCopy[lastHolecompleted] = true;
-    activeRoundCopy.matches[matchIndex].presses = pressesCopy;
+  const initiatePress = (match, matchIndex, rowDataIndex) => {
+    let activeRoundCopy = state.activeRound;
+    const lastHolecompleted = getLastCompletedHole(match);
+    let matchesArrayCopy = [...state.activeRound.matches];
+    let pressesArrayCopy = [
+      ...state.activeRound.matches[matchIndex].presses
+    ];
+    let pressArrayCopy = [...pressesArrayCopy[rowDataIndex]];
+
+    pressArrayCopy[lastHolecompleted] = true;
+    pressesArrayCopy[rowDataIndex] = pressArrayCopy;
+    matchesArrayCopy[matchIndex].presses = pressesArrayCopy;
+    activeRoundCopy.matches = matchesArrayCopy;
     dispatch({
       type: 'update-active-round',
       roundInfo: activeRoundCopy,
@@ -230,18 +244,20 @@ export default function MatchTable(props) {
     );
   };
 
-  const TableBody = (rowData, match, index) => {
+  const TableBody = (rowData, rowDataIndex, match, index) => {
     let pressCounter = 0;
     return (
       <React.Fragment>
         <tr>
           <td style={{ maxWidth: '85px' }}>
             {match.name}
-            {showPressButton(match) ? (
+            {showPressButton(match, rowDataIndex) ? (
               <Button
                 variant="success"
                 size="sm"
-                onClick={() => initiatePress(match, index)}
+                onClick={() =>
+                  initiatePress(match, index, rowDataIndex)
+                }
                 className="pressButton"
               >
                 Press
@@ -266,32 +282,36 @@ export default function MatchTable(props) {
             )}
           </td>
         </tr>
-        {match.presses.map((press, index) => {
-          if (press) {
-            pressCounter += 1;
-            return (
-              <tr>
-                <td>Press {pressCounter}</td>
-                {rowData.map((row) => (
-                  <td>
-                    {getPressScoreByHole(
-                      row.hole,
-                      match,
-                      index,
-                      rowData,
-                    )}
-                  </td>
-                ))}
-                <td>
-                  {getMatchPlayScoreTotal(
-                    match.firstPlayerIndex,
-                    match.secondPlayerIndex,
-                    rowData,
-                    index,
-                  )}
-                </td>
-              </tr>
-            );
+        {match.presses.map((presses, pressesIndex) => {
+          if (pressesIndex == rowDataIndex) {
+            return presses.map((press, pressIndex) => {
+              if (press) {
+                pressCounter += 1;
+                return (
+                  <tr>
+                    <td>Press {pressCounter}</td>
+                    {rowData.map((row) => (
+                      <td>
+                        {getPressScoreByHole(
+                          row.hole,
+                          match,
+                          pressIndex,
+                          rowData,
+                        )}
+                      </td>
+                    ))}
+                    <td>
+                      {getMatchPlayScoreTotal(
+                        match.firstPlayerIndex,
+                        match.secondPlayerIndex,
+                        rowData,
+                        pressIndex,
+                      )}
+                    </td>
+                  </tr>
+                );
+              }
+            });
           }
         })}
         {pressCounter > 0 ? (
@@ -312,7 +332,7 @@ export default function MatchTable(props) {
       return (
         <Table striped bordered hover variant="dark" size="sm">
           <thead>{TableHeader(holes)}</thead>
-          <tbody>{TableBody(holes, match, matchIndex)}</tbody>
+          <tbody>{TableBody(holes, index, match, matchIndex)}</tbody>
         </Table>
       );
     }),

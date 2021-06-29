@@ -10,19 +10,36 @@ export default function ScoreTable(props) {
     playerIndex: null,
   });
 
-  const getPlayerTotal = (player, holeArray) => {
+  const getPlayerTotal = (player, holeArray, holeArrayIndex) => {
     let total = 0;
-    holeArray.map((holes) => {
-      player.scorecard[holes.hole]
-        ? (total += player.scorecard[holes.hole])
-        : null;
-    });
+    if (holeArrayIndex === 0) {
+      holeArray.map((holes) => {
+        player.scorecard[holes.hole]
+          ? (total += player.scorecard[holes.hole])
+          : null;
+      });
+    } else {
+      props.holeArray.map((holesArray, index) => {
+        if (index <= holeArrayIndex) {
+          holesArray.map((holes) => {
+            player.scorecard[holes.hole]
+              ? (total += player.scorecard[holes.hole])
+              : null;
+          });
+        }
+      });
+    }
     return total;
   };
 
   const updateScore = (playerIndex, newScore, hole) => {
     let scorecardCopy = state.activeRound;
-    scorecardCopy.players[playerIndex].scorecard[hole] = newScore;
+    if (newScore >= 0) {
+      scorecardCopy.players[playerIndex].scorecard[hole] = newScore;
+    }
+    else {
+      scorecardCopy.players[playerIndex].scorecard[hole] = 0;
+    }
     dispatch({
       type: 'update-active-round',
       roundInfo: scorecardCopy,
@@ -37,7 +54,6 @@ export default function ScoreTable(props) {
       setScoreInput(scoreInputCopy);
     }
     setAllowScoreInput(toggleValue);
-    console.log(scoreInputCopy);
   };
 
   const TableHeader = (rowData) => {
@@ -52,7 +68,7 @@ export default function ScoreTable(props) {
     );
   };
 
-  const TableBody = (rowData) => {
+  const TableBody = (rowData, holeArrayIndex) => {
     return state.activeRound.players.map((player, index) => {
       return (
         <tr key={index}>
@@ -62,14 +78,20 @@ export default function ScoreTable(props) {
           {rowData.map((row) => (
             <td
               onClick={() => toggleScoreInput(true, row.hole, index)}
-              className={allowScoreInput &&
+              className={
+                allowScoreInput &&
                 scoreInput.hole === row.hole &&
-                scoreInput.playerIndex === index ? 'cellWidth' : ''}
+                scoreInput.playerIndex === index
+                  ? 'cellWidth'
+                  : ''
+              }
+              key={`key${index}${row.hole}`}
             >
               {allowScoreInput &&
               scoreInput.hole === row.hole &&
               scoreInput.playerIndex === index ? (
                 <Form.Control
+                autoFocus
                   value={
                     player.scorecard[row.hole]
                       ? player.scorecard[row.hole]
@@ -77,13 +99,11 @@ export default function ScoreTable(props) {
                   }
                   type="number"
                   onChange={({ target }) =>
-                    target.valueAsNumber >= 0
-                      ? updateScore(
+                       updateScore(
                           index,
                           target.valueAsNumber,
                           row.hole,
                         )
-                      : null
                   }
                   onBlur={() => toggleScoreInput(false)}
                 />
@@ -95,7 +115,9 @@ export default function ScoreTable(props) {
               )}
             </td>
           ))}
-          <td className='cellWidth'>{getPlayerTotal(player, rowData)}</td>
+          <td className="cellWidth">
+            {getPlayerTotal(player, rowData, holeArrayIndex)}
+          </td>
         </tr>
       );
     });
@@ -111,7 +133,7 @@ export default function ScoreTable(props) {
       key={index}
     >
       <thead>{TableHeader(holes)}</thead>
-      <tbody>{TableBody(holes)}</tbody>
+      <tbody>{TableBody(holes, index)}</tbody>
     </Table>
   ));
 }
