@@ -49,6 +49,8 @@ export default function NewMatchModal(props) {
     let playerArray = [...players],
       matches = [],
       pressArray = [];
+console.log(state);
+
     const defaultPress = [...CONSTANTS.defaultPressArray];
     pressArray.push(defaultPress);
 
@@ -67,7 +69,6 @@ export default function NewMatchModal(props) {
     players.map((player, index) => {
       playerArray[index]['scorecard'] = [];
     });
-
     let activeRound = {
       startDate: new Date(),
       players: playerArray,
@@ -78,8 +79,8 @@ export default function NewMatchModal(props) {
       type: 'update-active-round',
       roundInfo: activeRound,
     });
-    resetLocalState();
     props.startRound();
+    resetLocalState();
   };
 
   const validateMatchDetails = () => {
@@ -95,7 +96,7 @@ export default function NewMatchModal(props) {
   };
 
   return (
-    <Modal show={props.show}>
+    <Modal show={props.show} onHide={()=>{}}>
       <Modal.Header>
         <Modal.Title>Start New Match</Modal.Title>
       </Modal.Header>

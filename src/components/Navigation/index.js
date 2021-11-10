@@ -42,6 +42,9 @@ const NavigationAuth = ({ authUser }) => (
         <Nav.Link as={Link} to={ROUTES.HOME}>
           Home
         </Nav.Link>
+        <Nav.Link as={Link} to={ROUTES.HISTORY}>
+          History
+        </Nav.Link>
         <Nav.Link as={Link} to={ROUTES.ACCOUNT}>
           Account
         </Nav.Link>

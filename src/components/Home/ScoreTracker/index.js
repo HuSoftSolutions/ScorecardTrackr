@@ -83,10 +83,13 @@ export default function Scoretracker(props) {
   };
 
   const endCurrentRound = () => {
-    let currentRound = state.activeRound;
+    let currentRoundHistory = [...state.roundHistory];
+    let activeRound = state.activeRound;
+    activeRound.activeRoundLength = state.activeRoundLength;
+    currentRoundHistory.push(state.activeRound);
     dispatch({
       type: 'round-history--set',
-      roundHistory: currentRound,
+      roundHistory: currentRoundHistory,
     });
     dispatch({
       type: 'update-active-round',

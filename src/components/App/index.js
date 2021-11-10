@@ -14,6 +14,7 @@ import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
+import HistroyPage from '../RoundHistory';
 import Footer from '../Footer';
 
 import * as ROUTES from '../../constants/routes';
@@ -28,6 +29,7 @@ const App = () => (
         <Route exact path={ROUTES.LANDING} component={LandingPage} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+        <Route path={ROUTES.HISTORY} component={HistroyPage} />
         <Route
           path={ROUTES.PASSWORD_FORGET}
           component={PasswordForgetPage}

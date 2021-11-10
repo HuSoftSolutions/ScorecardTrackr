@@ -150,11 +150,7 @@ export default function MatchTable(props) {
         matchTotal -= 1;
       }
     });
-    return getMatchtotalResult(
-      matchTotal,
-      match.firstPlayerIndex,
-      match.secondPlayerIndex,
-    );
+    return matchTotal;
   };
 
   const getMatchtotalResult = (p1Total, p1, p2) => {
@@ -195,22 +191,18 @@ export default function MatchTable(props) {
     return lastHole;
   };
 
-  const showPressButton = (match, rowArrayIndex) => {
-    // debugger;
+  const showPressButton = (match, rowArrayIndex, rowData) => {
     const players = [...state.activeRound.players],
       lastHolecompleted = getLastCompletedHole(match);
-    const roundCompleteCheck =
-      lastHolecompleted % 9 == 0 ? false : true;
+    const roundCompleteCheck = lastHolecompleted % 9 == 0 ? false : true;
     const alreadyPressed = roundCompleteCheck
       ? match.presses[rowArrayIndex][lastHolecompleted]
       : true;
-    let p1Score =
-        players[match.firstPlayerIndex].scorecard[lastHolecompleted],
-      p2Score =
-        players[match.secondPlayerIndex].scorecard[lastHolecompleted],
-      comparison = p1Score - p2Score,
-      compareCheck = comparison > 0 || comparison < 0 ? true : false;
-    return compareCheck && !alreadyPressed && roundCompleteCheck;
+
+      const matchStanding = getMatchPlayScoreTotal(match.firstPlayerIndex, match.secondPlayerIndex, rowData, undefined, true),
+        scoresNotTied = matchStanding === 0 ? false : true;
+
+    return scoresNotTied && !alreadyPressed && roundCompleteCheck;
   };
 
   const initiatePress = (match, matchIndex, rowDataIndex) => {
@@ -251,7 +243,7 @@ export default function MatchTable(props) {
         <tr>
           <td style={{ maxWidth: '85px' }}>
             {match.name}
-            {showPressButton(match, rowDataIndex) ? (
+            {showPressButton(match, rowDataIndex, rowData) ? (
               <Button
                 variant="success"
                 size="sm"
@@ -320,7 +312,13 @@ export default function MatchTable(props) {
             {rowData.map((row) => (
               <td key={row}></td>
             ))}
-            <td>{getMatchTotal(match, rowData)}</td>
+            <td>
+              {getMatchtotalResult(
+                  getMatchTotal(match, rowData),
+                  match.firstPlayerIndex,
+                  match.secondPlayerIndex,
+              )}
+            </td>
           </tr>
         ) : null}
       </React.Fragment>

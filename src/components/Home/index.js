@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useStore } from '../../store';
 import { compose } from 'recompose';
 import { withAuthorization, withEmailVerification } from '../Session';
 import NewMatchModal from '../../utils/NewMatchModal';
@@ -8,22 +9,22 @@ import StartNewMatchButton from '../../utils/StartNewMatchButton';
 import './index.css';
 
 const HomePage = (props) => {
+  const { state, dispatch } = useStore();
   const [showMatchModal, toggleMatchModal] = useState(false);
-  const [newMatchStarted, toggleScoreComponent] = useState(false);
-
-  const endRound = () => {
-    toggleScoreComponent(false);
-  }
+  const [newMatchStarted, toggleScoreComponent] = useState(state.activeRound ? true : false);
 
   return (
     <div className="page-container">
-     {newMatchStarted ? <Scoretracker endRound={endRound}/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
+     {newMatchStarted ? <Scoretracker endRound={()=> toggleScoreComponent(!newMatchStarted)} activateRound={()=> toggleScoreComponent(!newMatchStarted)}/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
 
       {/* <RoundHistory /> */}
       <NewMatchModal
         show={showMatchModal}
-        startRound={() => {toggleScoreComponent(true); toggleMatchModal(false);}}
-        hide={() => toggleMatchModal(false)}
+        startRound={() => {
+          toggleMatchModal(false);
+          toggleScoreComponent(true);
+        }}
+        onHide={() => toggleMatchModal(false)}
       />
 
     </div>
