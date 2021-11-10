@@ -20,8 +20,6 @@ const StoreContext = createContext();
      //ex: Match1
            Match2
            Match3
-
-        
         
  */
 
@@ -32,17 +30,29 @@ const StoreContext = createContext();
 const INITIAL_STATE = {
   roundHistory: [],
   activeRound: null,
+  activeRoundLength: 9
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'round-history--set':
+      console.log(action.type, action.roundHistory);
       return {
         ...state,
         roundHistory: action.roundHistory,
       };
-
-    // case ''
+      case 'update-active-round':
+        console.log(action.type, action.roundInfo);
+        return {
+          ...state,
+          activeRound: action.roundInfo,
+        };
+        case 'update-active-round-length':
+        console.log(action.type, action.roundLength);
+        return {
+          ...state,
+          activeRoundLength: action.roundLength,
+        };
   }
 };
 
