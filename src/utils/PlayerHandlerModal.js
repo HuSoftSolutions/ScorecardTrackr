@@ -62,7 +62,9 @@ export default function Edit_AddPlayerModal(props) {
           );
           matches.push({
             name: `${playersArray[i].name} vs. ${playersArray[j].name}`,
-            presses: existingPresses ? existingPresses.presses : defaultPressArray,
+            presses: existingPresses
+              ? existingPresses.presses
+              : defaultPressArray,
             firstPlayerIndex: i,
             secondPlayerIndex: j,
           });
@@ -98,22 +100,25 @@ export default function Edit_AddPlayerModal(props) {
           onChangePlayerName={playerNameChange}
         />
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={cancelChanges}>
-          Cancel
-        </Button>
+      <Modal.Footer className="addEditPlayerModal_Footer">
         {props.addOrEdit !== 'Add' ? (
-          <Button variant="danger" onClick={removePlayer}>
+          <Button variant="danger" size="sm" className='removePlayerButton' onClick={removePlayer}>
             Remove Player
           </Button>
         ) : null}
-        <Button
-          variant="primary"
-          disabled={newPlayer.name != null ? false : true}
-          onClick={savePlayer}
-        >
-          Save Changes
-        </Button>
+        <div className='justifyContent_spaceBetween displayFlex'>
+          <Button variant="secondary" size="sm" onClick={cancelChanges}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={newPlayer.name != null ? false : true}
+            onClick={savePlayer}
+          >
+            Save Changes
+          </Button>
+        </div>
       </Modal.Footer>
     </Modal>
   );

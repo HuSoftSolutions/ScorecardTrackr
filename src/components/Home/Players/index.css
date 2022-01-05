@@ -1,10 +1,18 @@
 .playersDiv {
     display: flex;
-    width: 50%;
+    max-width: fit-content;
     margin: 10px auto;
     max-height: 32px;
 }
 
 .playerInput {
     height: max-content;
+}
+
+.playersIcon {
+    margin-right: 5px;
+}
+
+.removePlayer {
+    margin-left: 5px;
 }

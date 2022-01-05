@@ -17,15 +17,17 @@ import {
 } from 'react-bootstrap';
 
 const Navigation = () => (
-  <AuthUserContext.Consumer>
-    {(authUser) =>
-      authUser ? (
-        <NavigationAuth authUser={authUser} />
-      ) : (
-        <NavigationNonAuth />
-      )
-    }
-  </AuthUserContext.Consumer>
+  <div>
+    <AuthUserContext.Consumer>
+      {(authUser) =>
+        authUser ? (
+          <NavigationAuth authUser={authUser} />
+        ) : (
+          <NavigationNonAuth />
+        )
+      }
+    </AuthUserContext.Consumer>
+  </div>
 );
 
 const NavigationAuth = ({ authUser }) => (
