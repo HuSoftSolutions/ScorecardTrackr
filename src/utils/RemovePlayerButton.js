@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 export default function RemovePlayerButton(props) {
   return (
-    <div className="new-match-container">
+    <div className="removePlayer">
       <Button
         onClick={props.onClick}
         size='sm'

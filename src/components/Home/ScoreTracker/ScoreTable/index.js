@@ -59,11 +59,11 @@ export default function ScoreTable(props) {
   const TableHeader = (rowData) => {
     return (
       <tr>
-        <th>Player</th>
+        <th className='firstHeaderCell overflowScroll'>Hole</th>
         {rowData.map((row) => (
-          <th key={row.hole}>{row.hole}</th>
+          <th className='tableCellWidth' key={row.hole}>{row.hole}</th>
         ))}
-        <th>Total</th>
+        <th className='tableCellWidth'>Total</th>
       </tr>
     );
   };
@@ -72,20 +72,14 @@ export default function ScoreTable(props) {
     return state.activeRound.players.map((player, index) => {
       return (
         <tr key={index}>
-          <td onClick={() => props.editPlayer(index)}>
+          <td className='overflowScroll scoreTableRowHeight middleAlignment' onClick={() => props.editPlayer(index)}>
             {player.name}
           </td>
           {rowData.map((row) => (
             <td
               onClick={() => toggleScoreInput(true, row.hole, index)}
-              className={
-                allowScoreInput &&
-                scoreInput.hole === row.hole &&
-                scoreInput.playerIndex === index
-                  ? 'cellWidth'
-                  : ''
-              }
               key={`key${index}${row.hole}`}
+              className='centerText middleAlignment'
             >
               {allowScoreInput &&
               scoreInput.hole === row.hole &&
@@ -115,7 +109,7 @@ export default function ScoreTable(props) {
               )}
             </td>
           ))}
-          <td className="cellWidth">
+          <td className='centerText middleAlignment'>
             {getPlayerTotal(player, rowData, holeArrayIndex)}
           </td>
         </tr>
@@ -130,10 +124,12 @@ export default function ScoreTable(props) {
       hover
       variant="dark"
       size="sm"
+      responsive="sm"
       key={index}
+      style={{tableLayout: "fixed"}}
     >
       <thead>{TableHeader(holes)}</thead>
       <tbody>{TableBody(holes, index)}</tbody>
     </Table>
-  ));
+  ))
 }

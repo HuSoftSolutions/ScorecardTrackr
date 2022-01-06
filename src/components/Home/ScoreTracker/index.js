@@ -3,22 +3,26 @@ import { Button } from 'react-bootstrap';
 import { useStore } from '../../../store';
 import AddNewPlayerButton from '../../../utils/AddNewPlayerButton';
 import Edit_AddPlayerModal from '../../../utils/PlayerHandlerModal';
-import EndRoundModal from '../../../utils/EndRoundModal';
+import ModalPrompt from '../../../utils/ModalPrompt';
 import ScoreTable from './ScoreTable';
 import MatchTable from './MatchTable';
 import './scoretracker.css';
+import * as CONSTANTS from '../../../constants/misc';
+
 
 export default function Scoretracker(props) {
   const { state, dispatch } = useStore();
   const [showPlayerModal, togglePlayerModal] = useState(false);
-  const [showEndRoundModal, toggleEndRoundModal] = useState(false);
-  const [endRoundModalDetails, setEndRoundModalDetails] = useState({});
+  const [showModalPrompt, toggleModalPrompt] = useState(false);
+  const [modalDetails, setModalDetails] = useState({});
   const [holeArray, setHoleArray] = useState([]);
   const [selectedPlayer, setPlayerToEdit] = useState({
     name: '',
     index: null,
   });
   const [add_edit, setAdd_Edit] = useState('');
+  const [modalPromptAction, setmodalPromptTitle] = useState('end');
+
 
   useEffect(function () {
     let holeCount = state.activeRoundLength,
@@ -55,10 +59,9 @@ export default function Scoretracker(props) {
     togglePlayerModal(true);
   };
 
-  const endRoundHandler = () => {
+  const validateScorecard = () => {
     let validated = true,
-      players = [...state.activeRound.players],
-      endRoundModal = {};
+      players = [...state.activeRound.players];
 
     players.map((player) => {
       for (let i = 1; i <= state.activeRoundLength; i++) {
@@ -67,19 +70,59 @@ export default function Scoretracker(props) {
         }
       }
     });
+    return validated;
+  };
+
+  const endRoundHandler = () => {
+    let modalPrompt = {},
+      validated = validateScorecard();
+
     if (validated) {
-      endRoundModal.message =
-        'Round is complete.  Would you like to play another nine holes?';
-      endRoundModal.denyButton = 'End Round';
+      modalPrompt.message =
+        'Are you sure you want to complete your round?';
+      modalPrompt.denyButton = 'Cancel';
     } else {
-      endRoundModal.message =
+      modalPrompt.message =
         'All scores have not been recorded for this round.  Are you sure you want to end incomplete round?';
-      endRoundModal.denyButton = 'Cancel';
+      modalPrompt.denyButton = 'Cancel';
     }
-    endRoundModal.confirmButton = 'Yes';
-    endRoundModal.roundValid = validated;
-    setEndRoundModalDetails(endRoundModal);
-    toggleEndRoundModal(true);
+    modalPrompt.confirmButton = 'Yes';
+    modalPrompt.title = 'End Round';
+    setmodalPromptTitle('end');
+    setModalDetails(modalPrompt);
+    toggleModalPrompt(true);
+  };
+
+  const continueRoundHandler = () => {
+    let modalPrompt = {};
+    modalPrompt.message =
+      'Would you like to add another 9 holes to your round?';
+    modalPrompt.denyButton = 'Cancel';
+    modalPrompt.confirmButton = 'Yes';
+    modalPrompt.title = 'Continue Round';
+
+    setmodalPromptTitle('new');
+    setModalDetails(modalPrompt);
+    toggleModalPrompt(true);
+  };
+
+  const addNineHoles = () => {
+    const pressArray = [...CONSTANTS.defaultPressArray];
+    let activeRoundCopy = state.activeRound;
+    let matchesCopy = [...state.activeRound.matches];
+    debugger;
+    state.activeRound.matches.map((match, index) => {
+      matchesCopy[index].presses.push(pressArray);
+    });
+    activeRoundCopy.matches = matchesCopy;
+    dispatch({
+      type: 'update-active-round-length',
+      roundLength: state.activeRoundLength + 9,
+    });
+    dispatch({
+      type: 'update-active-round',
+      roundInfo: activeRoundCopy,
+    });
   };
 
   const endCurrentRound = () => {
@@ -100,20 +143,39 @@ export default function Scoretracker(props) {
       roundLength: 9,
     });
     props.endRound();
-  }
+  };
 
   return (
     <div>
-      <div className="buttonDiv">
+      <div className="scoretrackerButtonDiv buttonMarginBottom5">
         <Button
+          size="sm"
           variant="secondary"
-          className="buttonPadding"
+          className="buttonMarginBottom5 endRoundButton"
           onClick={endRoundHandler}
         >
           End Round
         </Button>
-        <AddNewPlayerButton onClick={() => addNewPlayer()} />
+        <div
+          className={`displayFlex ${
+            validateScorecard()
+              ? 'justifyContent_spaceBetween'
+              : 'justifyContent_flexEnd'
+          }`}
+        >
+          {validateScorecard() ? (
+            <Button
+              size="sm"
+              // className=""
+              onClick={continueRoundHandler}
+            >
+              Continue
+            </Button>
+          ) : null}
+          <AddNewPlayerButton onClick={() => addNewPlayer()} />
+        </div>
       </div>
+
       <ScoreTable holeArray={holeArray} editPlayer={editPlayer} />
       <MatchTable holeArray={holeArray} />
       <Edit_AddPlayerModal
@@ -122,8 +184,13 @@ export default function Scoretracker(props) {
         addOrEdit={add_edit}
         playerToEdit={selectedPlayer}
       />
-        
-      <EndRoundModal show={showEndRoundModal} hide={() => toggleEndRoundModal(false)} modalDetails={endRoundModalDetails} endRound={endCurrentRound}/>
+
+      <ModalPrompt
+        show={showModalPrompt}
+        hide={() => toggleModalPrompt(false)}
+        modalDetails={modalDetails}
+        continue={modalPromptAction === "end" ? endCurrentRound : addNineHoles}
+      />
     </div>
   );
 }

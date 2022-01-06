@@ -37,7 +37,7 @@ export default function NewMatchModal(props) {
   const onCancel = () => {
     setPlayers([{ name: '' }]);
     setType(0);
-    props.hide();
+    props.onHide();
   };
 
   const resetLocalState = () => {

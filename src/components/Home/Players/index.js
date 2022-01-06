@@ -17,7 +17,7 @@ export default function Players(props) {
 
     return (
         <div className="playersDiv">
-          <InputGroup.Prepend>
+          <InputGroup.Prepend className="playersIcon">
             <InputGroup.Text id="playerNames" style={{ padding: ".375rem" }}>
               {PlayerIcon("")}
             </InputGroup.Text>

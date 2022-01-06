@@ -114,7 +114,7 @@ export default function MatchTable(props) {
     }
   };
 
-  const getMatchTotal = (match, rowArray) => {
+  const getMatchTotal = (match, rowArray, rowDataIndex) => {
     let totals = [],
       matchTotal = 0;
 
@@ -128,19 +128,21 @@ export default function MatchTable(props) {
       ),
     );
     match.presses.map((presses, pressIndex) => {
-      presses.map((press, index) => {
-        if (press) {
-          totals.push(
-            getMatchPlayScoreTotal(
-              match.firstPlayerIndex,
-              match.secondPlayerIndex,
-              rowArray,
-              index,
-              true,
-            ),
-          );
-        }
-      });
+      if (pressIndex == rowDataIndex) {
+        presses.map((press, index) => {
+          if (press) {
+            totals.push(
+              getMatchPlayScoreTotal(
+                match.firstPlayerIndex,
+                match.secondPlayerIndex,
+                rowArray,
+                index,
+                true,
+              ),
+            );
+          }
+        });
+      }
     });
     totals.map((total) => {
       if (total > 0) {
@@ -168,49 +170,65 @@ export default function MatchTable(props) {
     }
   };
 
-  const getLastCompletedHole = (match) => {
+  const getLastCompletedHole = (match, rowData) => {
+    const startingHole = rowData[0].hole,
+      endingHole = rowData[8].hole;
     let lastHole = 0,
       holeComplete = true;
 
     for (let i = 1; i <= state.activeRoundLength; i++) {
-      state.activeRound.players.map((player, index) => {
-        if (!player.scorecard[i]) {
-          if (
-            index == match.firstPlayerIndex ||
-            index == match.secondPlayerIndex
-          ) {
-            holeComplete = false;
+      if (i >= startingHole && i <= endingHole) {
+        state.activeRound.players.map((player, index) => {
+          if (!player.scorecard[i]) {
+            if (
+              index == match.firstPlayerIndex ||
+              index == match.secondPlayerIndex
+            ) {
+              holeComplete = false;
+            }
           }
-        }
-        if (index == match.secondPlayerIndex) {
-          if (holeComplete) lastHole = i;
-          else holeComplete = true;
-        }
-      });
+          if (index == match.secondPlayerIndex) {
+            if (holeComplete) lastHole = i;
+            else holeComplete = true;
+          }
+        });
+      }
     }
     return lastHole;
   };
 
   const showPressButton = (match, rowArrayIndex, rowData) => {
     const players = [...state.activeRound.players],
-      lastHolecompleted = getLastCompletedHole(match);
-    const roundCompleteCheck = lastHolecompleted % 9 == 0 ? false : true;
+      lastHolecompleted = getLastCompletedHole(match, rowData);
+    const roundCompleteCheck =
+      lastHolecompleted % 9 == 0 ? false : true;
     const alreadyPressed = roundCompleteCheck
       ? match.presses[rowArrayIndex][lastHolecompleted]
       : true;
 
-      const matchStanding = getMatchPlayScoreTotal(match.firstPlayerIndex, match.secondPlayerIndex, rowData, undefined, true),
-        scoresNotTied = matchStanding === 0 ? false : true;
+    const matchStanding = getMatchPlayScoreTotal(
+        match.firstPlayerIndex,
+        match.secondPlayerIndex,
+        rowData,
+        undefined,
+        true,
+      ),
+      scoresNotTied = matchStanding === 0 ? false : true;
 
     return scoresNotTied && !alreadyPressed && roundCompleteCheck;
   };
 
-  const initiatePress = (match, matchIndex, rowDataIndex) => {
+  const initiatePress = (
+    match,
+    matchIndex,
+    rowDataIndex,
+    rowData,
+  ) => {
     let activeRoundCopy = state.activeRound;
-    const lastHolecompleted = getLastCompletedHole(match);
+    const lastHolecompleted = getLastCompletedHole(match, rowData);
     let matchesArrayCopy = [...state.activeRound.matches];
     let pressesArrayCopy = [
-      ...state.activeRound.matches[matchIndex].presses
+      ...state.activeRound.matches[matchIndex].presses,
     ];
     let pressArrayCopy = [...pressesArrayCopy[rowDataIndex]];
 
@@ -227,63 +245,31 @@ export default function MatchTable(props) {
   const TableHeader = (rowData) => {
     return (
       <tr>
-        <th>Match</th>
+        <th className="firstHeaderCell">Match</th>
         {rowData.map((row) => (
-          <th key={row.hole}>{row.hole}</th>
+          <th className='tableCellWidth' key={row.hole}>{row.hole}</th>
         ))}
-        <th>Total</th>
+        <th className='tableCellWidth'>Total</th>
       </tr>
     );
   };
 
-  const TableBody = (rowData, rowDataIndex, match, index) => {
+  const MatchPresses = (rowData, rowDataIndex, match, index) => {
     let pressCounter = 0;
     return (
       <React.Fragment>
-        <tr>
-          <td style={{ maxWidth: '85px' }}>
-            {match.name}
-            {showPressButton(match, rowDataIndex, rowData) ? (
-              <Button
-                variant="success"
-                size="sm"
-                onClick={() =>
-                  initiatePress(match, index, rowDataIndex)
-                }
-                className="pressButton"
-              >
-                Press
-              </Button>
-            ) : null}
-          </td>
-          {rowData.map((row) => (
-            <td>
-              {getMatchPlayScoreByHole(
-                row.hole,
-                match.firstPlayerIndex,
-                match.secondPlayerIndex,
-                rowData,
-              )}
-            </td>
-          ))}
-          <td>
-            {getMatchPlayScoreTotal(
-              match.firstPlayerIndex,
-              match.secondPlayerIndex,
-              rowData,
-            )}
-          </td>
-        </tr>
         {match.presses.map((presses, pressesIndex) => {
           if (pressesIndex == rowDataIndex) {
             return presses.map((press, pressIndex) => {
               if (press) {
                 pressCounter += 1;
                 return (
-                  <tr>
+                  <tr key={pressCounter}>
                     <td>Press {pressCounter}</td>
                     {rowData.map((row) => (
-                      <td>
+                          row.hole == pressIndex ? 
+                          <td key={Math.random()} className='userPressedTableFont middleAlignment centerText' >Press</td> :
+                      <td key={Math.random()} className='middleAlignment centerText'>
                         {getPressScoreByHole(
                           row.hole,
                           match,
@@ -291,8 +277,8 @@ export default function MatchTable(props) {
                           rowData,
                         )}
                       </td>
-                    ))}
-                    <td>
+                        ))}
+                    <td className="centerText middleAlignment">
                       {getMatchPlayScoreTotal(
                         match.firstPlayerIndex,
                         match.secondPlayerIndex,
@@ -309,14 +295,14 @@ export default function MatchTable(props) {
         {pressCounter > 0 ? (
           <tr>
             <td>Total</td>
-            {rowData.map((row) => (
-              <td key={row}></td>
-            ))}
-            <td>
+            {/* {rowData.map((row, index) => (
+              <td key={index}></td>
+            ))} */}
+            <td colSpan="10" style={{ textAlign: 'right' }}>
               {getMatchtotalResult(
-                  getMatchTotal(match, rowData),
-                  match.firstPlayerIndex,
-                  match.secondPlayerIndex,
+                getMatchTotal(match, rowData, rowDataIndex),
+                match.firstPlayerIndex,
+                match.secondPlayerIndex,
               )}
             </td>
           </tr>
@@ -328,10 +314,59 @@ export default function MatchTable(props) {
   return props.holeArray.map((holes, index) =>
     state.activeRound.matches.map((match, matchIndex) => {
       return (
-        <Table striped bordered hover variant="dark" size="sm">
-          <thead>{TableHeader(holes)}</thead>
-          <tbody>{TableBody(holes, index, match, matchIndex)}</tbody>
-        </Table>
+        <React.Fragment key={Math.random()}>
+          <div className="buttonDiv buttonMarginBottom5">
+          {holes.find((x)=> x.hole == getLastCompletedHole(match, holes) + 1 ) || getLastCompletedHole(match, holes) == 0 ?
+            <Button
+              variant="success"
+              size="sm"
+              disabled={!showPressButton(match, index, holes)}
+              onClick={() =>
+                initiatePress(match, matchIndex, index, holes)
+              }
+              className="pressButton"
+            >
+              Press
+            </Button> : null}
+          </div>
+          <Table
+            striped
+            bordered
+            hover
+            variant="dark"
+            responsive="sm"
+            size="sm"
+            style={{ tableLayout: 'fixed' }}
+          >
+            <thead>{TableHeader(holes)}</thead>
+            <tbody>
+              <tr key={index}>
+                <td>{match.name}</td>
+                {holes.map((row) => (
+                  <td
+                    className="centerText middleAlignment"
+                    key={row.hole}
+                  >
+                    {getMatchPlayScoreByHole(
+                      row.hole,
+                      match.firstPlayerIndex,
+                      match.secondPlayerIndex,
+                      holes,
+                    )}
+                  </td>
+                ))}
+                <td className="centerText middleAlignment">
+                  {getMatchPlayScoreTotal(
+                    match.firstPlayerIndex,
+                    match.secondPlayerIndex,
+                    holes,
+                  )}
+                </td>
+              </tr>
+              {MatchPresses(holes, index, match, matchIndex)}
+            </tbody>
+          </Table>
+        </React.Fragment>
       );
     }),
   );
