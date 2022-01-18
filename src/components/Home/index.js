@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store';
 import { compose } from 'recompose';
 import { withAuthorization, withEmailVerification } from '../Session';
@@ -15,7 +15,7 @@ const HomePage = (props) => {
 
   return (
     <div className="page-container">
-     {newMatchStarted ? <Scoretracker endRound={()=> toggleScoreComponent(!newMatchStarted)} activateRound={()=> toggleScoreComponent(!newMatchStarted)}/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
+     {newMatchStarted ? <Scoretracker {...props} endRound={()=> toggleScoreComponent(!newMatchStarted)} activateRound={()=> toggleScoreComponent(!newMatchStarted)}/> : <StartNewMatchButton toggle={() => toggleMatchModal(true)} /> }
 
       {/* <RoundHistory /> */}
       <NewMatchModal

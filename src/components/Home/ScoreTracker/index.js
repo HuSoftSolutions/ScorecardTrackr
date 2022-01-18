@@ -9,7 +9,6 @@ import MatchTable from './MatchTable';
 import './scoretracker.css';
 import * as CONSTANTS from '../../../constants/misc';
 
-
 export default function Scoretracker(props) {
   const { state, dispatch } = useStore();
   const [showPlayerModal, togglePlayerModal] = useState(false);
@@ -22,7 +21,6 @@ export default function Scoretracker(props) {
   });
   const [add_edit, setAdd_Edit] = useState('');
   const [modalPromptAction, setmodalPromptTitle] = useState('end');
-
 
   useEffect(function () {
     let holeCount = state.activeRoundLength,
@@ -109,12 +107,13 @@ export default function Scoretracker(props) {
   const addNineHoles = () => {
     const pressArray = [...CONSTANTS.defaultPressArray];
     let activeRoundCopy = state.activeRound;
-    let matchesCopy = [...state.activeRound.matches];
-    debugger;
-    state.activeRound.matches.map((match, index) => {
-      matchesCopy[index].presses.push(pressArray);
-    });
-    activeRoundCopy.matches = matchesCopy;
+    if (activeRoundCopy.matchType != 0) {
+      let matchesCopy = [...state.activeRound.matches];
+      state.activeRound.matches.map((match, index) => {
+        matchesCopy[index].presses.push(pressArray);
+      });
+      activeRoundCopy.matches = matchesCopy;
+    }
     dispatch({
       type: 'update-active-round-length',
       roundLength: state.activeRoundLength + 9,
@@ -126,14 +125,18 @@ export default function Scoretracker(props) {
   };
 
   const endCurrentRound = () => {
-    let currentRoundHistory = [...state.roundHistory];
     let activeRound = state.activeRound;
     activeRound.activeRoundLength = state.activeRoundLength;
-    currentRoundHistory.push(state.activeRound);
-    dispatch({
-      type: 'round-history--set',
-      roundHistory: currentRoundHistory,
-    });
+
+    props.firebase.doRoundHistoryUpdate(
+      activeRound,
+      props.firebase.auth.currentUser.uid,
+    );
+
+    // dispatch({
+    //   type: 'round-history--set',
+    //   roundHistory: currentRoundHistory,
+    // });
     dispatch({
       type: 'update-active-round',
       roundInfo: null,
@@ -177,7 +180,9 @@ export default function Scoretracker(props) {
       </div>
 
       <ScoreTable holeArray={holeArray} editPlayer={editPlayer} />
-      <MatchTable holeArray={holeArray} />
+      {state.activeRound.matchType != 0 && (
+        <MatchTable holeArray={holeArray} />
+      )}
       <Edit_AddPlayerModal
         show={showPlayerModal}
         hide={() => togglePlayerModal(false)}
@@ -189,7 +194,9 @@ export default function Scoretracker(props) {
         show={showModalPrompt}
         hide={() => toggleModalPrompt(false)}
         modalDetails={modalDetails}
-        continue={modalPromptAction === "end" ? endCurrentRound : addNineHoles}
+        continue={
+          modalPromptAction === 'end' ? endCurrentRound : addNineHoles
+        }
       />
     </div>
   );

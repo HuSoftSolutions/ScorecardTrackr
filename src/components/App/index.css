@@ -4,5 +4,5 @@
   background-color: #dcdcdc !important;
   justify-content: space-between;
   height: inherit;
-  overflow: scroll;
+  overflow: auto;
 }

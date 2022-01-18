@@ -42,8 +42,9 @@ export default function Edit_AddPlayerModal(props) {
 
   const savePlayer = () => {
     let playersArray = [...state.activeRound.players],
-      matchesArray = [...state.activeRound.matches],
       updatedActiveRound = state.activeRound;
+      
+      
     if (playersArray.length === props.playerToEdit.index) {
       playersArray.push({ name: newPlayer.name, scorecard: [] });
     } else {
@@ -52,8 +53,9 @@ export default function Edit_AddPlayerModal(props) {
     updatedActiveRound.players = playersArray;
 
     if (state.activeRound.matchType === 1) {
-      let defaultPressArray = [[...CONSTANTS.defaultPressArray]];
-      let matches = [];
+      let defaultPressArray = [[...CONSTANTS.defaultPressArray]],
+       matchesArray = [...state.activeRound.matches],
+       matches = [];
       for (let i = 0; i < playersArray.length; i++) {
         for (let j = i + 1; j < playersArray.length; j++) {
           let existingPresses = matchesArray.find(

@@ -16,3 +16,7 @@
 .match-type-container {
   display: flex;
 }
+
+body::-webkit-scrollbar-track {
+  background: orange;        /* color of the tracking area */
+}

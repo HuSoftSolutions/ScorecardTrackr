@@ -28,7 +28,6 @@ class Firebase {
     /* Social Sign In Method Provider */
 
     this.googleProvider = new app.auth.GoogleAuthProvider();
-
   }
 
   // *** Auth API ***
@@ -42,27 +41,27 @@ class Firebase {
   doSignInWithGoogle = () =>
     this.auth.signInWithPopup(this.googleProvider);
 
-
   doSignOut = () => this.auth.signOut();
 
-  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+  doPasswordReset = (email) =>
+    this.auth.sendPasswordResetEmail(email);
 
   doSendEmailVerification = () =>
     this.auth.currentUser.sendEmailVerification({
       url: process.env.REACT_APP_CONFIRMATION_EMAIL_REDIRECT,
     });
 
-  doPasswordUpdate = password =>
+  doPasswordUpdate = (password) =>
     this.auth.currentUser.updatePassword(password);
 
   // *** Merge Auth and DB User API *** //
 
   onAuthUserListener = (next, fallback) =>
-    this.auth.onAuthStateChanged(authUser => {
+    this.auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         this.user(authUser.uid)
           .once('value')
-          .then(snapshot => {
+          .then((snapshot) => {
             const dbUser = snapshot.val();
 
             // default empty roles
@@ -88,10 +87,23 @@ class Firebase {
 
   // *** User API ***
 
-  user = uid => this.db.ref(`users/${uid}`);
+  doRoundHistoryUpdate = (round, uid) => {
+    const postKey = round.roundId
+      ? round.roundId
+      : this.db.ref().child('roundHistory').push().key;
+
+  let roundObject = round.roundId ? round : { uid, ...round },
+      updateObject = {};
+    updateObject[`roundHistory/${postKey}`] = roundObject;
+    updateObject[`users/${uid}/rounds/${postKey}`] = roundObject;
+    this.db.ref().update(updateObject);
+  };
+
+  userRoundHistory = (uid) => this.db.ref(`users/${uid}/rounds`);
+
+  user = (uid) => this.db.ref(`users/${uid}`);
 
   users = () => this.db.ref('users');
-
 }
 
 export default Firebase;

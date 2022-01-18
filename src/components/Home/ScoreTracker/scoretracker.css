@@ -50,7 +50,7 @@
 }
 
 .overflowScroll {
-  overflow: scroll;
+  overflow: auto;
 }
 
 .middleAlignment {
