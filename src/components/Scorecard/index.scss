@@ -1,0 +1,117 @@
+@import 'src/custom.scss';
+
+.scorecard-container {
+  display: flex;
+  flex-direction: column;
+  // height: 100%;
+  // width: 500px;
+  overflow-x: auto;
+  overflow-y: auto;
+  // height: 100vh - 30;
+  // background-color: $dark;
+
+
+
+  th,
+  td {
+    min-width: 60px;
+    max-width: 60px;
+    width: 60px;
+    height: 30px;
+    text-align: center;
+    background-color: $dark;
+    align-items: center;
+    // border-right: 1px rgb(30, 30, 30) solid;
+    // border-top: 1px rgb(30, 30, 30) solid;
+  }
+
+  tbody {
+    width: 500px;
+  }
+
+  #current_hole {
+    background-color: $success !important;
+    color: white;
+  }
+
+  input {
+    .player-score:hover {
+      cursor: pointer;
+      border: 1px solid $secondary;
+    }
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  .sticky-row {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .sticky {
+    position: sticky;
+    left: 0;
+    min-width: 100px;
+    max-width: 100px;
+    width: 100px;
+    // background-color: $dark;
+    color: white;
+  }
+}
+
+table {
+  // width: 500px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: $light;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.tab-content {
+  padding: 0px !important;
+}
+.tab-pane.active.show {
+  margin: 0;
+  padding: 0;
+}
+
+@media screen and (max-width: 992px) {
+  .scorecard-container {
+    font-size: x-small;
+
+    .sticky {
+      min-width: 70px;
+      max-width: 70px;
+    }
+
+    th,
+    td {
+      min-width: 40px;
+      max-width: 40px;
+      width: 40px;
+    }
+  }
+}
+
+@media screen and (max-width: 692px) {
+}

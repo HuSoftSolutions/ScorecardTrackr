@@ -1,0 +1,43 @@
+.account-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-direction: column;
+  color: white;
+  width: 100%;
+  // background-image: url("../../scoretrackr-bg-gradient.svg");
+
+  .text-muted {
+    font-size: x-small;
+  }
+  input {
+    font-size: med;
+    border-width: 0;
+    border-bottom: 1px black solid;
+    color: black;
+    border-radius: 0.25em;
+    border-color: rgb(205, 205, 205);
+    margin-bottom: 1em;
+    padding: 0.25em;
+    padding-left: 1em;
+  }
+}
+
+.account-card {
+  padding: 1em;
+  margin: 0;
+  // border-width: 0;
+  // border: 4px rgb(255, 255, 255) solid;
+  background-color: rgba(255, 255, 255, 0.524);
+  border-radius: 1em;
+  width: 80%;
+  max-width: 400px;
+}
+
+@media screen and (max-width: 500px) {
+  .account-card {
+    background-color: none;
+    border-width: 0;
+  }
+}

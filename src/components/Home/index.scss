@@ -1,0 +1,28 @@
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-direction: column;
+  color: white;
+  width: 100%;
+}
+
+.home-card {
+  gap: 50px;
+  padding: 1em;
+  margin: 0;
+  width: 100%;
+  max-width: 60%;
+  background-color: rgba(255, 255, 255, 0.524);
+  border-radius: 1em;
+  margin: 1em;
+}
+
+@media screen and (max-width: 992px) {
+  .home-card {
+    background-color: none;
+    border-width: 0;
+    font-size: small;
+  }
+}

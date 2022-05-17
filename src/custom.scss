@@ -1,0 +1,31 @@
+$danger: #F93154;
+$success: #00B74A;
+$primary: #1266F1;
+$secondary: #464646;
+$dark: #262626;
+$light: #dcdcdc;
+$warning: #FFA900;
+$booking: #31aa4c;
+$primary-dark: #0c49aa;
+$light-tr: #dcdcdcbd;
+$light-dark: #b8b8b8;
+// $no-show: $light;
+
+
+$theme-colors: (
+  "danger": $danger,
+  "success": $success,
+  "primary": $primary,
+  "primary-dark": $primary,
+  "light-dark": $light-dark,
+  "secondary": $secondary,
+  "dark": $dark,
+  "light": $light,
+  "warning": $warning,
+  "booking": $booking,
+  "light-tr": $light-tr,
+  "gold": rgb(191, 146, 0)
+);
+
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";

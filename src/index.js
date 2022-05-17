@@ -5,15 +5,12 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 import App from './components/App';
-import Firebase, { FirebaseContext } from './components/Firebase';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { StoreProvider } from './store';
 
 ReactDOM.render(
   <StoreProvider>
-    <FirebaseContext.Provider value={new Firebase()}>
-      <App />
-    </FirebaseContext.Provider>
+    <App />
   </StoreProvider>,
   document.getElementById('root'),
 );
