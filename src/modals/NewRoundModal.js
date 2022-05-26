@@ -5,13 +5,15 @@ import { HiUserRemove, HiUserAdd } from "react-icons/hi"
 import { v4 as uuidv4 } from 'uuid';
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import * as ROUTES from '../constants/routes';
+import * as FUNCTIONS from '../helpers/functions.js'
 import "./newRoundModal.scss";
 
 /* Static Text */
 const DATA = {
     TITLE: "New Round",
     SUBTITLE: "Click each button to toggle selection",
-    PLAYER_ADD: "Please add players"
+    PLAYER_ADD: "Add Players to Continue",
+    SELECT_NINES: "Choose Course and Select Nines to Continue"
 }
 
 const NewRoundModal = (props) => {
@@ -20,8 +22,9 @@ const NewRoundModal = (props) => {
     const { state, dispatch } = useStore();
     const navigate = useNavigate();
     const [players, setPlayers] = useState([]);
+    const [nines, setNines] = useState([]);
 
-    /* Components */
+    /* Functions */
     function isValid() {
 
         let errors = [];
@@ -38,22 +41,28 @@ const NewRoundModal = (props) => {
         setPlayers([])
     }
 
+    function initializePlayerScorecards(players){
+        let p = [...players];
+
+        players.forEach((player, playerIndex) => {
+            p.scorecard = FUNCTIONS.generateBlankScorecard(nines)
+        })  
+        
+        return p;
+    }
+
     function handleStartRound() {
         const ID = uuidv4();
         navigate(ROUTES.ROUND + `/${ID}`)
         handleClose();
-        dispatch({ type: 'start_new_round', round_id: ID, players, nines: ["front", "back"] });
+        dispatch({ type: 'start_new_round', round_id: ID, players: initializePlayerScorecards(players), nines });
     }
 
     function handleCourseSelection(course) {
         dispatch({ type: 'set_selected_course', selected_course: course });
     }
 
-    function generateScorecard() {
-        
-    }
-
-    function newPlayer() { return { name: "", hdcp: 0, id: uuidv4(), scorecard: generateScorecard() }; };
+    function newPlayer() { return { name: "", hdcp: 0, id: uuidv4(), scorecard: [] }; };
 
     function removePlayer(p) { setPlayers(players.filter((el) => el.id !== p.id)); };
 
@@ -63,6 +72,44 @@ const NewRoundModal = (props) => {
         players_[index][key] = value;
         setPlayers(players_);
     };
+
+    function updateSelectedNines(nine) {
+        let selectedNines = [...nines];
+
+        console.log(`${nine.name} clicked!`)
+
+        console.log(`selected nines before: ${nines.length}`)
+
+        let nineFoundIndex = isNineSelected(nine); // returns -1 if not found
+
+        let newNines = [];
+
+        if (nineFoundIndex !== -1) { // nine was previously selected, remove
+
+            selectedNines.forEach(n => {
+                if (n.name !== nine.name) newNines.push(n)
+            })
+
+        } else {
+            newNines = [...selectedNines, nine]
+        }
+
+        console.log(`selected nines after: ${newNines.length}`)
+
+
+        setNines(newNines)
+    }
+
+    function isNineSelected(nine) {
+        // let index = nines.findIndex(n => n.name === nine.name)
+
+        let found = -1;
+        nines.forEach((n, i) => {
+            if (nine.name === n.name) found = i;
+        })
+
+        return found;
+    }
 
     /* Components */
     const CourseSelection = () => {
@@ -82,6 +129,20 @@ const NewRoundModal = (props) => {
         )
     }
 
+    const NinesSelection = () => {
+        /* Ryan's great idea */
+        return (state.selected_course ?
+            <div className="d-flex flex-row justify-content-end pb-3">
+                {state.selected_course.nines.map((nine, nineIndex) =>
+                    <div key={nineIndex} className="form-check mx-2">
+                        <input type="checkbox" checked={isNineSelected(nine) !== -1} className="form-check-input" id={nine.name} onChange={() => { updateSelectedNines(nine) }} />
+                        <label className="form-check-label">{nine.name}</label>
+                    </div>
+                )}
+            </div> : null
+        )
+    }
+
 
 
     return (
@@ -91,7 +152,9 @@ const NewRoundModal = (props) => {
                 <CourseSelection />
             </Modal.Header>
             <Modal.Body className="bg-dark text-white">
-                <div>
+                <NinesSelection />
+
+                {nines.length ? <div>
                     <div className="d-flex justify-content-end w-100">
                         <div className="d-flex w-100 justify-content-between align-items-center">
                             {players?.length ? <p className="mb-0">Players</p> : <p className="mb-0">{DATA.PLAYER_ADD}</p>}
@@ -108,7 +171,7 @@ const NewRoundModal = (props) => {
                         )
                     })}
 
-                </div>
+                </div> : <p>{DATA.SELECT_NINES}</p>}
             </Modal.Body>
             <Modal.Footer className="bg-dark text-white d-flex justify-content-between footer">
                 <Button variant="outline-danger" onClick={handleClose}>

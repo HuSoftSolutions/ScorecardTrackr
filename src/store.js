@@ -7,17 +7,11 @@ const INITIAL_STATE = {
 
   /* Active Round */
   round_id: null,
-  current_hole: 15,
-  selected_course: frjConfig,
-  players: [
-    { id: 1, name: 'cody husek', front: [0, 0, 0, 0, 0, 0, 0, 0, 0], back: [0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: 2, name: 'cody husek', front: [0, 0, 0, 0, 0, 0, 0, 0, 0], back: [0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: 3, name: 'cody husek', front: [0, 0, 0, 0, 0, 0, 0, 0, 0], back: [0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: 4, name: 'cody husek', front: [0, 0, 0, 0, 0, 0, 0, 0, 0], back: [0, 0, 0, 0, 0, 0, 0, 0, 0] }
-
-  ],
+  current_hole_index: 0,
+  selected_course: null,
+  players: [],
   matches: [],
-  nines: ['front', 'back'],
+  nines: [],
   side_games: [],
 
   /* General */
@@ -37,7 +31,7 @@ const reducer = (state, action) => {
       
       return {
         ...state,
-        current_hole: action.hole
+        current_hole_index: action.hole
       }
 
     case 'open_new_match_modal':
@@ -66,6 +60,7 @@ const reducer = (state, action) => {
       }
 
     case 'set-player-score':
+      console.log(action.players)
       return {
         ...state,
         players: action.players

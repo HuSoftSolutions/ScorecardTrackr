@@ -16,6 +16,8 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
+import { getDatabase, ref, child, get } from "firebase/database";
+
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -29,6 +31,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
 const googleProvider = new GoogleAuthProvider();
 
