@@ -1,0 +1,71 @@
+@import 'src/custom.scss';
+
+.round-page {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  width: 100%;
+
+  padding: 1em;
+  color: $light-tr !important;
+
+  p {
+    // margin: 0;
+  }
+
+  .nav-tabs {
+    border-color: $dark !important;
+  }
+
+  .tab-content {
+    background-color: $light-tr;
+    border-color: $dark !important;
+    height: 100%;
+    padding: 1em;
+    border-bottom-right-radius: 0.25em;
+    border-bottom-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+    color: $dark !important;
+  }
+
+  .nav-link {
+    color: $light !important;
+    :hover {
+      color: $light !important;
+    }
+  }
+
+  .nav-item {
+    border-bottom-color: $dark !important;
+    :hover {
+      border-color: $dark !important;
+      border-bottom-color: $dark !important;
+    }
+  }
+
+  .nav-item.active {
+    background-color: $light !important;
+    border-bottom-color: $light !important;
+    :hover {
+      border-color: $light !important;
+    }
+  }
+
+  .nav-link.active {
+    color: $dark !important;
+    font-weight: bold;
+    background-color: $light;
+    :hover {
+      color: $primary !important;
+    }
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .hole-container {
+    h1 {
+      font-size: large;
+    }
+  }
+}

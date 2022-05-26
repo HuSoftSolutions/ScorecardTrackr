@@ -1,0 +1,42 @@
+.navigation,
+.navigation a.nav-link,
+.navigation .navbar-brand,
+.navigation .navbar-text {
+  // background-color: rgb(255, 255, 255);
+  // color: rgb(255, 255, 255) !important;
+}
+
+.navigation {
+    /* min-height: 70px !important; */
+  // padding-right: 2em;
+  width: 100%;
+
+  .container {
+    // color: white;
+    width: 100%;
+  }
+
+  .navbar-toggler-icon {
+    // color: white !important;
+  // background-color: rgb(255, 255, 255) !important;
+  // border-color: white !important;
+
+  }
+
+
+}
+
+.navbar-brand {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+
+@media screen and (max-width: 992px) {
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 2em;
+  }
+}

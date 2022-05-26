@@ -1,8 +1,0 @@
-.app-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #dcdcdc !important;
-  justify-content: space-between;
-  height: inherit;
-  overflow: scroll;
-}

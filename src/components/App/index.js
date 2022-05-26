@@ -1,47 +1,37 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
 import SignUpPage from '../SignUp';
 import SignInPage from '../SignIn';
-import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import HistroyPage from '../RoundHistory';
-import Footer from '../Footer';
-
+import ActiveRound from '../ActiveRound';
+import Reset from '../Reset/Reset.js';
 import * as ROUTES from '../../constants/routes';
-import { withAuthentication } from '../Session';
-import './index.css';
+import ErrorPage from '../ErrorPage/PageNotFound';
+import './index.scss';
 
 const App = () => (
   <div className="app-container">
     <Router>
       <Navigation />
-      <Switch>
-        <Route exact path={ROUTES.LANDING} component={LandingPage} />
-        <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-        <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-        <Route path={ROUTES.HISTORY} component={HistroyPage} />
-        <Route
-          path={ROUTES.PASSWORD_FORGET}
-          component={PasswordForgetPage}
-        />
-        <Route path={ROUTES.HOME} component={HomePage} />
-        <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-        <Route path={ROUTES.ADMIN} component={AdminPage} />
-        <Redirect to={ROUTES.LANDING} />
-      </Switch>
-      <Footer />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
+        <Route path={ROUTES.SIGN_IN} element={<SignInPage />} />
+        <Route path={ROUTES.HISTORY} element={<HistroyPage />} />
+        <Route path={ROUTES.HOME} element={<HomePage />} />
+        <Route path={ROUTES.ACCOUNT} element={<AccountPage />} />
+        <Route path={ROUTES.ADMIN} element={<AdminPage />} />
+        <Route path={ROUTES.ACTIVE_ROUND} element={<ActiveRound />} />
+        <Route path={ROUTES.RESET} element={<Reset />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
     </Router>
   </div>
 );
 
-export default withAuthentication(App);
+export default App;
