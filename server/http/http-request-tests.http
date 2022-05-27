@@ -1,0 +1,7 @@
+@host = http://localhost:8080
+
+### FIND ALL ROLES
+GET {{host}}/user/role HTTP/1.1
+
+### FIND BY USER ID 1 
+GET {{host}}/user/1 HTTP/1.1
