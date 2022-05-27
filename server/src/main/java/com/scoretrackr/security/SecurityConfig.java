@@ -1,0 +1,64 @@
+package com.scoretrackr.security;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+@EnableWebSecurity
+@ConditionalOnWebApplication
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final JwtConverter converter;
+
+    public SecurityConfig(JwtConverter converter) {
+        this.converter = converter;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.csrf().disable();
+        http.cors();
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/health_check").permitAll()
+                .antMatchers(HttpMethod.POST, "/authenticate", "/encode", "/user/create").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/{username}").permitAll()
+                .antMatchers(HttpMethod.POST, "/refresh_token").authenticated()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/course").permitAll()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/course/{courseId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/course/{name}").permitAll()
+                .antMatchers(HttpMethod.POST, "/scoretrackr/course").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/scoretrackr/course/{courseId}").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET, "/scoretrackr/hole/{holeId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/hole/{nineId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/scoretrackr/hole").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/scoretrackr/hole/{holeId}").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET, "/scoretrackr/nine/{nineId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/nine/{courseId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/scoretrackr/nine").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET, "/scoretrackr/round/{roundId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/scoretrackr/round").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.PUT, "/scoretrackr/round/{roundId}").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/scoretrackr/roundtype").permitAll()
+                .antMatchers(HttpMethod.GET, "/scoretrackr/roundtype/{roundTypeId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/scoretrackr/roundtype").hasAnyAuthority("ADMIN")
+                .antMatchers("/**").denyAll()
+                .and()
+                .addFilter(new JwtRequestFilter(authenticationManager(), converter))
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    }
+
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+}
