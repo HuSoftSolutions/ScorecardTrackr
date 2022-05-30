@@ -23,7 +23,7 @@ public class UserRepository {
                 (rs, i) -> rs.getString("name"));
     }
 
-    public User findByUserId(int userId) {
+    public User findByUserId(String userId) {
         User user = jdbcTemplate.query("select * from user where user_id = ?;", new UserMapper(), userId)
                 .stream().findFirst().orElse(null);
 
@@ -68,17 +68,18 @@ public class UserRepository {
     }
 
     public User add(User user) {
-        final String sql = "insert into user (email, password_hash, first_name, last_name, handicap) "
-                + "values (?, ?, ?, ?, ?);";
+        final String sql = "insert into user (user_id, email, password_hash, first_name, last_name, handicap) "
+                + "values (?, ?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, user.getEmail());
-            statement.setString(2, user.getPassword());
-            statement.setString(3, user.getFirstName());
-            statement.setString(4, user.getLastName());
-            statement.setInt(5, user.getHandicap());
+            statement.setString(1, user.getUserId());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
+            statement.setString(4, user.getFirstName());
+            statement.setString(5, user.getLastName());
+            statement.setInt(6, user.getHandicap());
             return statement;
         }, keyHolder);
 
@@ -86,10 +87,8 @@ public class UserRepository {
             return null;
         }
 
-        user.setUserId(keyHolder.getKey().intValue());
-
         final String sqlRoleInsert = "insert into user_role (user_id, role_id) "
-                + "values (" + user.getUserId() + ", 1);";
+                + "values ('" + user.getUserId() + "', '491d338a-dfb8-11ec-9d64-0242ac120002');";
 
         jdbcTemplate.update(sqlRoleInsert);
 
@@ -167,7 +166,7 @@ public class UserRepository {
         }
     }
 
-    private List<String> getAuthorities(int userId) {
+    private List<String> getAuthorities(String userId) {
         String sql = "select r.role_id, r.`name` "
                 + "from user_role ur "
                 + "inner join role r on ur.role_id = r.role_id "

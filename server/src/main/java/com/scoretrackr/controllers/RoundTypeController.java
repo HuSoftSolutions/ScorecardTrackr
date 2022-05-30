@@ -25,7 +25,7 @@ public class RoundTypeController {
     public List<RoundType> findAll() { return service.findAll(); }
 
     @GetMapping("/{roundTypeId}")
-    public ResponseEntity<RoundType> findByRoundTypeId(@PathVariable int roundTypeId){
+    public ResponseEntity<RoundType> findByRoundTypeId(@PathVariable String roundTypeId){
         RoundType round = service.findByRoundTypeId(roundTypeId);
         if (round == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

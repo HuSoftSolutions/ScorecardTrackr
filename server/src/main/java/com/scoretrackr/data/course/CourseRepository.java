@@ -23,7 +23,7 @@ public class CourseRepository {
         return jdbcTemplate.query(sql, new CourseMapper());
     }
 
-    public Course findByCourseId(int courseId) {
+    public Course findByCourseId(String courseId) {
         final String sql = "select * from course where course_id = " + courseId + ";";
         return jdbcTemplate.queryForObject(sql, new CourseMapper());
     }
@@ -34,29 +34,28 @@ public class CourseRepository {
     }
 
     public Course add(Course course) {
-        final String sql = "insert into course (`name`, address, city, state, zip_code, phone_number, "
-            + "email, rating, slope) values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        final String sql = "insert into course (course_id, `name`, address, city, state, zip_code, phone_number, "
+            + "email, rating, slope) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, course.getName());
-            statement.setString(2, course.getAddress());
-            statement.setString(3, course.getCity());
-            statement.setString(4, course.getState());
-            statement.setString(5, course.getZipCode());
-            statement.setString(6, course.getPhoneNumber());
-            statement.setString(7, course.getEmail());
-            statement.setDouble(8, course.getRating());
-            statement.setDouble(9, course.getSlope());
+            statement.setString(1, course.getCourseId());
+            statement.setString(2, course.getName());
+            statement.setString(3, course.getAddress());
+            statement.setString(4, course.getCity());
+            statement.setString(5, course.getState());
+            statement.setString(6, course.getZipCode());
+            statement.setString(7, course.getPhoneNumber());
+            statement.setString(8, course.getEmail());
+            statement.setDouble(9, course.getRating());
+            statement.setDouble(10, course.getSlope());
             return statement;
         }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
         }
-
-        course.setCourseId(keyHolder.getKey().intValue());
 
         return course;
     }

@@ -19,7 +19,7 @@ public class RoundController {
     public RoundController(RoundService service) { this.service = service; }
 
     @GetMapping("/{roundId}")
-    public ResponseEntity<Round> findByRoundId(@PathVariable int roundId){
+    public ResponseEntity<Round> findByRoundId(@PathVariable String roundId){
         Round round = service.findByRoundId(roundId);
         if (round == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

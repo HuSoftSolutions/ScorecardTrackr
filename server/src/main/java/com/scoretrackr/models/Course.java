@@ -1,7 +1,7 @@
 package com.scoretrackr.models;
 
 public class Course {
-    private int courseId;
+    private String courseId;
     private String name;
     private String address;
     private String city;
@@ -15,7 +15,7 @@ public class Course {
     public Course() {
     }
 
-    public Course(int courseId, String name, String address, String city, String state,
+    public Course(String courseId, String name, String address, String city, String state,
                   String zipCode, String phoneNumber, String email, double rating, double slope) {
         this.courseId = courseId;
         this.name = name;
@@ -29,11 +29,11 @@ public class Course {
         this.slope = slope;
     }
 
-    public int getCourseId() {
+    public String getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
+    public void setCourseId(String courseId) {
         this.courseId = courseId;
     }
 

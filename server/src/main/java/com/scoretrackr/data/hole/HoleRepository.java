@@ -17,7 +17,7 @@ public class HoleRepository {
 
     public HoleRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
-    public Hole findByHoleId(int holeId) {
+    public Hole findByHoleId(String holeId) {
         final String sql = "select * "
                         + "from hole h "
                         + "inner join nine n on h.nine_id = n.nine_id "
@@ -26,7 +26,7 @@ public class HoleRepository {
         return jdbcTemplate.queryForObject(sql, new HoleMapper());
     }
 
-    public List<Hole> findByNineId(int nineId) {
+    public List<Hole> findByNineId(String nineId) {
         final String sql = "select * "
                         + "from hole h "
                         + "inner join nine n on h.nine_id = n.nine_id "
@@ -36,25 +36,24 @@ public class HoleRepository {
     }
 
     public Hole add(Hole hole) {
-        final String sql = "insert into hole (`number`, handicap, par, yards, nine_id) "
-                + "values (?, ?, ?, ?, ?);";
+        final String sql = "insert into hole (hole_id, `number`, handicap, par, yards, nine_id) "
+                + "values (?, ?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, hole.getNumber());
-            statement.setInt(2, hole.getHandicap());
-            statement.setInt(3, hole.getPar());
-            statement.setInt(4, hole.getYards());
-            statement.setInt(5, hole.getNine().getNineId());
+            statement.setString(1, hole.getHoleId());
+            statement.setInt(2, hole.getNumber());
+            statement.setInt(3, hole.getHandicap());
+            statement.setInt(4, hole.getPar());
+            statement.setInt(5, hole.getYards());
+            statement.setString(6, hole.getNine().getNineId());
             return statement;
         }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
         }
-
-        hole.setHoleId(keyHolder.getKey().intValue());
 
         return hole;
     }

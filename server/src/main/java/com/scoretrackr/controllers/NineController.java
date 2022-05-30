@@ -21,7 +21,7 @@ public class NineController {
     public NineController(NineService service) { this.service = service; }
 
     @GetMapping("/nineId/{nineId}")
-    public ResponseEntity<Nine> findByNineId(@PathVariable int nineId){
+    public ResponseEntity<Nine> findByNineId(@PathVariable String nineId){
         Nine nine = service.findByNineId(nineId);
         if (nine == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -30,7 +30,7 @@ public class NineController {
     }
 
     @GetMapping("/courseId/{courseId}")
-    public ResponseEntity<List<Nine>> findByCourseId(@PathVariable int courseId){
+    public ResponseEntity<List<Nine>> findByCourseId(@PathVariable String courseId){
         List<Nine> nines = service.findByCourseId(courseId);
         if (nines == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -25,7 +25,7 @@ public class UserController {
     public List<String> findAllRoles() { return service.findAllRoles(); }
 
     @GetMapping("/user/{userId}")
-    public User findByUserId(@PathVariable int userId) { return service.findByUserId(userId); }
+    public User findByUserId(@PathVariable String userId) { return service.findByUserId(userId); }
 
     @GetMapping("/user/email/{email}")
     public User findByEmail(@PathVariable String email) { return service.findByEmail(email); }

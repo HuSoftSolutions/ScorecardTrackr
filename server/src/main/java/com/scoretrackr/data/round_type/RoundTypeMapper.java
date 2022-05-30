@@ -12,7 +12,7 @@ public class RoundTypeMapper implements RowMapper<RoundType> {
     public RoundType mapRow(ResultSet rs, int rowNum) throws SQLException {
         RoundType roundType = new RoundType();
 
-        roundType.setRoundTypeId(rs.getInt("round_type_id"));
+        roundType.setRoundTypeId(rs.getString("round_type_id"));
         roundType.setName(rs.getString("name"));
 
         return roundType;

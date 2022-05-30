@@ -1,5 +1,7 @@
 @host = http://localhost:8080
-@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOjEsImF1dGhvcml0aWVzIjoiQURNSU4iLCJleHAiOjE2NTM4Mzk5MTJ9.9FrY5GMfOC5cFPJ3Eu0Gh1uryxcCsebuSRvMFuRETpc
+@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6ImpzbWl0aEBnbWFpbC5jb20iLCJpZCI6IjdiOTVkYmVhLWRmYmUtMTFlYy05ZDY0LTAyNDJhYzEyMDAwMiIsImF1dGhvcml0aWVzIjoiVVNFUiIsImV4cCI6MTY1Mzg4MDQzOH0.G0SOvH4d31BaMQJ0gIQyPUT4kcZu1_GBf76ID1wm7Xo
+
+
 
 
 
@@ -11,6 +13,7 @@ POST {{host}}/user/create HTTP/1.1
 Content-Type: application/json
 
 {
+    "userId": "7b95dbea-dfbe-11ec-9d64-0242ac120002",
     "email": "jsmith@gmail.com",
     "password": "JSmithPassword1!",
     "confirmPassword": "JSmithPassword1!",
@@ -41,7 +44,7 @@ Content-Type: application/json
 GET {{host}}/user/role HTTP/1.1
 
 ### GET BY USER ID 1 
-GET {{host}}/user/1 HTTP/1.1
+GET {{host}}/user/5 HTTP/1.1
 
 ### GET BY EMAIL "ransell@gmail.com"
 GET {{host}}/user/email/ransell@gmail.com HTTP/1.1
@@ -62,10 +65,12 @@ Authorization: Bearer {{jwt}}
 {
     "email": "jsmith@gmail.com",
     "password": "JSmithPassword1!",
-    "first_name": "John",
+    "first_name": "Johnny",
     "last_name": "Smith",
-    "handicap": 1
+    "handicap": 2
 }
+
+
 
 
 
@@ -92,9 +97,192 @@ Authorization: Bearer {{jwt}}
     "address": "2737 N Blair Stone Rd",
     "city": "Tallahassee",
     "state": "FL",
-    "zip_code": "32301",
-    "phone_number": "(850) 891-2560",
+    "zipCode": "32301",
+    "phoneNumber": "(850) 891-2560",
     "email": "admin@scoretrackr.com",
     "rating": 90.0,
     "slope": 115.0
 }
+
+### CHANGE HILAMAN'S EMAIL
+PUT {{host}}/scoretrackr/course/2 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "courseId": 2,
+    "name": "Hilaman Golf Course",
+    "address": "2737 N Blair Stone Rd",
+    "city": "Tallahassee",
+    "state": "FL",
+    "zipCode": "32301",
+    "phoneNumber": "(850) 891-2560",
+    "email": "adminUpdated@scoretrackr.com",
+    "rating": 90.0,
+    "slope": 115.0
+}
+
+
+
+
+
+
+### --- HOLE HTTP REQUESTS --- ###
+
+### GET BY HOLE ID 1
+GET {{host}}/scoretrackr/hole/holeId/1 HTTP/1.1
+
+### GET BY NINE ID 1
+GET {{host}}/scoretrackr/hole/nineId/1 HTTP/1.1
+
+### CREATE HOLE 10 AT FOX RUN FRONT 9
+POST {{host}}/scoretrackr/hole HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "number": 10,
+    "handicap": 7,
+    "par": 5,
+    "yards": 200,
+    "nine": {
+        "nineId": 1,
+        "name": "Front 9",
+        "course": {
+            "courseId": 1,
+            "name": "Fox Run Golf Club",
+            "address": "129 County Hwy 142A",
+            "city": "Johnstown",
+            "state": "NY",
+            "zipCode": "12095",
+            "phoneNumber": "(518)-762-3717",
+            "email": "richardscott@pga.com",
+            "rating": 70.0,
+            "slope": 125.0
+        }
+    }
+}
+
+### CHANGE HOLE 10 AT FOX RUN YARDS
+PUT {{host}}/scoretrackr/hole/19 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "holeId": 19,
+    "number": 10,
+    "handicap": 7,
+    "par": 5,
+    "yards": 400,
+    "nine": {
+        "nineId": 1,
+        "name": "Front 9",
+        "course": {
+            "courseId": 1,
+            "name": "Fox Run Golf Club",
+            "address": "129 County Hwy 142A",
+            "city": "Johnstown",
+            "state": "NY",
+            "zipCode": "12095",
+            "phoneNumber": "(518)-762-3717",
+            "email": "richardscott@pga.com",
+            "rating": 70.0,
+            "slope": 125.0
+        }
+    }
+}
+
+
+
+
+
+
+### --- NINE HTTP REQUESTS --- ###
+
+### GET BY NINE ID 1
+GET {{host}}/scoretrackr/nine/nineId/1 HTTP/1.1
+
+### GET BY COURSE ID 1
+GET {{host}}/scoretrackr/nine/courseId/1 HTTP/1.1
+
+### ADD FRONT NINE TO HILAMAN
+POST {{host}}/scoretrackr/nine HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "name": "Front 9",
+  "course": {
+    "courseId": 2,
+    "name": "Hilaman Golf Course",
+    "address": "2737 N Blair Stone Rd",
+    "city": "Tallahassee",
+    "state": "FL",
+    "zipCode": "32301",
+    "phoneNumber": "(850) 891-2560",
+    "email": "adminUpdated@scoretrackr.com",
+    "rating": 90.0,
+    "slope": 115.0
+  }
+}
+
+
+
+
+
+
+### --- ROUND HTTP REQUESTS --- ###
+
+### GET BY ROUND ID 1
+GET {{host}}/scoretrackr/round/1 HTTP/1.1
+
+### CREATE ROUND OF STROKE PLAY
+POST {{host}}/scoretrackr/round HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "roundType": {
+    "roundTypeId": 1,
+    "name": "STROKE"
+  }
+}
+
+### CHANGE ROUND WITH ROUND ID 2 TO MATCH PLAY
+PUT {{host}}/scoretrackr/round/2 HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "roundId": 2,
+  "roundType": {
+    "roundTypeId": 2,
+    "name": "MATCH"
+  }
+}
+
+
+
+
+
+
+### --- ROUND TYPE HTTP REQUESTS --- ###
+
+### GET ALL ROUND TYPES
+GET {{host}}/scoretrackr/roundtype HTTP/1.1
+
+### ADD NASSAU ROUND TYPE
+POST {{host}}/scoretrackr/roundtype HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+  {
+    "name": "NASSAU"
+  }

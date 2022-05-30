@@ -1,7 +1,7 @@
 package com.scoretrackr.models;
 
 public class Score {
-    private int scoreId;
+    private String scoreId;
     private int score;
     private Round round;
     private User user;
@@ -9,7 +9,7 @@ public class Score {
 
     public Score(){}
 
-    public Score(int scoreId, int score, Round round, User user, Hole hole){
+    public Score(String scoreId, int score, Round round, User user, Hole hole){
         this.scoreId = scoreId;
         this.score = score;
         this.round = round;
@@ -17,11 +17,11 @@ public class Score {
         this.hole = hole;
     }
 
-    public int getScoreId() {
+    public String getScoreId() {
         return scoreId;
     }
 
-    public void setScoreId(int scoreId) {
+    public void setScoreId(String scoreId) {
         this.scoreId = scoreId;
     }
 

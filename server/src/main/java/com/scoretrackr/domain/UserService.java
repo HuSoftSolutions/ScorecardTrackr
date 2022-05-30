@@ -21,7 +21,7 @@ public class UserService {
 
     public List<String> findAllRoles() { return repository.findAllRoles(); }
 
-    public User findByUserId(int userId) { return repository.findByUserId(userId); }
+    public User findByUserId(String userId) { return repository.findByUserId(userId); }
 
     public User findByEmail(String email) { return repository.findByEmail(email); }
 
@@ -37,11 +37,6 @@ public class UserService {
 
         result = validatePassword(user);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (user.getUserId() != 0) {
-            result.addErrorMessage("User id cannot be set before user creation.");
             return result;
         }
 
@@ -78,7 +73,7 @@ public class UserService {
             return result;
         }
 
-        if (user.getUserId() <= 0) {
+        if (user.getUserId() == null) {
             result.addErrorMessage("User id must be set to change email.");
             return result;
         }
@@ -98,7 +93,7 @@ public class UserService {
             return result;
         }
 
-        if (user.getUserId() <= 0) {
+        if (user.getUserId() == null) {
             result.addErrorMessage("User id must be set to change password.");
             return result;
         }

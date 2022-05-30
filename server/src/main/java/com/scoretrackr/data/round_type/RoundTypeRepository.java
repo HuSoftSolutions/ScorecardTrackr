@@ -22,26 +22,25 @@ public class RoundTypeRepository {
         return jdbcTemplate.query(sql, new RoundTypeMapper());
     }
 
-    public RoundType findByRoundTypeId(int roundTypeId) {
+    public RoundType findByRoundTypeId(String roundTypeId) {
         final String sql = "select * from round_type where round_type_id = " + roundTypeId + ";";
         return jdbcTemplate.queryForObject(sql, new RoundTypeMapper());
     }
 
     public RoundType add(RoundType roundType) {
-        final String sql = "insert into round_type (`name`) values (?);";
+        final String sql = "insert into round_type (round_type_id, `name`) values (?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, roundType.getName());
+            statement.setString(1, roundType.getRoundTypeId());
+            statement.setString(2, roundType.getName());
             return statement;
         }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
         }
-
-        roundType.setRoundTypeId(keyHolder.getKey().intValue());
 
         return roundType;
     }

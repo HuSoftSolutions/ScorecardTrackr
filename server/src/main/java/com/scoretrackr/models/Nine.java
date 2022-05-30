@@ -1,23 +1,23 @@
 package com.scoretrackr.models;
 
 public class Nine {
-    private int nineId;
+    private String nineId;
     private String name;
     private Course course;
 
     public Nine(){}
 
-    public Nine(int nineId, String name, Course course){
+    public Nine(String nineId, String name, Course course){
         this.nineId = nineId;
         this.name = name;
         this.course = course;
     }
 
-    public int getNineId() {
+    public String getNineId() {
         return nineId;
     }
 
-    public void setNineId(int nineId) {
+    public void setNineId(String nineId) {
         this.nineId = nineId;
     }
 

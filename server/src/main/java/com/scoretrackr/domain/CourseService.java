@@ -16,18 +16,13 @@ public class CourseService {
 
     public List<Course> findAll() { return repository.findAll(); }
 
-    public Course findByCourseId(int courseId) { return repository.findByCourseId(courseId); }
+    public Course findByCourseId(String courseId) { return repository.findByCourseId(courseId); }
 
     public Course findByName(String name) { return repository.findByName(name); }
 
     public Result<Course> add(Course course) {
         Result<Course> result = validate(course);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (course.getCourseId() != 0) {
-            result.addErrorMessage("Course ID must not be set for add.");
             return result;
         }
 

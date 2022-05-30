@@ -18,16 +18,11 @@ public class RoundTypeService {
 
     public List<RoundType> findAll() { return repository.findAll(); }
 
-    public RoundType findByRoundTypeId(int roundTypeId) { return repository.findByRoundTypeId(roundTypeId); }
+    public RoundType findByRoundTypeId(String roundTypeId) { return repository.findByRoundTypeId(roundTypeId); }
 
     public Result<RoundType> add(RoundType roundType) {
         Result<RoundType> result = validate(roundType);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (roundType.getRoundTypeId() != 0) {
-            result.addErrorMessage("RoundType ID must not be set for add.");
             return result;
         }
 

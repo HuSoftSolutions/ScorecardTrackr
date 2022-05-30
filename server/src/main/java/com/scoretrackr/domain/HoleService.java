@@ -15,18 +15,13 @@ public class HoleService {
 
     public HoleService(HoleRepository repository) { this.repository = repository; }
 
-    public Hole findByHoleId(int holeId) { return repository.findByHoleId(holeId); }
+    public Hole findByHoleId(String holeId) { return repository.findByHoleId(holeId); }
 
-    public List<Hole> findByNineId(int nineId) { return repository.findByNineId(nineId); }
+    public List<Hole> findByNineId(String nineId) { return repository.findByNineId(nineId); }
 
     public Result<Hole> add(Hole hole) {
         Result<Hole> result = validate(hole);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (hole.getHoleId() != 0) {
-            result.addErrorMessage("Hole ID must not be set for add.");
             return result;
         }
 

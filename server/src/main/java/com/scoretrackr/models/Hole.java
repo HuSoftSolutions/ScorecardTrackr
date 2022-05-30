@@ -1,7 +1,7 @@
 package com.scoretrackr.models;
 
 public class Hole {
-    private int holeId;
+    private String holeId;
     private int number;
     private int handicap;
     private int par;
@@ -10,7 +10,7 @@ public class Hole {
 
     public Hole(){}
 
-    public Hole(int holeId, int number, int handicap, int par, int yards, Nine nine){
+    public Hole(String holeId, int number, int handicap, int par, int yards, Nine nine){
         this.holeId = holeId;
         this.number = number;
         this.handicap = handicap;
@@ -19,11 +19,11 @@ public class Hole {
         this.nine = nine;
     }
 
-    public int getHoleId() {
+    public String getHoleId() {
         return holeId;
     }
 
-    public void setHoleId(int holeId) {
+    public void setHoleId(String holeId) {
         this.holeId = holeId;
     }
 

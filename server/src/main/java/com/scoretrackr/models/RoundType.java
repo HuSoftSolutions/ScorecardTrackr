@@ -1,21 +1,21 @@
 package com.scoretrackr.models;
 
 public class RoundType {
-    private int roundTypeId;
+    private String roundTypeId;
     private String name;
 
     public RoundType(){}
 
-    public RoundType(int roundTypeId, String name){
+    public RoundType(String roundTypeId, String name){
         this.roundTypeId = roundTypeId;
         this.name = name;
     }
 
-    public int getRoundTypeId() {
+    public String getRoundTypeId() {
         return roundTypeId;
     }
 
-    public void setRoundTypeId(int roundTypeId) {
+    public void setRoundTypeId(String roundTypeId) {
         this.roundTypeId = roundTypeId;
     }
 

@@ -16,18 +16,13 @@ public class NineService {
 
     public NineService(NineRepository repository) { this.repository = repository; }
 
-    public Nine findByNineId(int nineId) { return repository.findByNineId(nineId); }
+    public Nine findByNineId(String nineId) { return repository.findByNineId(nineId); }
 
-    public List<Nine> findByCourseId(int courseId) { return repository.findByCourseId(courseId); }
+    public List<Nine> findByCourseId(String courseId) { return repository.findByCourseId(courseId); }
 
     public Result<Nine> add(Nine nine) {
         Result<Nine> result = validate(nine);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (nine.getNineId() != 0) {
-            result.addErrorMessage("Nine ID must not be set for add.");
             return result;
         }
 

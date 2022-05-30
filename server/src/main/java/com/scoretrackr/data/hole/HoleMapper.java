@@ -13,7 +13,7 @@ public class HoleMapper implements RowMapper<Hole> {
     public Hole mapRow(ResultSet rs, int rowNum) throws SQLException {
         Hole hole = new Hole();
 
-        hole.setHoleId(rs.getInt("hole_id"));
+        hole.setHoleId(rs.getString("hole_id"));
         hole.setNumber(rs.getInt("number"));
         hole.setHandicap(rs.getInt("handicap"));
         hole.setPar(rs.getInt("par"));

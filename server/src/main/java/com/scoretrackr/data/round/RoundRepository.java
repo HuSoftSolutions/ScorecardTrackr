@@ -18,7 +18,7 @@ public class RoundRepository {
 
     public RoundRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
-    public Round findByRoundId(int roundId) {
+    public Round findByRoundId(String roundId) {
         final String sql = "select * "
                         + "from `round` r "
                         + "inner join round_type rt on r.round_type_id = rt.round_type_id "
@@ -27,20 +27,19 @@ public class RoundRepository {
     }
 
     public Round add(Round round) {
-        final String sql = "insert into `round` (round_type_id) values (?);";
+        final String sql = "insert into `round` (round_id, round_type_id) values (?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, round.getRoundType().getRoundTypeId());
+            statement.setString(1, round.getRoundId());
+            statement.setString(2, round.getRoundType().getRoundTypeId());
             return statement;
         }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
         }
-
-        round.setRoundId(keyHolder.getKey().intValue());
 
         return round;
     }
