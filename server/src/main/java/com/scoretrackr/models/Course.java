@@ -6,7 +6,7 @@ public class Course {
     private String address;
     private String city;
     private String state;
-    private int zipCode;
+    private String zipCode;
     private String phoneNumber;
     private String email;
     private double rating;
@@ -16,7 +16,7 @@ public class Course {
     }
 
     public Course(int courseId, String name, String address, String city, String state,
-                  int zipCode, String phoneNumber, String email, double rating, double slope) {
+                  String zipCode, String phoneNumber, String email, double rating, double slope) {
         this.courseId = courseId;
         this.name = name;
         this.address = address;
@@ -69,11 +69,11 @@ public class Course {
         this.state = state;
     }
 
-    public int getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 

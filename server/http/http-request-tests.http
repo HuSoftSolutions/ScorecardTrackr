@@ -1,7 +1,100 @@
 @host = http://localhost:8080
+@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOjEsImF1dGhvcml0aWVzIjoiQURNSU4iLCJleHAiOjE2NTM4Mzk5MTJ9.9FrY5GMfOC5cFPJ3Eu0Gh1uryxcCsebuSRvMFuRETpc
 
-### FIND ALL ROLES
+
+
+
+### --- USER HTTP REQUESTS --- ###
+
+### CREATE USER JOHN SMITH
+POST {{host}}/user/create HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "jsmith@gmail.com",
+    "password": "JSmithPassword1!",
+    "confirmPassword": "JSmithPassword1!",
+    "first_name": "John",
+    "last_name": "Smith",
+    "handicap": 1
+}
+
+### LOGIN jsmith@gmail.com
+POST {{host}}/authenticate HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "jsmith@gmail.com",
+    "password": "JSmithPassword1!"
+}
+
+### LOGIN ADMIN (ransell@gmail.com)
+POST {{host}}/authenticate HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "ransell@gmail.com",
+    "password": "ehCX7MexUCb&T7"
+}
+
+### GET ALL ROLES
 GET {{host}}/user/role HTTP/1.1
 
-### FIND BY USER ID 1 
+### GET BY USER ID 1 
 GET {{host}}/user/1 HTTP/1.1
+
+### GET BY EMAIL "ransell@gmail.com"
+GET {{host}}/user/email/ransell@gmail.com HTTP/1.1
+
+### GET BY FIRST NAME "Ryan"
+GET {{host}}/user/firstName/Ryan HTTP/1.1
+
+### GET BY LAST NAME "Ansell"
+GET {{host}}/user/lastName/Ansell HTTP/1.1
+
+### CHANGE JOHN SMITH'S HANDICAP
+
+PUT {{host}}/user/update HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "email": "jsmith@gmail.com",
+    "password": "JSmithPassword1!",
+    "first_name": "John",
+    "last_name": "Smith",
+    "handicap": 1
+}
+
+
+
+
+### --- COURSE HTTP REQUESTS --- ###
+
+### GET ALL COURSES
+GET {{host}}/scoretrackr/course HTTP/1.1
+
+### GET COURSE BY ID 1
+GET {{host}}/scoretrackr/course/1 HTTP/1.1
+
+### GET COURSE BY NAME "Fox Run Golf Club"
+GET {{host}}/scoretrackr/course/name/Fox%20Run%20Golf%20Club HTTP/1.1
+
+### CREATE COURSE HILAMAN
+POST {{host}}/scoretrackr/course HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "name": "Hilaman Golf Course",
+    "address": "2737 N Blair Stone Rd",
+    "city": "Tallahassee",
+    "state": "FL",
+    "zip_code": "32301",
+    "phone_number": "(850) 891-2560",
+    "email": "admin@scoretrackr.com",
+    "rating": 90.0,
+    "slope": 115.0
+}

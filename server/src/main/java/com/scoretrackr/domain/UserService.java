@@ -56,6 +56,22 @@ public class UserService {
         return result;
     }
 
+    public Result<User> update(User user) {
+        Result<User> result = validateWithoutPassword(user);
+        if (!result.isSuccess()) {
+            return result;
+        }
+
+        boolean success = repository.update(user);
+        if (!success) {
+            result.addErrorMessage("Could not update User ID: " + user.getUserId());
+        }
+
+        return result;
+    }
+
+    // THE CHANGE FUNCTIONS BELOW MIGHT NOT BE NEEDED
+
     public Result<User> changeEmail(User user) {
         Result<User> result = validatePassword(user);
         if (!result.isSuccess()) {

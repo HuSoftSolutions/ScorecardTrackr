@@ -18,12 +18,20 @@ public class HoleRepository {
     public HoleRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
     public Hole findByHoleId(int holeId) {
-        final String sql = "select * from hole where hole_id = " + holeId + ";";
+        final String sql = "select * "
+                        + "from hole h "
+                        + "inner join nine n on h.nine_id = n.nine_id "
+                        + "inner join course c on n.course_id = c.course_id "
+                        + "where h.hole_id = " + holeId + ";";
         return jdbcTemplate.queryForObject(sql, new HoleMapper());
     }
 
     public List<Hole> findByNineId(int nineId) {
-        final String sql = "select * from hole where nine_id = " + nineId + ";";
+        final String sql = "select * "
+                        + "from hole h "
+                        + "inner join nine n on h.nine_id = n.nine_id "
+                        + "inner join course c on n.course_id = c.course_id "
+                        + "where h.nine_id = " + nineId + ";";
         return jdbcTemplate.query(sql, new HoleMapper());
     }
 

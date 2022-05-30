@@ -1,6 +1,8 @@
 package com.scoretrackr.controllers;
 
 import com.scoretrackr.domain.UserService;
+import com.scoretrackr.domain.result.Result;
+import com.scoretrackr.models.Course;
 import com.scoretrackr.models.User;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
@@ -25,13 +27,13 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public User findByUserId(@PathVariable int userId) { return service.findByUserId(userId); }
 
-    @GetMapping("/user/{email}")
+    @GetMapping("/user/email/{email}")
     public User findByEmail(@PathVariable String email) { return service.findByEmail(email); }
 
-    @GetMapping("/user/{firstName}")
+    @GetMapping("/user/firstName/{firstName}")
     public User findByFirstName(@PathVariable String firstName) { return service.findByFirstName(firstName); }
 
-    @GetMapping("/user/{lastName}")
+    @GetMapping("/user/lastName/{lastName}")
     public User findByLastName(@PathVariable String lastName) { return service.findByLastName(lastName); }
 
     @PostMapping("/user/create")
@@ -43,6 +45,23 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PutMapping("/user/update")
+    public ResponseEntity<Object> update(@RequestBody User user, @AuthenticationPrincipal User principal){
+        principal.setEmail(user.getEmail());
+        principal.setPassword(user.getPassword());
+        principal.setFirstName(user.getFirstName());
+        principal.setLastName(user.getLastName());
+        principal.setHandicap(user.getHandicap());
+
+        var result = service.update(principal);
+        if (result.isSuccess()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    // THE FOLLOWING CHANGE FUNCTIONS MIGHT NOT BE NEEDED
 
     @PutMapping("/user/email")
     public ResponseEntity<Object> changeEmail(

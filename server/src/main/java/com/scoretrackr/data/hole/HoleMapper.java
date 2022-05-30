@@ -14,7 +14,7 @@ public class HoleMapper implements RowMapper<Hole> {
         Hole hole = new Hole();
 
         hole.setHoleId(rs.getInt("hole_id"));
-        hole.setNumber(rs.getInt("`number`"));
+        hole.setNumber(rs.getInt("number"));
         hole.setHandicap(rs.getInt("handicap"));
         hole.setPar(rs.getInt("par"));
         hole.setYards(rs.getInt("yards"));

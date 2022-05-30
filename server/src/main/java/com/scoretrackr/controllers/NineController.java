@@ -20,7 +20,7 @@ public class NineController {
 
     public NineController(NineService service) { this.service = service; }
 
-    @GetMapping("/{nineId}")
+    @GetMapping("/nineId/{nineId}")
     public ResponseEntity<Nine> findByNineId(@PathVariable int nineId){
         Nine nine = service.findByNineId(nineId);
         if (nine == null) {
@@ -29,7 +29,7 @@ public class NineController {
         return ResponseEntity.ok(nine);
     }
 
-    @GetMapping("/{courseId}")
+    @GetMapping("/courseId/{courseId}")
     public ResponseEntity<List<Nine>> findByCourseId(@PathVariable int courseId){
         List<Nine> nines = service.findByCourseId(courseId);
         if (nines == null) {
