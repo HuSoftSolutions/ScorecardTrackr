@@ -47,7 +47,7 @@ public class JwtConverter {
             User user = new User();
 
             user.setEmail(jws.getBody().getSubject());
-            user.setUserId(jws.getBody().get("id", Integer.class));
+            user.setUserId(jws.getBody().get("id", String.class));
 
             String authStr = jws.getBody().get("authorities", String.class);
             List<String> authorities = Arrays.stream(authStr.split(","))

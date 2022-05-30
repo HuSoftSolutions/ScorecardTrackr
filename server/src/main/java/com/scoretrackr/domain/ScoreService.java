@@ -14,22 +14,17 @@ public class ScoreService {
 
     public ScoreService(ScoreRepository repository) { this.repository = repository; }
 
-    public Score findByScoreId(int scoreId) { return repository.findByScoreId(scoreId); }
+    public Score findByScoreId(String scoreId) { return repository.findByScoreId(scoreId); }
 
-    public Score findByRoundId(int roundId) { return repository.findByRoundId(roundId); }
+    public Score findByRoundId(String roundId) { return repository.findByRoundId(roundId); }
 
-    public Score findByUserId(int userId) { return repository.findByUserId(userId); }
+    public Score findByUserId(String userId) { return repository.findByUserId(userId); }
 
-    public Score findByHoleId(int holeId) { return repository.findByHoleId(holeId); }
+    public Score findByHoleId(String holeId) { return repository.findByHoleId(holeId); }
 
     public Result<Score> add(Score score) {
         Result<Score> result = validate(score);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (score.getScoreId() != 0) {
-            result.addErrorMessage("Score ID must not be set for add.");
             return result;
         }
 

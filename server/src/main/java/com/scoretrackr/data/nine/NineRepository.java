@@ -17,7 +17,7 @@ public class NineRepository {
 
     public NineRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
-    public Nine findByNineId(int nineId) {
+    public Nine findByNineId(String nineId) {
         final String sql = "select * "
                         + "from nine n "
                         + "inner join course c on n.course_id = c.course_id "
@@ -25,7 +25,7 @@ public class NineRepository {
         return jdbcTemplate.queryForObject(sql, new NineMapper());
     }
 
-    public List<Nine> findByCourseId(int courseId) {
+    public List<Nine> findByCourseId(String courseId) {
         final String sql = "select * "
                         + "from nine n "
                         + "inner join course c on n.course_id = c.course_id "
@@ -34,21 +34,20 @@ public class NineRepository {
     }
 
     public Nine add(Nine nine) {
-        final String sql = "insert into nine (`name`, course_id) values (?, ?);";
+        final String sql = "insert into nine (nine_id, `name`, course_id) values (?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, nine.getName());
-            statement.setInt(2, nine.getCourse().getCourseId());
+            statement.setString(1, nine.getNineId());
+            statement.setString(2, nine.getName());
+            statement.setString(3, nine.getCourse().getCourseId());
             return statement;
         }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
         }
-
-        nine.setNineId(keyHolder.getKey().intValue());
 
         return nine;
     }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class User implements UserDetails {
 
-    private int userId;
+    private String userId;
     private String email;
     private String password;
     private String firstName;
@@ -21,11 +21,11 @@ public class User implements UserDetails {
     private boolean disabled;
     private List<String> authorities = new ArrayList<>();
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

@@ -22,7 +22,7 @@ public class HoleController {
     public HoleController(HoleService service) { this.service = service; }
 
     @GetMapping("/holeId/{holeId}")
-    public ResponseEntity<Hole> findByHoleId(@PathVariable int holeId){
+    public ResponseEntity<Hole> findByHoleId(@PathVariable String holeId){
         Hole hole = service.findByHoleId(holeId);
         if (hole == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -31,7 +31,7 @@ public class HoleController {
     }
 
     @GetMapping("/nineId/{nineId}")
-    public ResponseEntity<List<Hole>> findByNineId(@PathVariable int nineId){
+    public ResponseEntity<List<Hole>> findByNineId(@PathVariable String nineId){
         List<Hole> holes = service.findByNineId(nineId);
         if (holes == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

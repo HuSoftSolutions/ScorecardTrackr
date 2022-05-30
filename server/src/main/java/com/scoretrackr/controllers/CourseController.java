@@ -23,7 +23,7 @@ public class CourseController {
     public List<Course> findAll() { return service.findAll(); }
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<Course> findByCourseId(@PathVariable int courseId){
+    public ResponseEntity<Course> findByCourseId(@PathVariable String courseId){
         Course course = service.findByCourseId(courseId);
         if (course == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

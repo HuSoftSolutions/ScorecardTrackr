@@ -15,7 +15,7 @@ public class ScoreMapper implements RowMapper<Score> {
     public Score mapRow(ResultSet rs, int rowNum) throws SQLException {
         Score score = new Score();
 
-        score.setScoreId(rs.getInt("score_id"));
+        score.setScoreId(rs.getString("score_id"));
         score.setScore(rs.getInt("score"));
         RoundMapper roundMapper = new RoundMapper();
         score.setRound(roundMapper.mapRow(rs, rowNum));

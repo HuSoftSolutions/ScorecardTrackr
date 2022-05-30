@@ -13,7 +13,7 @@ public class NineMapper implements RowMapper<Nine> {
     public Nine mapRow(ResultSet rs, int rowNum) throws SQLException {
         Nine nine = new Nine();
 
-        nine.setNineId(rs.getInt("nine_id"));
+        nine.setNineId(rs.getString("nine_id"));
         nine.setName(rs.getString("name"));
         CourseMapper courseMapper = new CourseMapper();
         nine.setCourse(courseMapper.mapRow(rs, rowNum));

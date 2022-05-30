@@ -15,16 +15,11 @@ public class RoundService {
 
     public RoundService(RoundRepository repository) { this.repository = repository; }
 
-    public Round findByRoundId(int roundId) { return repository.findByRoundId(roundId); }
+    public Round findByRoundId(String roundId) { return repository.findByRoundId(roundId); }
 
     public Result<Round> add(Round round) {
         Result<Round> result = validate(round);
         if (!result.isSuccess()) {
-            return result;
-        }
-
-        if (round.getRoundId() != 0) {
-            result.addErrorMessage("Round ID must not be set for add.");
             return result;
         }
 
