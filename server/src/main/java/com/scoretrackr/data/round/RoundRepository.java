@@ -22,7 +22,7 @@ public class RoundRepository {
         final String sql = "select * "
                         + "from `round` r "
                         + "inner join round_type rt on r.round_type_id = rt.round_type_id "
-                        + "where r.round_id = " + roundId + ";";
+                        + "where r.round_id = '" + roundId + "';";
         return jdbcTemplate.queryForObject(sql, new RoundMapper());
     }
 

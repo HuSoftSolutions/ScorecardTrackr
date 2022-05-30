@@ -22,7 +22,7 @@ public class HoleRepository {
                         + "from hole h "
                         + "inner join nine n on h.nine_id = n.nine_id "
                         + "inner join course c on n.course_id = c.course_id "
-                        + "where h.hole_id = " + holeId + ";";
+                        + "where h.hole_id = '" + holeId + "';";
         return jdbcTemplate.queryForObject(sql, new HoleMapper());
     }
 
@@ -31,7 +31,7 @@ public class HoleRepository {
                         + "from hole h "
                         + "inner join nine n on h.nine_id = n.nine_id "
                         + "inner join course c on n.course_id = c.course_id "
-                        + "where h.nine_id = " + nineId + ";";
+                        + "where h.nine_id = '" + nineId + "';";
         return jdbcTemplate.query(sql, new HoleMapper());
     }
 

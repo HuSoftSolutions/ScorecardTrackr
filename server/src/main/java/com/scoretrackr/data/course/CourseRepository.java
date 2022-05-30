@@ -24,7 +24,7 @@ public class CourseRepository {
     }
 
     public Course findByCourseId(String courseId) {
-        final String sql = "select * from course where course_id = " + courseId + ";";
+        final String sql = "select * from course where course_id = '" + courseId + "';";
         return jdbcTemplate.queryForObject(sql, new CourseMapper());
     }
 
