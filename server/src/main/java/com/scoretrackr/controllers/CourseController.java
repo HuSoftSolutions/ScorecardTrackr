@@ -50,7 +50,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseId}")
-    public ResponseEntity<Object> update(@PathVariable int courseId, @RequestBody Course course){
+    public ResponseEntity<Object> update(@PathVariable String courseId, @RequestBody Course course){
         Result<Course> result = service.update(course);
         if (result.isSuccess()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

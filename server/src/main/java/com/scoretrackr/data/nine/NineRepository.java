@@ -21,7 +21,7 @@ public class NineRepository {
         final String sql = "select * "
                         + "from nine n "
                         + "inner join course c on n.course_id = c.course_id "
-                        + "where n.nine_id = " + nineId + ";";
+                        + "where n.nine_id = '" + nineId + "';";
         return jdbcTemplate.queryForObject(sql, new NineMapper());
     }
 
@@ -29,12 +29,12 @@ public class NineRepository {
         final String sql = "select * "
                         + "from nine n "
                         + "inner join course c on n.course_id = c.course_id "
-                        + "where n.course_id = " + courseId + ";";
+                        + "where n.course_id = '" + courseId + "';";
         return jdbcTemplate.query(sql, new NineMapper());
     }
 
     public Nine add(Nine nine) {
-        final String sql = "insert into nine (nine_id, `name`, course_id) values (?, ?);";
+        final String sql = "insert into nine (nine_id, `name`, course_id) values (?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
