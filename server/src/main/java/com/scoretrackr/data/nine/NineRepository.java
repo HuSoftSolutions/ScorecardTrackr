@@ -18,12 +18,18 @@ public class NineRepository {
     public NineRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
     public Nine findByNineId(int nineId) {
-        final String sql = "select * from nine where nine_id = " + nineId + ";";
+        final String sql = "select * "
+                        + "from nine n "
+                        + "inner join course c on n.course_id = c.course_id "
+                        + "where n.nine_id = " + nineId + ";";
         return jdbcTemplate.queryForObject(sql, new NineMapper());
     }
 
     public List<Nine> findByCourseId(int courseId) {
-        final String sql = "select * from nine where course_id = " + courseId + ";";
+        final String sql = "select * "
+                        + "from nine n "
+                        + "inner join course c on n.course_id = c.course_id "
+                        + "where n.course_id = " + courseId + ";";
         return jdbcTemplate.query(sql, new NineMapper());
     }
 

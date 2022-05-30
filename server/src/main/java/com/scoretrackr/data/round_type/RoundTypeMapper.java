@@ -13,7 +13,7 @@ public class RoundTypeMapper implements RowMapper<RoundType> {
         RoundType roundType = new RoundType();
 
         roundType.setRoundTypeId(rs.getInt("round_type_id"));
-        roundType.setName(rs.getString("`name`"));
+        roundType.setName(rs.getString("name"));
 
         return roundType;
     }

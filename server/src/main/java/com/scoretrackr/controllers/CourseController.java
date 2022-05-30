@@ -3,6 +3,7 @@ package com.scoretrackr.controllers;
 import com.scoretrackr.domain.CourseService;
 import com.scoretrackr.domain.result.Result;
 import com.scoretrackr.models.Course;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class CourseController {
         return ResponseEntity.ok(course);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<Course> findByName(@PathVariable String name){
         Course course = service.findByName(name);
         if (course == null) {

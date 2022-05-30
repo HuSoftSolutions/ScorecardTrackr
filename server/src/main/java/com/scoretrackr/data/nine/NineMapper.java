@@ -14,7 +14,7 @@ public class NineMapper implements RowMapper<Nine> {
         Nine nine = new Nine();
 
         nine.setNineId(rs.getInt("nine_id"));
-        nine.setName(rs.getString("`name`"));
+        nine.setName(rs.getString("name"));
         CourseMapper courseMapper = new CourseMapper();
         nine.setCourse(courseMapper.mapRow(rs, rowNum));
 

@@ -46,7 +46,7 @@ public class UserRepository {
     }
 
     public User findByFirstName(String firstName) {
-        User user = jdbcTemplate.query("select * from user where email = ?;", new UserMapper(), firstName)
+        User user = jdbcTemplate.query("select * from user where first_name = ?;", new UserMapper(), firstName)
                 .stream().findFirst().orElse(null);
 
         if (user != null) {
@@ -57,7 +57,7 @@ public class UserRepository {
     }
 
     public User findByLastName(String lastName) {
-        User user = jdbcTemplate.query("select * from user where email = ?;", new UserMapper(), lastName)
+        User user = jdbcTemplate.query("select * from user where last_name = ?;", new UserMapper(), lastName)
                 .stream().findFirst().orElse(null);
 
         if (user != null) {
@@ -95,6 +95,28 @@ public class UserRepository {
 
         return user;
     }
+
+    public boolean update(User user) {
+        final String sql = "update user set "
+                + "email = ?, "
+                + "password_hash = ?, "
+                + "first_name = ?, "
+                + "last_name = ?, "
+                + "handicap = ? "
+                + "where user_id = ?;";
+
+        int rowsAffected = jdbcTemplate.update(sql,
+                user.getEmail(),
+                user.getPassword(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getHandicap(),
+                user.getUserId());
+
+        return rowsAffected > 0;
+    }
+
+    // THE CHANGE FUNCTIONS BELOW MIGHT NOT BE NEEDED
 
     public boolean changeEmail(User user) {
         final String sql = "update user set email = ? where user_id = ?;";

@@ -29,7 +29,7 @@ public class CourseRepository {
     }
 
     public Course findByName(String name) {
-        final String sql = "select * from course where course_id = " + name + ";";
+        final String sql = "select * from course where `name` = \"" + name + "\";";
         return jdbcTemplate.queryForObject(sql, new CourseMapper());
     }
 
@@ -44,7 +44,7 @@ public class CourseRepository {
             statement.setString(2, course.getAddress());
             statement.setString(3, course.getCity());
             statement.setString(4, course.getState());
-            statement.setInt(5, course.getZipCode());
+            statement.setString(5, course.getZipCode());
             statement.setString(6, course.getPhoneNumber());
             statement.setString(7, course.getEmail());
             statement.setDouble(8, course.getRating());
