@@ -7,6 +7,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import * as ROUTES from '../constants/routes';
 import * as FUNCTIONS from '../helpers/functions.js'
 import "./newRoundModal.scss";
+import {db, auth} from '../firebase.js'
 
 /* Static Text */
 const DATA = {
@@ -23,6 +24,7 @@ const NewRoundModal = (props) => {
     const navigate = useNavigate();
     const [players, setPlayers] = useState([]);
     const [nines, setNines] = useState([]);
+
 
     /* Functions */
     function isValid() {
@@ -45,24 +47,32 @@ const NewRoundModal = (props) => {
         let p = [...players];
 
         players.forEach((player, playerIndex) => {
-            p.scorecard = FUNCTIONS.generateBlankScorecard(nines)
+            player.score = FUNCTIONS.generateBlankScorecard(nines)
         })  
         
         return p;
     }
 
+    function createNewRound() {
+
+    }
+
     function handleStartRound() {
         const ID = uuidv4();
+        const card = combineNines();
+        const p = initializePlayerScorecards(players)
+        const {name} = state?.selected_course
+        console.log(p)
+        dispatch({ type: 'start_new_round', round_id: ID, created_at: new Date(), owner: auth.currentUser.uid, players: p, card, course: name });
         navigate(ROUTES.ROUND + `/${ID}`)
         handleClose();
-        dispatch({ type: 'start_new_round', round_id: ID, players: initializePlayerScorecards(players), nines });
     }
 
     function handleCourseSelection(course) {
         dispatch({ type: 'set_selected_course', selected_course: course });
     }
 
-    function newPlayer() { return { name: "", hdcp: 0, id: uuidv4(), scorecard: [] }; };
+    function newPlayer() { return { name: "", hdcp: 0, id: uuidv4(), score: [] }; };
 
     function removePlayer(p) { setPlayers(players.filter((el) => el.id !== p.id)); };
 
@@ -76,16 +86,11 @@ const NewRoundModal = (props) => {
     function updateSelectedNines(nine) {
         let selectedNines = [...nines];
 
-        console.log(`${nine.name} clicked!`)
-
-        console.log(`selected nines before: ${nines.length}`)
-
         let nineFoundIndex = isNineSelected(nine); // returns -1 if not found
 
         let newNines = [];
 
         if (nineFoundIndex !== -1) { // nine was previously selected, remove
-
             selectedNines.forEach(n => {
                 if (n.name !== nine.name) newNines.push(n)
             })
@@ -94,10 +99,19 @@ const NewRoundModal = (props) => {
             newNines = [...selectedNines, nine]
         }
 
-        console.log(`selected nines after: ${newNines.length}`)
-
-
         setNines(newNines)
+    }
+
+    function combineNines() {
+        let holes = {holes: [], hdcp: [], par: [], yards: []};
+        nines.forEach(nine => {
+            holes.holes = [...holes.holes, ...nine.holes]
+            holes.hdcp = [...holes.hdcp, ...nine.hdcp]
+            holes.par = [...holes.par, ...nine.par]
+            holes.yards = [...holes.yards, ...nine.yards]
+        })
+        console.log(holes)
+        return holes;
     }
 
     function isNineSelected(nine) {

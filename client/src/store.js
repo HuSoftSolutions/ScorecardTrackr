@@ -1,17 +1,20 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import frjConfig from './configs/foxrungolfclub.json';
+import { doc, setDoc, addDoc, collection, updateDoc } from "firebase/firestore";
+import {db} from './firebase.js'
 
 const StoreContext = createContext();
 
 const INITIAL_STATE = {
 
   /* Active Round */
+  selected_course: null, // full config
+
   round_id: null,
   current_hole_index: 0,
-  selected_course: null,
   players: [],
   matches: [],
-  nines: [],
+  card: {holes: [], hcdp: [], par: [], yards: []},
   side_games: [],
 
   /* General */
@@ -19,9 +22,24 @@ const INITIAL_STATE = {
   courses: [],
 };
 
+async function setRound__FS(round){
+  setDoc(doc(db, 'rounds', round.round_id), {
+    ...round
+  })
+}
+
+async function updateRound__FS(value, id){
+  updateDoc(doc(db, 'rounds', id), {players: value})
+}
+
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'start_new_round':
+      console.log(action.players)
+
+      setRound__FS(action)
+
       return {
         ...state,
         ...action
@@ -61,6 +79,9 @@ const reducer = (state, action) => {
 
     case 'set-player-score':
       console.log(action.players)
+
+      updateRound__FS(action.players, state.round_id)
+
       return {
         ...state,
         players: action.players

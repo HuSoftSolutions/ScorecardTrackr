@@ -1,8 +1,8 @@
 @import 'src/custom.scss';
 
 .modal-content {
-  // border: 2px rgb(225, 154, 154) solid;
-  border-radius: 0;
+  border: 0px !important;
+  border-radius: 0 !important;
 
   .footer {
     border-radius: 0;

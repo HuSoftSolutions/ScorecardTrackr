@@ -9,7 +9,7 @@ import "./index.scss";
 
 import { FiMinus, FiPlus } from 'react-icons/fi'
 
-const HOLE_SCORE_LIMIT = 50;
+const HOLE_SCORE_LIMIT = 9;
 
 const ActiveRound = () => {
 
@@ -19,28 +19,23 @@ const ActiveRound = () => {
     let location = useLocation();
     let params = useParams();
 
-    // load 
-    useEffect(() => {
-    }, [])
-
-
     const returnScore = (i) => {
         let currentPlayer = (state.players.filter(p => p.id = i + 1))[i];
+        console.log(currentPlayer)
         let score = currentPlayer?.score?.[state.current_hole_index] || 0;
 
         return (
             <h1 className="mb-0">
-                Score
-                <br />
                 {score}
             </h1>
         );
     }
 
     function decreaseScore(playerIndex) {
-        let currentPlayer = (state.players.filter(p => p.id = playerIndex + 1))[0];
-        let curScore = currentPlayer.score[state.current_hole_index];
-        let isValid = curScore - 1 > 0;
+        let currentPlayer = (state.players.filter(p => p.id = playerIndex + 1))?.[playerIndex];
+        console.log(currentPlayer)
+        let curScore = currentPlayer?.score?.[state.current_hole_index];
+        let isValid = curScore > 0;
 
         currentPlayer.score[state.current_hole_index] = isValid ? curScore - 1 : curScore;
 
@@ -52,8 +47,8 @@ const ActiveRound = () => {
 
 
     function increaseScore(playerIndex) {
-        let currentPlayer = (state.players.filter(p => p.id = playerIndex + 1))[0];
-        let curScore = currentPlayer.score[state.current_hole_index];
+        let currentPlayer = (state.players.filter(p => p.id = playerIndex + 1))?.[playerIndex];
+        let curScore = currentPlayer?.score?.[state.current_hole_index];
         let isValid = curScore + 1 < HOLE_SCORE_LIMIT;
 
         currentPlayer.score[state.current_hole_index] = isValid ? curScore + 1 : curScore;
@@ -66,7 +61,6 @@ const ActiveRound = () => {
 
     function ControlledTabs() {
         const [key, setKey] = useState('profile');
-
         return (
             <Tabs
                 activeKey={key}
@@ -79,14 +73,14 @@ const ActiveRound = () => {
                     <div className="d-flex">
                         <div>
                             <FiMinus className="p-1 bg-dark text-light rounded" size="50"
-                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === 0 ? (state.nines.length * 9) - 1 : state.current_hole_index - 1 })}
+                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === 0 ? (state.card.holes.length - 1) : state.current_hole_index - 1 })}
                             />
                         </div>
                         <div className="m-0 text-dark bg-light rounded mx-1 text-center h-100 w-100 d-flex justify-content-center align-items-center">
-                            <h1 className="mb-0">Hole {state.current_hole_index + 1}</h1></div>
+                            <h1 className="mb-0">Hole {state.card.holes[state.current_hole_index]}</h1></div>
                         <div>
                             <FiPlus className="p-1 bg-dark text-light rounded" size="50"
-                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === state.nines.length * 9 - 1 ? 0 : state.current_hole_index + 1 })}
+                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === state.card.holes.length - 1 ? 0 : state.current_hole_index + 1 })}
                             />
                         </div>
                     </div>

@@ -21,18 +21,25 @@ const ScorecardTable = (props) => {
   });
 
   let yardageTotal = 0;
+  let nineYardageTotal = 0
+
   let parTotal = 0;
+  let nineParTotal = 0;
+
+  const { holes, hdcp, par, yards } = props?.state?.card;
 
   return (
     <table>
       <thead className="sticky-row">
         <tr>
           <th className="sticky">HOLE</th>
-          {props?.state?.nines?.map((n, i) => {
+          {holes?.map((n, i) => {
+            let showTotal = ((i + 1) % 9 === 0) && holes.length > 9;
+
             return (
               <React.Fragment key={i + "HOLE"}>
-                {n?.holes?.map((h, i) => <th key={i} id={h === props?.state?.current_hole ? "current_hole" : ""} className="text-white">{h}</th>)}
-                <th key={i} className="text-white font-weight-bold"></th>
+                <th key={i} id={i === props?.state?.current_hole_index ? "current_hole" : ""} className="text-white">{n}</th>
+                {showTotal ? <th></th> : null}
               </React.Fragment>
             )
           })}
@@ -40,11 +47,13 @@ const ScorecardTable = (props) => {
         </tr>
         <tr>
           <th className="sticky">HDCP</th>
-          {props?.state?.nines?.map((n, i) => {
+          {hdcp?.map((n, i) => {
+            let showTotal = ((i + 1) % 9 === 0) && hdcp.length > 9;
+
             return (
               <React.Fragment key={i + 'HDCP'}>
-                {n?.hdcp?.map((h, i) => <th key={i} className="bg-primary text-white">{h}</th>)}
-                <th key={i} className=" bg-primary text-white"></th>
+                <th key={i} className="bg-primary text-white">{n}</th>
+                {showTotal ? <th className="bg-primary"></th> : null}
               </React.Fragment>
             )
           })}
@@ -52,13 +61,17 @@ const ScorecardTable = (props) => {
         </tr>
         <tr>
           <th className="sticky">YARDS</th>
-          {props?.state?.nines?.map((n, i) => {
-            let total = n?.yards?.reduce((t, c) => { return t + c })
-            yardageTotal += total;
+          {yards?.map((n, i) => {
+            let showTotal = ((i + 1) % 9 === 0) && yards.length > 9;
+            let resetNine = i % 9 === 0;
+            nineYardageTotal = resetNine ? n : nineYardageTotal + n;
+            yardageTotal += n;
+
             return (
               <React.Fragment key={i + 'YARDS'}>
-                {n?.yards?.map((h, i) => <th key={i} className="bg-warning">{h}</th>)}
-                <th key={i} className="bold bg-warning">{total}</th>
+                <th key={i} className="bg-warning">{n}</th>
+                {showTotal ? <th className="bold bg-warning">{nineYardageTotal}</th> : null}
+
               </React.Fragment>
             )
           })}
@@ -66,13 +79,14 @@ const ScorecardTable = (props) => {
         </tr>
         <tr>
           <th className="sticky">PAR</th>
-          {props?.state?.nines?.map((n, i) => {
-            let total = n?.par?.reduce((t, c) => { return t + c })
-            parTotal += total;
-            return (
+          {par?.map((n, i) => {
+            let showTotal = ((i + 1) % 9 === 0) && par.length > 9;
+            let resetNine = i % 9 === 0;
+            nineParTotal = resetNine ? n : nineParTotal + n;
+            parTotal += n; return (
               <React.Fragment key={i + 'PAR'}>
-                {n?.par?.map((h, i) => <th key={i} className="bg-light-tr">{h}</th>)}
-                <th key={i} className="bold bg-light-tr">{total}</th>
+                <th key={i} className="bg-light-tr">{n}</th>
+                {showTotal ? <th className="bold bg-light-tr">{nineParTotal}</th> : null}
               </React.Fragment>
             )
           })}
@@ -82,28 +96,26 @@ const ScorecardTable = (props) => {
       <tbody>
         {props?.state?.players?.map((player, playerIndex) => {
           let total = 0;
+          let nineTotal = 0;
+
           let bg = (playerIndex + 2) % 2 === 0 ? "bg-white" : "bg-light-dark"
 
           return (
             <tr key={playerIndex}>
-              <td className={`sticky ${bg} text-dark`}>{player?.name}</td>
-              {props.state?.nines?.map((n, ninesIndex) => {
-                let startIndex = n
-                let endIndex = n + 9;
-                let currentNine = player.scorecard.slice(startIndex, endIndex) || []
-
-                let nineTotal = currentNine.length ? currentNine.reduce((t, c) => { return t + c }) : 0;
-                total += nineTotal;
+              <th className={`sticky ${bg} text-dark`}>{player?.name}</th>
+              {player?.score?.map((n, i) => {
+                let showTotal = ((i + 1) % 9 === 0) && holes.length > 9;
+                let resetNine = i % 9 === 0;
+                nineTotal = resetNine ? n : nineTotal + n;
+                total += n;
                 return (
-                  <React.Fragment key={playerIndex + 'PLAYER' + ninesIndex}>
-                    {currentNine.map((h, i) => {
-                      return (<td key={i} className={`player-score ${bg}`} >{h}</td>) //onClick={() => { props.handleScoreEntry(h, p, n, i) }}
-                    })}
-                    <td key={ninesIndex} className={bg} >{nineTotal}</td>
+                  <React.Fragment key={i + 'PAR'}>
+                    <th key={i} className={bg}>{n === 0 ? "" : n}</th>
+                    {showTotal ? <th className={bg}>{nineTotal === 0 ? "" : nineTotal}</th> : null}
                   </React.Fragment>
                 )
               })}
-              <td key={playerIndex} className={bg}>{total}</td>
+              <th className={bg}>{total}</th>
 
             </tr>
           )

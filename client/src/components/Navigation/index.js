@@ -7,6 +7,7 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
+import { useStore } from "../../store";
 import './index.scss';
 import {
   Navbar,
@@ -14,10 +15,13 @@ import {
   Popover,
   OverlayTrigger,
   Container,
+  Button
 } from 'react-bootstrap';
 
 
 const Navigation = () => {
+
+  const { state, dispatch } = useStore();
 
   const [user, loading, error] = useAuthState(auth);
   const [userRoles, setUserRoles] = useState([]);
@@ -44,10 +48,21 @@ const Navigation = () => {
     fetchUserRoles();
   }, [user, loading]);
 
-  return (user ? <NavigationAuth authUser={user} /> : <NavigationNonAuth />);
+  return (user ? <NavigationAuth authUser={user} navigate={(x) => navigate(x)} state={state} /> : <NavigationNonAuth />);
 }
 
-const NavigationAuth = ({ authUser }) => (
+const GoToActiveRound = ({id, navigate}) => {
+
+  function onClick() {
+    navigate(ROUTES.ROUND + `/${id}`)
+  }
+
+  return (
+    <Button className="mx-2" variant="success" onClick={onClick}>Go To Active Round</Button>
+  )
+}
+
+const NavigationAuth = ({ authUser, state, navigate }) => (
   <Navbar className="navigation w-100" bg="dark" expand="lg">
     <Container fluid>
       <Navbar.Brand as={Link} to={ROUTES.HOME} className="text-white small">
@@ -62,7 +77,9 @@ const NavigationAuth = ({ authUser }) => (
           <Nav.Link className="text-white" as={Link} to={ROUTES.ACCOUNT}>account</Nav.Link>
         </Nav>
         <Nav.Link className="mr-auto">
-          <SignOutButton /></Nav.Link>
+          {state.round_id ? <GoToActiveRound navigate={navigate} id={state.round_id} /> : null}
+          <SignOutButton />
+        </Nav.Link>
       </Navbar.Collapse>
     </Container>
   </Navbar>
