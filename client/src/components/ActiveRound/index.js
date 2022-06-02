@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useStore } from "../../store";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Tabs, Tab } from 'react-bootstrap';
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, setDoc, addDoc, collection, getDoc } from "firebase/firestore";
+import { db } from '../../firebase';
 
 import Scorecard from '../Scorecard';
+import Matches from '../Matches';
+import Holes from '../Holes';
+
 import "./index.scss";
 
 import { FiMinus, FiPlus } from 'react-icons/fi'
@@ -30,6 +34,22 @@ const ActiveRound = () => {
             </h1>
         );
     }
+
+    useEffect(() => {
+
+        async function getRound__FS(id) {
+            const ref = doc(db, "rounds", id);
+            const round = await getDoc(ref);
+            if(round.exists()){
+                dispatch(round.data());
+            }
+        }
+
+        console.log(params?.id)
+        if (state.round_id === null && params?.id !== null) {
+            getRound__FS(params.id)
+        }
+    }, [])
 
     function decreaseScore(playerIndex) {
         let currentPlayer = (state.players.filter(p => p.id = playerIndex + 1))?.[playerIndex];
@@ -70,37 +90,10 @@ const ActiveRound = () => {
                     <Scorecard />
                 </Tab>
                 <Tab eventKey="profile" title="Hole" className="hole-container d-flex flex-column h-100 p-3">
-                    <div className="d-flex">
-                        <div>
-                            <FiMinus className="p-1 bg-dark text-light rounded" size="50"
-                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === 0 ? (state.card.holes.length - 1) : state.current_hole_index - 1 })}
-                            />
-                        </div>
-                        <div className="m-0 text-dark bg-light rounded mx-1 text-center h-100 w-100 d-flex justify-content-center align-items-center">
-                            <h1 className="mb-0">Hole {state.card.holes[state.current_hole_index]}</h1></div>
-                        <div>
-                            <FiPlus className="p-1 bg-dark text-light rounded" size="50"
-                                onClick={() => dispatch({ type: 'set_current_hole', hole: state.current_hole_index === state.card.holes.length - 1 ? 0 : state.current_hole_index + 1 })}
-                            />
-                        </div>
-                    </div>
-                    <div className="d-flex flex-column mt-3 rounded">
-                        {state.players.map((p, i) => {
-                            return (
-                                <div key={i} className="d-flex text-light p-2 bg-dark my-1 align-items-center rounded">
-                                    <div className="w-50"><h1 className="mb-0">{p.name}</h1></div>
-                                    <div><FiMinus className="p-1 bg-dark text-light rounded" size="50" onClick={() => dispatch({ type: 'set-player-score', players: decreaseScore(i) })} /></div>
-                                    <div className="m-0 rounded mx-1 flex-fill text-center h-100 d-flex justify-content-center align-items-center">
-                                        {returnScore(i)}
-                                    </div>
-                                    <div><FiPlus className="p-1 bg-dark text-light rounded" size="50" onClick={() => dispatch({ type: 'set-player-score', players: increaseScore(i) })} /></div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                  
                 </Tab>
-                <Tab eventKey="contact" title="Matches">
-                    <div className="d-flex w-100 h-100">Test</div>
+                <Tab eventKey="matches" title="Matches" className="">
+                    <div className="d-flex text-dark w-100 h-100 bg-warning "> est </div>
                 </Tab>
             </Tabs>
         );

@@ -11,6 +11,7 @@ const INITIAL_STATE = {
   selected_course: null, // full config
 
   round_id: null,
+  course: "",
   current_hole_index: 0,
   players: [],
   matches: [],

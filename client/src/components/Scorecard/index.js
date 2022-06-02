@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from "../../store";
 import frjConfig from '../../configs/foxrungolfclub.json';
 import './index.scss';
+import { BsCheck } from 'react-icons/bs';
 
 const SCORECARD_HEADER = ['hole', 'hdcp', 'yards', 'par']
 
@@ -29,7 +30,7 @@ const ScorecardTable = (props) => {
   const { holes, hdcp, par, yards } = props?.state?.card;
 
   return (
-    <table>
+    <table className="">
       <thead className="sticky-row">
         <tr>
           <th className="sticky">HOLE</th>
@@ -99,6 +100,7 @@ const ScorecardTable = (props) => {
           let nineTotal = 0;
 
           let bg = (playerIndex + 2) % 2 === 0 ? "bg-white" : "bg-light-dark"
+          if (true) bg += " text-primary"
 
           return (
             <tr key={playerIndex}>
@@ -110,7 +112,9 @@ const ScorecardTable = (props) => {
                 total += n;
                 return (
                   <React.Fragment key={i + 'PAR'}>
-                    <th key={i} className={bg}>{n === 0 ? "" : n}</th>
+                    <th key={i} className={bg}>{n === 0 ? "" : n}
+                      {/* <span><BsCheck size={25} className="p-1 text-primary rounded " /></span> */}
+                    </th>
                     {showTotal ? <th className={bg}>{nineTotal === 0 ? "" : nineTotal}</th> : null}
                   </React.Fragment>
                 )
@@ -141,8 +145,12 @@ const Scorecard = () => {
 
 
   return (
-    <div className="scorecard-container">
-      {ScorecardTable({ state, handleScoreEntry })}
+    <div>
+      <div className="bold large p-3 text-white m-0" style={{ backgroundColor: '#262626' }}><h3 className="m-0">{state.course}</h3></div>
+
+      <div className="scorecard-container w-100">
+        {ScorecardTable({ state, handleScoreEntry })}
+      </div>
     </div>
   )
 };

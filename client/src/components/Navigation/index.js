@@ -77,7 +77,7 @@ const NavigationAuth = ({ authUser, state, navigate }) => (
           <Nav.Link className="text-white" as={Link} to={ROUTES.ACCOUNT}>account</Nav.Link>
         </Nav>
         <Nav.Link className="mr-auto">
-          {state.round_id ? <GoToActiveRound navigate={navigate} id={state.round_id} /> : null}
+          {/* {state.round_id ? <GoToActiveRound navigate={navigate} id={state.round_id} /> : null} */}
           <SignOutButton />
         </Nav.Link>
       </Navbar.Collapse>
