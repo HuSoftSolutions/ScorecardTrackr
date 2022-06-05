@@ -4,7 +4,6 @@ export const returnScore = (i, state) => {
     let currentPlayer = state.players.filter((p) => (p.id = i + 1))[
       i
     ];
-    console.log(currentPlayer);
     let score = currentPlayer?.score?.[state.current_hole_index] || 0;
 
     return <h1 className="mb-0">{score}</h1>;
@@ -14,7 +13,6 @@ export const returnScore = (i, state) => {
     let currentPlayer = state.players.filter(
       (p) => (p.id = playerIndex + 1),
     )?.[playerIndex];
-    console.log(currentPlayer);
     let curScore = currentPlayer?.score?.[state.current_hole_index];
     let isValid = curScore > 0;
 

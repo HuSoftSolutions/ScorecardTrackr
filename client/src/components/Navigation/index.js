@@ -71,9 +71,9 @@ const NavigationAuth = ({ authUser, state, navigate }) => (
       <Navbar.Toggle className="bg-white text-dark" aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="nav-links flex-fill">
-          <Nav.Link className="text-white" as={Link} to={ROUTES.LANDING}>landing</Nav.Link>
+          {/* <Nav.Link className="text-white" as={Link} to={ROUTES.LANDING}>landing</Nav.Link> */}
           <Nav.Link className="text-white" as={Link} to={ROUTES.HOME}>home</Nav.Link>
-          <Nav.Link className="text-white" as={Link} to={ROUTES.HISTORY}>history</Nav.Link>
+          {/* <Nav.Link className="text-white" as={Link} to={ROUTES.HISTORY}>history</Nav.Link> */}
           <Nav.Link className="text-white" as={Link} to={ROUTES.ACCOUNT}>account</Nav.Link>
         </Nav>
         <Nav.Link className="mr-auto">

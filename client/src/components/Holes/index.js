@@ -7,6 +7,13 @@ import './index.scss';
 const Holes = () => {
   const { state, dispatch } = useStore();
 
+  function setCurrentHole(score) {
+    dispatch({
+      type: 'set_current_hole',
+      hole: score,
+    });
+  }
+
   return (
     <div>
       <div className="d-flex">
@@ -14,19 +21,17 @@ const Holes = () => {
           <FiMinus
             className="p-1 bg-dark text-light rounded"
             size="50"
-            onClick={() =>
-              dispatch({
-                type: 'set_current_hole',
-                hole:
-                  state.current_hole_index === 0
-                    ? state.card.holes.length - 1
-                    : state.current_hole_index - 1,
-              })
-            }
+            onClick={() => {
+              const score =
+                state.current_hole_index === 0
+                  ? state.card.holes.length - 1
+                  : state.current_hole_index - 1;
+              setCurrentHole(score);
+            }}
           />
         </div>
-        <div className="m-0 text-dark bg-light rounded mx-1 text-center h-100 w-100 d-flex justify-content-center align-items-center">
-          <h1 className="mb-0">
+        <div className="d-flex flex-fill bg-white rounded text-dark justify-content-center align-items-center mx-1">
+          <h1 className="mb-0 align-font-center">
             Hole {state.card.holes[state.current_hole_index]}
           </h1>
         </div>
@@ -34,16 +39,14 @@ const Holes = () => {
           <FiPlus
             className="p-1 bg-dark text-light rounded"
             size="50"
-            onClick={() =>
-              dispatch({
-                type: 'set_current_hole',
-                hole:
-                  state.current_hole_index ===
-                  state.card.holes.length - 1
-                    ? 0
-                    : state.current_hole_index + 1,
-              })
-            }
+            onClick={() => {
+              const score =
+                state.current_hole_index ===
+                state.card.holes.length - 1
+                  ? 0
+                  : state.current_hole_index + 1;
+              setCurrentHole(score);
+            }}
           />
         </div>
       </div>
