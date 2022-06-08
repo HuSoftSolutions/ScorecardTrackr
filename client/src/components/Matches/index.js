@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { BsFillTrashFill } from 'react-icons/bs';
 import ConfirmDeleteModal from '../../modals/ConfirmDeleteModal';
 import * as functions from '../../helpers/functions';
+import useWindowSize from '../../hooks/useWindowSize';
 
 /* CONSTANTS */
 
@@ -33,6 +34,7 @@ const DATA = {
 
 const Matches = () => {
   const { state, dispatch } = useStore();
+  const { width, height } = useWindowSize();
 
   const [showNewMatchModal, setShowNewMatchModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
@@ -82,7 +84,9 @@ const Matches = () => {
   function getPlayerOptions() {
     const { players } = state;
     let p = [];
-    players.forEach((ply) => p.push({ value: ply, label: ply.name }));
+    players.forEach((ply) => {
+      p.push({ value: ply.uid, label: ply.name });
+    });
     return p;
   }
 
@@ -95,38 +99,6 @@ const Matches = () => {
       m.splice(index, 1);
       dispatch({ type: 'update-matches', matches: m });
     }
-  }
-
-  function calculateMatchTotal(match) {
-    console.log(match.matchType)
-    switch (match.matchType.value) {
-      case 'skins':
-        calculateSkins(match);
-        return;
-      case 'bestball':
-        console.log('Best ball!');
-        return;
-      case 'nassau':
-        console.log('Nassau!');
-        return;
-    }
-  }
-
-  function calculateSkins(match) {
-    if(match.matchFormat.value === 'individual'){
-      console.log(match.participants)
-    }else{
-      console.log(match.teams)
-    }
-    // const skins = functions.calculateSkins(players);
-
-    return (
-      <div>
-        {/* {players.map((p, i) => {
-          return <div>{p.score}</div>;
-        })} */}
-      </div>
-    );
   }
 
   /* HELPER COMPONENTS */
@@ -223,14 +195,94 @@ const Matches = () => {
       teams,
     } = props.match;
 
+    const SkinsMatch = () => {
+      let res = [];
+      if (matchFormat.value === 'individual') {
+        res = functions.calculateSkinsIndividual(state, participants);
+      } else if (matchFormat.value === 'teams') {
+        res = functions.calculateSkinsTeams(state, teams);
+      }
+
+      return (
+        <div>
+          {res.map((p, i) => {
+            return (
+              <div key={i} className=" p-1 d-flex">
+                <div className="d-flex" style={{ fontSize: '13px' }}>
+                  {p.player} ({p.score}) Hole: {p.hole}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    const NassauMatch = () => {
+
+      let res = [];
+      if (matchFormat.value === 'individual') {
+        res = functions.calculateNassauIndividual(state, participants);
+      } else if (matchFormat.value === 'teams') {
+        res = functions.calculateNassauTeams(state, teams);
+      }
+ 
+      return(
+        <div></div>
+      )
+    }
+
+    const BestBallMatch = () => {
+
+      let res = [];
+      if (matchFormat.value === 'individual') {
+        res = functions.calculateBestBallIndividual(state, participants);
+      } else if (matchFormat.value === 'teams') {
+        res = functions.calculateBestBallTeams(state, teams);
+      }
+ 
+      return(
+        <div></div>
+      )
+    }
+
+    const CalculateMatchTotal = () => {
+      let res = <div>Match not found</div>;
+
+      switch (matchType.value) {
+        case 'skins':
+          res = SkinsMatch();
+          break;
+
+        case 'nassau':
+          res = NassauMatch();
+          break;
+
+        case 'bestball':
+          res = BestBallMatch();
+          break;
+
+        default:
+          break;
+      }
+
+      return res;
+    };
+
     const IndividualMatch = (props) => {
       return (
         <div className="d-flex">
           {props.match.participants.map((p, i) => {
             return (
-              <div key={i} className="d-flex">
+              <div
+                key={i}
+                className="d-flex"
+                style={{ fontSize: '13px' }}
+              >
                 <div className="mx-2">{p.label}</div>
-                {i + 1 < participants.length ? 'vs.' : null}
+                {i + 1 < participants.length ? (
+                  <span className="text-light-dark">vs.</span>
+                ) : null}
               </div>
             );
           })}
@@ -244,7 +296,7 @@ const Matches = () => {
       const Team = (props) => {
         const { players } = props;
         return (
-          <div className="">
+          <div className="" style={{ fontSize: '13px' }}>
             {players.map((p, i) => {
               return (
                 <p key={i} className="m-0 mx-2">
@@ -262,7 +314,9 @@ const Matches = () => {
             return (
               <div key={i} className="d-flex align-items-center">
                 <Team players={teams[t]} />
-                {i + 1 < Object.keys(teams).length ? 'vs.' : null}
+                {i + 1 < Object.keys(teams).length ? (
+                  <span className="text-light-dark">vs.</span>
+                ) : null}
               </div>
             );
           })}
@@ -271,9 +325,7 @@ const Matches = () => {
     };
 
     return (
-      <div
-        className="bg-light d-flex flex-column p-2 rounded m-1 flex-grow flex-fill col-12 col-lg-3"
-      >
+      <div className="bg-light d-flex flex-column p-2 rounded m-1 flex-grow flex-fill col-12 col-lg-3">
         <div className="d-flex justify-content-between">
           <p className="m-0">
             <strong className="m-0">{matchType.label}</strong>
@@ -293,13 +345,18 @@ const Matches = () => {
             <TeamMatch {...props} />
           )}
         </div>
-        <div>{calculateMatchTotal(props.match)}</div>
+        <div>
+          <CalculateMatchTotal match={props.match} />
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="p-3 d-flex flex-column">
+    <div
+      className="p-3 d-flex flex-column matches-container"
+      style={{ height: (height || 120) - 120, overflowX: 'auto' }}
+    >
       <div className="d-flex justify-content-between align-items-center text-dark">
         <h3 className="m-0">Current Matches</h3>
         <Button

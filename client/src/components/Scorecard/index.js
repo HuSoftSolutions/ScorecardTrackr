@@ -138,7 +138,7 @@ const Scorecard = () => {
 
   function handleScoreEntry(value, player, n, index) {
     let players = [...state?.players];
-    let i = players.findIndex(p => player.id === p.id);
+    let i = players.findIndex(p => player.uid === p.uid);
     players[i][n][index] = (value + 1) % 10
     dispatch({ type: 'set-player-score', players: players })
   }

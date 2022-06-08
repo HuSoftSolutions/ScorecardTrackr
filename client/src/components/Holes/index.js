@@ -67,13 +67,13 @@ const Holes = () => {
                   onClick={() =>
                     dispatch({
                       type: 'set-player-score',
-                      players: functions.decreaseScore(i, state),
+                      players: functions.decreaseScore(p.uid, state),
                     })
                   }
                 />
               </div>
               <div className="m-0 rounded mx-1 flex-fill text-center h-100 d-flex justify-content-center align-items-center">
-                {functions.returnScore(i, state)}
+                {functions.returnScore(p.uid, state)}
               </div>
               <div>
                 <FiPlus
@@ -82,7 +82,7 @@ const Holes = () => {
                   onClick={() =>
                     dispatch({
                       type: 'set-player-score',
-                      players: functions.increaseScore(i, state),
+                      players: functions.increaseScore(p.uid, state),
                     })
                   }
                 />

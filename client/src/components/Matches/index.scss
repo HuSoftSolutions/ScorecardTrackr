@@ -1,2 +1,8 @@
 @import 'src/custom.scss';
 
+.matches-container {
+    display: flex;
+    padding: 2em;
+    flex-direction: column;
+    overflow-y: scroll;
+}

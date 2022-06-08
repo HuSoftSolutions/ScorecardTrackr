@@ -27,7 +27,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:dev": "env-cmd -f .env.dev npm run build && firebase deploy --only hosting -P dev",
+    "build:staging": "env-cmd -f .env.dev npm run build && firebase deploy --only hosting -P staging",
     "build:prod": "env-cmd -f .env.prod npm run build && firebase deploy --only hosting -P prod"
   },
   "browserslist": [

@@ -33,18 +33,20 @@ const RoundHistory = () => {
       const snapshot = await getDocs(ref);
       const r = []
       snapshot.forEach(doc => {
+        console.log(doc.data())
         r.push(doc.data())
       })
       setRounds(r)
+      console.log(r)
     }
 
-    console.log(user?.uid)
     if (user?.uid) getUserRounds(user?.uid);
   }, [user])
 
 
   function handleLoadRound(round) {
-    dispatch({ ...round });
+    console.log(round.players)
+    dispatch({ ...round, type: 'load_round' });
     navigate(ROUTES.ROUND + `/${round.round_id}`)
   }
 

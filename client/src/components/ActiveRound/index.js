@@ -24,21 +24,34 @@ const ActiveRound = () => {
       const ref = doc(db, 'rounds', id);
       const round = await getDoc(ref);
       if (round.exists()) {
-        dispatch({...round.data(), type: 'load_round'});
+        dispatch({ ...round.data(), type: 'load_round' });
       }
     }
 
     if (state.round_id === null && params?.id !== null)
       getRound__FS(params.id);
+
+    return () => {
+      dispatch({ type: `reset_active_round` });
+    };
   }, []);
 
   return (
     <div className="round-page">
-      <Tabs activeKey={key} onSelect={(k) => { setKey(k) }}>
+      <Tabs
+        activeKey={key}
+        onSelect={(k) => {
+          setKey(k);
+        }}
+      >
         <Tab eventKey="home" title="Scorecard">
           <Scorecard />
         </Tab>
-        <Tab eventKey="profile" title="Hole" className="hole-container p-3">
+        <Tab
+          eventKey="profile"
+          title="Hole"
+          className="hole-container p-3"
+        >
           <Holes />
         </Tab>
         <Tab eventKey="matches" title="Matches" className="">

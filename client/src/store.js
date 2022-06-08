@@ -12,7 +12,6 @@ import { db } from './firebase.js';
 const StoreContext = createContext();
 
 const INITIAL_STATE = {
-  
   /* Active Round */
   round_id: null,
   course: '',
@@ -35,13 +34,18 @@ async function setRound__FS(round) {
 }
 
 async function updateRound__FS(value, id) {
+  // console.log(`updating round db ${value}`);
   updateDoc(doc(db, 'rounds', id), value);
 }
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'start_new_round':
+    case 'reset_active_round':
+      return {
+        ...INITIAL_STATE,
+      };
 
+    case 'start_new_round':
       setRound__FS(action);
 
       return {
@@ -52,9 +56,9 @@ const reducer = (state, action) => {
     case 'load_round':
 
       return {
-        ...state,
-        ...action
-      }
+        ...INITIAL_STATE,
+        ...action,
+      };
 
     case 'set_current_hole':
       return {
@@ -96,7 +100,6 @@ const reducer = (state, action) => {
       };
 
     case 'set-player-score':
-
       updateRound__FS({ players: action.players }, state.round_id);
 
       return {

@@ -1,44 +1,37 @@
 const HOLE_SCORE_LIMIT = 9;
 
-export const returnScore = (i, state) => {
-    let currentPlayer = state.players.filter((p) => (p.id = i + 1))[
-      i
-    ];
-    let score = currentPlayer?.score?.[state.current_hole_index] || 0;
+export const returnScore = (id, state) => {
+  let currentPlayer = state.players.find((p) => p.uid === id);
+  // console.log(currentPlayer);
+  let score = currentPlayer?.score?.[state.current_hole_index] || 0;
 
-    return <h1 className="mb-0">{score}</h1>;
-  };
+  return <h1 className="mb-0">{score}</h1>;
+};
 
-  export function decreaseScore(playerIndex, state) {
-    let currentPlayer = state.players.filter(
-      (p) => (p.id = playerIndex + 1),
-    )?.[playerIndex];
-    let curScore = currentPlayer?.score?.[state.current_hole_index];
-    let isValid = curScore > 0;
+export function decreaseScore(id, state) {
+  let players = [...state.players]
+  let currentPlayerIndex = state.players.findIndex((p) => (p.uid === id));
 
-    currentPlayer.score[state.current_hole_index] = isValid
-      ? curScore - 1
-      : curScore;
+  let curScore = players[currentPlayerIndex]?.score?.[state.current_hole_index];
+  let isValid = curScore > 0;
 
-    let players = [...state.players];
-    players[playerIndex] = currentPlayer;
+  players[currentPlayerIndex].score[state.current_hole_index] = isValid
+    ? curScore - 1
+    : curScore;
 
-    return players;
-  }
+  return players;
+}
 
-  export function increaseScore(playerIndex, state) {
-    let currentPlayer = state.players.filter(
-      (p) => (p.id = playerIndex + 1),
-    )?.[playerIndex];
-    let curScore = currentPlayer?.score?.[state.current_hole_index];
-    let isValid = curScore + 1 < HOLE_SCORE_LIMIT;
+export function increaseScore(id, state) {
+  let players = [...state.players]
+  let currentPlayerIndex = state.players.findIndex((p) => (p.uid === id));
 
-    currentPlayer.score[state.current_hole_index] = isValid
-      ? curScore + 1
-      : curScore;
+  let curScore = players[currentPlayerIndex]?.score?.[state.current_hole_index];
+  let isValid = curScore + 1 < HOLE_SCORE_LIMIT;
 
-    let players = [...state.players];
-    players[playerIndex] = currentPlayer;
+  players[currentPlayerIndex].score[state.current_hole_index] = isValid
+    ? curScore + 1
+    : curScore;
 
-    return players;
-  }
+  return players;
+}
