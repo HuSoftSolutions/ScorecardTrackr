@@ -6,7 +6,7 @@ import { BsFillTrashFill } from 'react-icons/bs';
 import ConfirmDeleteModal from '../../modals/ConfirmDeleteModal';
 import * as functions from '../../helpers/functions';
 import useWindowSize from '../../hooks/useWindowSize';
-
+import "./index.scss";
 /* CONSTANTS */
 
 const DATA = {
@@ -104,6 +104,7 @@ const Matches = () => {
   /* HELPER COMPONENTS */
 
   const MatchTypeDropdown = (props) => {
+
     return (
       <div className="p-1 w-100">
         <strong>Match Type</strong>
@@ -208,8 +209,8 @@ const Matches = () => {
           {res.map((p, i) => {
             return (
               <div key={i} className=" p-1 d-flex">
-                <div className="d-flex" style={{ fontSize: '13px' }}>
-                  {p.player} ({p.score}) Hole: {p.hole}
+                <div className="d-flex w-100 font-monospace" style={{ fontSize: '13px' }}>
+                  <span className="fw-bold">{p.player}</span> <span className="text-danger mx-2">({p.score})</span> <span>Hole {p.hole}</span>
                 </div>
               </div>
             );
