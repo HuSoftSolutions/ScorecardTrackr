@@ -42,6 +42,10 @@ create table course (
 	slope float not null
 );
 
+create table `round` (
+	round_id varchar(36) primary key unique
+);
+
 create table nine (
 	nine_id varchar(36) primary key unique,
     `name` varchar(100) not null,
@@ -63,27 +67,99 @@ create table hole (
         references nine(nine_id)
 );
 
-create table round_type (
-	round_type_id varchar(36) primary key unique, 
+/* MATCH OR STROKE */
+create table scoring_type (
+	scoring_type_id varchar(36) primary key unique, 
     `name` varchar(50) not null
 );
 
-create table `round` (
-	round_id varchar(36) primary key unique,
-	round_type_id varchar(36) not null,
-    constraint round_type_id
-		foreign key (round_type_id)
-        references round_type(round_type_id)
+/* INDIVIDUAL OR TEAMS */
+create table match_format (
+	match_format_id varchar(36) primary key unique, 
+    `name` varchar(50) not null
+);
+
+/* NASSAU, BEST BALL, OR SKINS */
+create table match_type (
+	match_type_id varchar(36) primary key unique, 
+    `name` varchar(50) not null
+);
+
+create table user_round (
+    user_id varchar(36) not null,
+    round_id varchar(36) not null,
+    constraint pk_user_round
+		primary key (user_id, round_id),
+    constraint fk_user_round_user_id
+        foreign key (user_id)
+		references `user`(user_id),
+	constraint fk_user_round_round_id
+		foreign key (round_id)
+		references `round`(round_id)
+);
+
+create table nine_round (
+    nine_id varchar(36) not null,
+    round_id varchar(36) not null,
+    constraint pk_nine_round
+		primary key (nine_id, round_id),
+    constraint fk_nine_round_nine_id
+        foreign key (nine_id)
+		references nine(nine_id),
+	constraint fk_nine_round_round_id
+		foreign key (round_id)
+		references `round`(round_id)
+);
+
+create table `match` (
+	match_id varchar(36) primary key unique,
+    round_id varchar(36) not null,
+    scoring_type_id varchar(36) not null,
+    match_format_id varchar(36) not null,
+    match_type_id varchar(36) not null,
+	constraint round_id
+		foreign key (round_id)
+        references `round`(round_id),
+	constraint scoring_type_id
+		foreign key (scoring_type_id)
+        references scoring_type(scoring_type_id),
+	constraint match_format_id
+		foreign key (match_format_id)
+        references match_format(match_format_id),
+	constraint match_type_id
+		foreign key (match_type_id)
+        references match_type(match_type_id)
+);
+
+create table team (
+	team_id varchar(36) primary key unique,
+    match_id varchar(36) not null,
+	constraint match_id
+		foreign key (match_id)
+        references `match`(match_id)
+);
+
+create table user_team (
+    user_id varchar(36) not null,
+    team_id varchar(36) not null,
+    constraint pk_user_team
+		primary key (user_id, team_id),
+    constraint fk_user_team_user_id
+        foreign key (user_id)
+		references `user`(user_id),
+	constraint fk_user_team_team_id
+		foreign key (team_id)
+		references team(team_id)
 );
 
 create table score (
 	score_id varchar(36) primary key unique,
     score int not null,
-	round_id varchar(36) not null,
+	score_round_id varchar(36) not null,
     user_id varchar(36) not null,
     hole_id varchar(36) not null,
-    constraint round_id
-		foreign key (round_id)
+    constraint score_round_id
+		foreign key (score_round_id)
         references `round`(round_id),
 	constraint user_id
 		foreign key (user_id)

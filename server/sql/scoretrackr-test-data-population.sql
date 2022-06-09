@@ -5,11 +5,18 @@ truncate table `user`;
 truncate table `role`;
 truncate table user_role;
 truncate table course;
+truncate table round;
 truncate table nine;
 truncate table hole;
-truncate table round;
+truncate table scoring_type;
+truncate table match_format;
+truncate table match_type;
+truncate table user_round;
+truncate table nine_round;
+truncate table `match`;
+truncate table team;
+truncate table user_team;
 truncate table score;
-truncate table round_type;
 set foreign_key_checks = 1;
 
 insert into `user` (user_id, email, password_hash, first_name, last_name, handicap) values
@@ -30,6 +37,9 @@ insert into user_role (user_id, role_id) values
 
 insert into course (course_id, `name`, address, city, state, zip_code, phone_number, email, rating, slope) values
 	('79c2efca-dfb8-11ec-9d64-0242ac120002', 'Fox Run Golf Club', '129 County Hwy 142A', 'Johnstown', 'NY', 12095, '(518)-762-3717', 'richardscott@pga.com', 70.0, 125.0);
+    
+insert into `round` (round_id) values
+	('d8cdc288-dfb8-11ec-9d64-0242ac120002');
     
 insert into nine (nine_id, `name`, course_id) values
 	('7cd3871a-dfb8-11ec-9d64-0242ac120002', 'Front 9', '79c2efca-dfb8-11ec-9d64-0242ac120002'),
@@ -55,14 +65,45 @@ insert into hole (hole_id, `number`, handicap, par, yards, nine_id) values
     ('ca7f0a2a-dfb8-11ec-9d64-0242ac120002', 17, 7, 4, 150, '7fd570ea-dfb8-11ec-9d64-0242ac120002'),
     ('d0e2e59e-dfb8-11ec-9d64-0242ac120002', 18, 18, 4, 150, '7fd570ea-dfb8-11ec-9d64-0242ac120002');
 
-insert into round_type (round_type_id, `name`) values
+insert into scoring_type (scoring_type_id, `name`) values
 	('d341e34e-dfb8-11ec-9d64-0242ac120002', 'STROKE'),
     ('d5ccbb0c-dfb8-11ec-9d64-0242ac120002', 'MATCH');
+    
+insert into match_format (match_format_id, `name`) values
+	('9119dabe-e781-11ec-8fea-0242ac120002', 'INDIVIDUAL'),
+    ('950eb22a-e781-11ec-8fea-0242ac120002', 'TEAMS');
+    
+insert into match_type (match_type_id, `name`) values
+	('99e5669a-e781-11ec-8fea-0242ac120002', 'BEST BALL'),
+    ('9cca1fcc-e781-11ec-8fea-0242ac120002', 'NASSAU'),
+    ('9f47324e-e781-11ec-8fea-0242ac120002', 'SKINS');
+    
+insert into user_round (user_id, round_id) values
+	('d5e2d64a-dfb7-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002'),
+    ('3f194c0c-dfb8-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002'),
+    ('43b5fbb6-dfb8-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002'),
+    ('464c9c90-dfb8-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002');
+    
+insert into nine_round (nine_id, round_id) values
+	('7cd3871a-dfb8-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002'),
+    ('7fd570ea-dfb8-11ec-9d64-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002');
+    
+insert into `match` (match_id, round_id, scoring_type_id, match_format_id, match_type_id) values
+	('5bf7140e-e782-11ec-8fea-0242ac120002', 'd8cdc288-dfb8-11ec-9d64-0242ac120002', 'd341e34e-dfb8-11ec-9d64-0242ac120002', '9119dabe-e781-11ec-8fea-0242ac120002', '99e5669a-e781-11ec-8fea-0242ac120002');
+    
+insert into team (team_id, match_id) values
+	('19767cd6-e783-11ec-8fea-0242ac120002', '5bf7140e-e782-11ec-8fea-0242ac120002'),
+	('48c14292-e78c-11ec-8fea-0242ac120002', '5bf7140e-e782-11ec-8fea-0242ac120002'),
+	('4c741ee6-e78c-11ec-8fea-0242ac120002', '5bf7140e-e782-11ec-8fea-0242ac120002'),
+    ('3118fea0-e78c-11ec-8fea-0242ac120002', '5bf7140e-e782-11ec-8fea-0242ac120002');
+    
+insert into user_team (user_id, team_id) values
+    ('d5e2d64a-dfb7-11ec-9d64-0242ac120002', '19767cd6-e783-11ec-8fea-0242ac120002'),
+    ('3f194c0c-dfb8-11ec-9d64-0242ac120002', '48c14292-e78c-11ec-8fea-0242ac120002'),
+    ('43b5fbb6-dfb8-11ec-9d64-0242ac120002', '4c741ee6-e78c-11ec-8fea-0242ac120002'),
+    ('464c9c90-dfb8-11ec-9d64-0242ac120002', '3118fea0-e78c-11ec-8fea-0242ac120002');
 
-insert into `round` (round_id, round_type_id) values
-	('d8cdc288-dfb8-11ec-9d64-0242ac120002', 'd341e34e-dfb8-11ec-9d64-0242ac120002');
-
-insert into score (score_id, score, round_id, user_id, hole_id) values
+insert into score (score_id, score, score_round_id, user_id, hole_id) values
 	('dc19f84e-dfb8-11ec-9d64-0242ac120002', 5, 'd8cdc288-dfb8-11ec-9d64-0242ac120002', 'd5e2d64a-dfb7-11ec-9d64-0242ac120002', '83238746-dfb8-11ec-9d64-0242ac120002'),
     ('df735418-dfb8-11ec-9d64-0242ac120002', 4, 'd8cdc288-dfb8-11ec-9d64-0242ac120002', '3f194c0c-dfb8-11ec-9d64-0242ac120002', '83238746-dfb8-11ec-9d64-0242ac120002'),
     ('e1e09292-dfb8-11ec-9d64-0242ac120002', 7, 'd8cdc288-dfb8-11ec-9d64-0242ac120002', '43b5fbb6-dfb8-11ec-9d64-0242ac120002', '83238746-dfb8-11ec-9d64-0242ac120002'),
