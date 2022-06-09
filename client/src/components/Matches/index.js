@@ -6,7 +6,8 @@ import { BsFillTrashFill } from 'react-icons/bs';
 import ConfirmDeleteModal from '../../modals/ConfirmDeleteModal';
 import * as functions from '../../helpers/functions';
 import useWindowSize from '../../hooks/useWindowSize';
-import "./index.scss";
+import './index.scss';
+import { RESET } from '../../constants/routes';
 /* CONSTANTS */
 
 const DATA = {
@@ -104,7 +105,6 @@ const Matches = () => {
   /* HELPER COMPONENTS */
 
   const MatchTypeDropdown = (props) => {
-
     return (
       <div className="p-1 w-100">
         <strong>Match Type</strong>
@@ -209,8 +209,15 @@ const Matches = () => {
           {res.map((p, i) => {
             return (
               <div key={i} className=" p-1 d-flex">
-                <div className="d-flex w-100 font-monospace" style={{ fontSize: '13px' }}>
-                  <span className="fw-bold">{p.player}</span> <span className="text-danger mx-2">({p.score})</span> <span>Hole {p.hole}</span>
+                <div
+                  className="d-flex w-100 font-monospace"
+                  style={{ fontSize: '13px' }}
+                >
+                  <span className="fw-bold">{p.player}</span>{' '}
+                  <span className="text-danger mx-2">
+                    (skin {p.score})
+                  </span>{' '}
+                  <span>Hole {p.hole}</span>
                 </div>
               </div>
             );
@@ -220,32 +227,70 @@ const Matches = () => {
     };
 
     const NassauMatch = () => {
-
       let res = [];
       if (matchFormat.value === 'individual') {
-        res = functions.calculateNassauIndividual(state, participants);
+        res = functions.calculateNassauIndividual(state, props.match);
       } else if (matchFormat.value === 'teams') {
-        res = functions.calculateNassauTeams(state, teams);
+        res = functions.calculateNassauTeams(state, props.match);
       }
- 
-      return(
-        <div></div>
-      )
-    }
+
+      return (
+        <div
+          className="font-monospace"
+          style={{ fontSize: '13px' }}
+        >
+          {res.map((match, i) => {
+            const { f, b, t } = match.status;
+
+            let fSign = f > 0 ? '+' : f < 0 ? '-' : 'AS';
+            let bSign = b > 0 ? '+' : b < 0 ? '-' : 'AS';
+            let tSign = t > 0 ? '+' : t < 0 ? '-' : 'AS';
+
+            return (
+              <div className="d-flex flex-column p-2 ">
+                <span className="fw-bold">{match.name}</span>
+                <span>
+                  Front: {fSign}{f === 0 ? '' : Math.abs(f)}{' '}
+                </span>
+                <span>
+                  Back: {bSign}{b === 0 ? '' : Math.abs(b)}{' '}
+                </span>
+                <span>
+                  Total: {tSign}{t === 0 ? '' : Math.abs(t)}{' '}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
 
     const BestBallMatch = () => {
-
       let res = [];
       if (matchFormat.value === 'individual') {
-        res = functions.calculateBestBallIndividual(state, participants);
+        res = functions.calculateBestBallIndividual(
+          state,
+          participants,
+        );
       } else if (matchFormat.value === 'teams') {
         res = functions.calculateBestBallTeams(state, teams);
       }
- 
-      return(
-        <div></div>
-      )
-    }
+
+      return (
+        <div>
+          {res.map((match, i) => {
+            return (
+              <div>
+                <span>{match.name}</span>
+                <span>Front {match.status.f} </span>
+                <span>Back {match.status.b} </span>
+                <span>Total {match.status.t} </span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
 
     const CalculateMatchTotal = () => {
       let res = <div>Match not found</div>;
@@ -329,9 +374,9 @@ const Matches = () => {
       <div className="bg-light d-flex flex-column p-2 rounded m-1 flex-grow flex-fill col-12 col-lg-3">
         <div className="d-flex justify-content-between">
           <p className="m-0">
-            <strong className="m-0">{matchType.label}</strong>
-            {' | '}
-            {matchFormat.label}
+            <strong className="m-0">{matchType.label}</strong>{' '}
+            (<span>{matchFormat.label}</span>{' - '}
+            <span>{scoringType.label}</span>)
           </p>
           <BsFillTrashFill
             size="18"
@@ -339,13 +384,7 @@ const Matches = () => {
             style={{ color: 'grey' }}
           />
         </div>
-        <div className="bg-dark text-light rounded p-1 my-1">
-          {matchFormat.value === 'individual' ? (
-            <IndividualMatch {...props} />
-          ) : (
-            <TeamMatch {...props} />
-          )}
-        </div>
+        <hr className="m-0 mt-1"/>
         <div>
           <CalculateMatchTotal match={props.match} />
         </div>

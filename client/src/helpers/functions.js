@@ -14,6 +14,13 @@ export function getPlayerScoreForHole(uid, hole_index, players) {
   return players.find((p) => p.uid === uid).score?.[hole_index];
 }
 
+export function getPlayerScorecard(uid, players) {
+  return players.find((p) => p.uid === uid).score;
+}
+
+// SKINS
+// Scoring: front, back, total
+
 export function calculateSkinsIndividual(state, participants) {
   const skins = [];
 
@@ -108,8 +115,92 @@ export function calculateSkinsTeams(state, teams) {
   return skins;
 }
 
-export function calculateNassauIndividual() {}
-export function calculateNassauTeams() {}
+// NASSAU
+// Scoring: front, back, total
 
-export function calculateBestBallIndividual() {}
-export function calculateBestBallTeams() {}
+/*
+
+Front 9 Leader: 
+Back 9 Leader: 
+Total Leader: 
+
+*/
+
+export function calculateNassauIndividual(state, match) {
+  // every participant has a match with every other participant
+  // check stroke or match play
+
+  const { scoringType, participants } = match;
+  const results = [];
+  const scores = [];
+
+  participants.forEach((p) => {
+    const playerScorecard = getPlayerScorecard(
+      p.value,
+      state.players,
+    );
+    scores.push(playerScorecard);
+  });
+
+  for (let i = 0; i < scores.length - 1; i++) {
+    for (let j = i + 1; j < scores.length; j++) {
+      const scores_a = scores[i];
+      const scores_b = scores[j];
+
+      const player_a = participants[i]?.label || '';
+      const player_b = participants[j]?.label || '';
+
+      const holes = scores_a?.length || 0;
+      const matchStatus = {
+        f: 0,
+        b: 0,
+        t: 0,
+        scoring: scoringType.value,
+      };
+
+      for (let ii = 0; ii < holes; ii++) {
+        const score_a = scores_a[ii];
+        const score_b = scores_b[ii];
+
+        if (score_a !== 0 && score_b !== 0) {
+          const nineIndex = ii < 9 ? 'f' : 'b';
+          const difference_stroke = score_a - score_b;
+
+          if (scoringType.value === 'stroke') {
+            matchStatus[nineIndex] += difference_stroke;
+            matchStatus.t += difference_stroke;
+          } else {
+            const difference_match =
+              difference_stroke > 0
+                ? 1
+                : difference_stroke < 0
+                ? -1
+                : 0;
+            matchStatus[nineIndex] += difference_match;
+            matchStatus.t += difference_match;
+          }
+        }
+      }
+      results.push({
+        name: player_a + ' vs ' + player_b,
+        status: matchStatus,
+      });
+    }
+  }
+
+  return results;
+}
+
+export function calculateNassauTeams(state, teams) {
+  // match between Team 1 and Team 2
+  // check stroke or match play
+
+  return {};
+}
+
+// BESTBALL
+// Scoring:
+
+export function calculateBestBallIndividual(state, participants) {}
+
+export function calculateBestBallTeams(state, teams) {}
