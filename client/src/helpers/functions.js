@@ -1,4 +1,4 @@
-/* return array of size of nines for match initialized to 0 */
+/* HELPERS start *************************************************** */
 export function generateBlankScorecard(nines) {
   let scorecard = [];
   nines.forEach((n) => {
@@ -14,13 +14,19 @@ export function getPlayerScoreForHole(uid, hole_index, players) {
   return players.find((p) => p.uid === uid).score?.[hole_index];
 }
 
+export function assignPlayerHandicap(uid, players, card) {
+}
+
 export function getPlayerScorecard(uid, players) {
   return players.find((p) => p.uid === uid).score;
 }
+/* HELPERS end *************************************************** */
 
-// SKINS
-// Scoring: front, back, total
 
+
+
+
+/* SKINS start *************************************************** */
 export function calculateSkinsIndividual(state, participants) {
   const skins = [];
 
@@ -53,12 +59,13 @@ export function calculateSkinsIndividual(state, participants) {
     }
   });
 
+  console.log(skins);
+
   return skins;
 }
 
 export function calculateSkinsTeams(state, teams) {
   const skins = [];
-
   const teamNames = Object.keys(teams);
 
   // iterate over holes
@@ -114,25 +121,21 @@ export function calculateSkinsTeams(state, teams) {
 
   return skins;
 }
+/* SKINS end *************************************************** */
 
-// NASSAU
-// Scoring: front, back, total
 
-/*
 
-Front 9 Leader: 
-Back 9 Leader: 
-Total Leader: 
 
-*/
 
+/* NASSAU start *************************************************** */
 export function calculateNassauIndividual(state, match) {
-  // every participant has a match with every other participant
-  // check stroke or match play
 
-  const { scoringType, participants } = match;
+  const { matchFormat, participants } = match;
   const results = [];
   const scores = [];
+  const scoring = matchFormat.value.includes('stroke')
+    ? 'stroke'
+    : 'match';
 
   participants.forEach((p) => {
     const playerScorecard = getPlayerScorecard(
@@ -155,7 +158,7 @@ export function calculateNassauIndividual(state, match) {
         f: 0,
         b: 0,
         t: 0,
-        scoring: scoringType.value,
+        scoring,
       };
 
       for (let ii = 0; ii < holes; ii++) {
@@ -166,7 +169,7 @@ export function calculateNassauIndividual(state, match) {
           const nineIndex = ii < 9 ? 'f' : 'b';
           const difference_stroke = score_a - score_b;
 
-          if (scoringType.value === 'stroke') {
+          if (scoring === 'stroke') {
             matchStatus[nineIndex] += difference_stroke;
             matchStatus.t += difference_stroke;
           } else {
@@ -191,16 +194,101 @@ export function calculateNassauIndividual(state, match) {
   return results;
 }
 
-export function calculateNassauTeams(state, teams) {
+export function calculateNassauTeams(state, match) {
   // match between Team 1 and Team 2
   // check stroke or match play
 
-  return {};
+  const { matchFormat, teams } = match;
+  const results = [];
+  const scores = []; // each team's scores
+  const teamNames = Object.keys(teams);
+  const scoring = matchFormat.value.includes('stroke')
+    ? 'stroke'
+    : 'match';
+
+  // iterate over teams
+  teamNames.forEach((team_name, team_index) => {
+    const teamScore = [];
+
+    // get players on team
+    let players = teams[team_name];
+
+    state.card.holes.forEach((h, hi) => {
+      let lowHoleScore = 0;
+      players.forEach((p, pi) => {
+        const playerScore = getPlayerScoreForHole(
+          p.value,
+          hi,
+          state.players,
+        );
+        if (lowHoleScore === 0) lowHoleScore = playerScore;
+        else if (playerScore < lowHoleScore)
+          lowHoleScore = playerScore;
+      });
+      teamScore.push(lowHoleScore);
+    });
+
+    scores.push(teamScore);
+  });
+
+  console.log(scores);
+
+  for (let i = 0; i < scores.length - 1; i++) {
+    for (let j = i + 1; j < scores.length; j++) {
+      const scores_a = scores[i];
+      const scores_b = scores[j];
+
+      const player_a = Object.keys(teams)[i] || '';
+      const player_b = Object.keys(teams)[j] || '';
+
+      const holes = scores_a?.length || 0;
+      const matchStatus = {
+        f: 0,
+        b: 0,
+        t: 0,
+        scoring,
+      };
+
+      for (let ii = 0; ii < holes; ii++) {
+        const score_a = scores_a[ii];
+        const score_b = scores_b[ii];
+
+        if (score_a !== 0 && score_b !== 0) {
+          const nineIndex = ii < 9 ? 'f' : 'b';
+          const difference_stroke = score_a - score_b;
+
+          if (scoring === 'stroke') {
+            matchStatus[nineIndex] += difference_stroke;
+            matchStatus.t += difference_stroke;
+          } else {
+            const difference_match =
+              difference_stroke > 0
+                ? 1
+                : difference_stroke < 0
+                ? -1
+                : 0;
+            matchStatus[nineIndex] += difference_match;
+            matchStatus.t += difference_match;
+          }
+        }
+      }
+      results.push({
+        name: player_a + ' vs ' + player_b,
+        status: matchStatus,
+      });
+    }
+  }
+
+  return results;
 }
+/* NASSAU end *************************************************** */
 
-// BESTBALL
-// Scoring:
 
+
+
+
+/* BESTBALL start *************************************************** */
 export function calculateBestBallIndividual(state, participants) {}
 
 export function calculateBestBallTeams(state, teams) {}
+/* BESTBALL end *************************************************** */

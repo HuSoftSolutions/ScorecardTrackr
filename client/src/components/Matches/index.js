@@ -8,28 +8,53 @@ import * as functions from '../../helpers/functions';
 import useWindowSize from '../../hooks/useWindowSize';
 import './index.scss';
 import { RESET } from '../../constants/routes';
+
 /* CONSTANTS */
 
-const DATA = {
-  MATCH_TYPE_OPTIONS: [
-    { label: 'Nassau', value: 'nassau' },
-    { label: 'Best Ball', value: 'bestball' },
-    { label: 'Skins', value: 'skins' },
-  ],
-  MATCH_FORMAT_OPTIONS: [
-    { label: 'Individual Play', value: 'individual' },
-    { label: 'Team Play', value: 'teams' },
-  ],
-  SCORING_OPTIONS: [
-    { label: 'Stroke', value: 'stroke' },
-    { label: 'Match', value: 'match' },
-  ],
-  INIT_MATCH_FORMAT: {
-    label: 'Individual Play',
-    value: 'individual',
+const MATCH_DATA = [
+  {
+    label: 'Skins Team Match',
+    value: ['skins', 'team'],
   },
-  INIT_TEAMS: { 'Team 1': [], 'Team 2': [] },
-};
+  {
+    label: 'Skins Individual Match',
+    value: ['skins', 'individual'],
+  },
+  {
+    label: 'Nassau Team Stroke Play',
+    value: ['nassau', 'team', 'stroke'],
+  },
+  {
+    label: 'Nassau Individual Stroke Play',
+    value: ['nassau', 'individual', 'stroke'],
+  },
+  {
+    label: 'Nassau Team Match Play',
+    value: ['nassau', 'team', 'match'],
+  },
+  {
+    label: 'Nassau Individual Match Play',
+    value: ['nassau', 'individual', 'stroke'],
+  },
+  // {
+  //   label: 'Best Ball Team Stroke Play',
+  //   value: ['bestball', 'team', 'stroke'],
+  // },
+  // {
+  //   label: 'Best Ball Team Match Play',
+  //   value: ['bestball', 'team', 'match'],
+  // },
+  // {
+  //   label: 'Best Ball Individual Stroke Play',
+  //   value: ['bestball', 'individual', 'stroke'],
+  // },
+  // {
+  //   label: 'Best Ball Individual Match Play',
+  //   value: ['bestball', 'individual', 'match'],
+  // },
+];
+
+const INIT_TEAMS = { 'Team 1': [], 'Team 2': [] };
 
 /* MATCHES COMPONENT */
 
@@ -39,12 +64,10 @@ const Matches = () => {
 
   const [showNewMatchModal, setShowNewMatchModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
-  const [matchFormat, setMatchFormat] = useState(
-    DATA.INIT_MATCH_FORMAT,
-  );
-  const [matchType, setMatchType] = useState(null);
-  const [scoringType, setScoringType] = useState(null);
-  const [teams, setTeams] = useState(DATA.INIT_TEAMS);
+
+  const [matchFormat, setMatchFormat] = useState(null);
+
+  const [teams, setTeams] = useState(INIT_TEAMS);
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
@@ -56,17 +79,18 @@ const Matches = () => {
 
   function closeModal() {
     setShowNewMatchModal(false);
-    setMatchFormat(DATA.INIT_MATCH_FORMAT);
-    setMatchType(null);
-    setScoringType(null);
-    setTeams(DATA.INIT_TEAMS);
+    setMatchFormat(null);
+    setTeams(INIT_TEAMS);
     setParticipants(getPlayerOptions());
   }
 
   function saveMatch() {
     const matches = [...state.matches];
     const newMatch = getMatchDetails();
-    if (!newMatch.matchType || !newMatch.scoringType) return;
+
+    const matchFormat = newMatch.matchFormat;
+
+    if (!matchFormat) return;
     matches.push(newMatch);
     dispatch({ type: 'update-matches', matches: matches });
     closeModal();
@@ -75,8 +99,6 @@ const Matches = () => {
   function getMatchDetails() {
     return {
       matchFormat,
-      matchType,
-      scoringType,
       teams,
       participants,
     };
@@ -103,32 +125,6 @@ const Matches = () => {
   }
 
   /* HELPER COMPONENTS */
-
-  const MatchTypeDropdown = (props) => {
-    return (
-      <div className="p-1 w-100">
-        <strong>Match Type</strong>
-        <Select
-          value={props.matchType}
-          onChange={props.setMatchType}
-          options={DATA.MATCH_TYPE_OPTIONS}
-        />
-      </div>
-    );
-  };
-
-  const ScoringDropdown = () => {
-    return (
-      <div className="p-1 w-100">
-        <strong>Scoring Type</strong>
-        <Select
-          value={scoringType}
-          onChange={setScoringType}
-          options={DATA.SCORING_OPTIONS}
-        />
-      </div>
-    );
-  };
 
   const Teams = () => {
     return (
@@ -187,32 +183,90 @@ const Matches = () => {
     );
   };
 
+  const ListParticipants = (props) => {
+    const { participants } = props;
+
+    return (
+      <div className="d-flex flex-row">
+        {participants.map((p, i) => {
+          return (
+            <div
+              key={i}
+              className="d-flex"
+              style={{ fontSize: '13px' }}
+            >
+              <div className="mx-2">{p.label}</div>
+              {i + 1 < participants.length ? (
+                <span className="text-light-dark">vs.</span>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const ListTeams = (props) => {
+    const { teams } = props;
+
+    const Team = (props) => {
+      const { players } = props;
+
+      return (
+        <div className="d-flex" style={{ fontSize: '13px' }}>
+          {players.map((p, i) => {
+            return (
+              <p key={i} className="m-0 mx-2">
+                {p.label}
+                {players.length > 1 && i + i < players.length
+                  ? ', '
+                  : null}
+              </p>
+            );
+          })}
+        </div>
+      );
+    };
+
+    return (
+      <div className="d-flex flex-row">
+        {Object.keys(teams).map((t, i) => {
+          return (
+            <div key={i} className="d-flex align-items-center">
+              <Team players={teams[t]} />
+              {i + 1 < Object.keys(teams).length ? (
+                <span className="text-light-dark">vs.</span>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const Match = (props) => {
-    const {
-      matchFormat,
-      matchType,
-      participants,
-      scoringType,
-      teams,
-    } = props.match;
+    const { matchFormat, participants, teams } = props.match;
 
     const SkinsMatch = () => {
       let res = [];
-      if (matchFormat.value === 'individual') {
+      if (matchFormat.value.includes('individual')) {
         res = functions.calculateSkinsIndividual(state, participants);
-      } else if (matchFormat.value === 'teams') {
+      } else if (matchFormat.value.includes('team')) {
         res = functions.calculateSkinsTeams(state, teams);
       }
 
       return (
-        <div>
+        <div
+          className="w-100 font-monospace"
+          style={{ fontSize: '13px' }}
+        >
+          {res.length === 0 ? (
+            <div className="p-2">No skins have been made.</div>
+          ) : null}
           {res.map((p, i) => {
             return (
-              <div key={i} className=" p-1 d-flex">
-                <div
-                  className="d-flex w-100 font-monospace"
-                  style={{ fontSize: '13px' }}
-                >
+              <div key={i} className="p-2">
+                <div>
                   <span className="fw-bold">{p.player}</span>{' '}
                   <span className="text-danger mx-2">
                     (skin {p.score})
@@ -228,17 +282,14 @@ const Matches = () => {
 
     const NassauMatch = () => {
       let res = [];
-      if (matchFormat.value === 'individual') {
+      if (matchFormat.value.includes('individual')) {
         res = functions.calculateNassauIndividual(state, props.match);
-      } else if (matchFormat.value === 'teams') {
+      } else if (matchFormat.value.includes('team')) {
         res = functions.calculateNassauTeams(state, props.match);
       }
 
       return (
-        <div
-          className="font-monospace"
-          style={{ fontSize: '13px' }}
-        >
+        <div className="font-monospace" style={{ fontSize: '13px' }}>
           {res.map((match, i) => {
             const { f, b, t } = match.status;
 
@@ -247,16 +298,19 @@ const Matches = () => {
             let tSign = t > 0 ? '+' : t < 0 ? '-' : 'AS';
 
             return (
-              <div className="d-flex flex-column p-2 ">
+              <div key={i} className="d-flex flex-column p-2 ">
                 <span className="fw-bold">{match.name}</span>
                 <span>
-                  Front: {fSign}{f === 0 ? '' : Math.abs(f)}{' '}
+                  Front: {fSign}
+                  {f === 0 ? '' : Math.abs(f)}{' '}
                 </span>
                 <span>
-                  Back: {bSign}{b === 0 ? '' : Math.abs(b)}{' '}
+                  Back: {bSign}
+                  {b === 0 ? '' : Math.abs(b)}{' '}
                 </span>
                 <span>
-                  Total: {tSign}{t === 0 ? '' : Math.abs(t)}{' '}
+                  Total: {tSign}
+                  {t === 0 ? '' : Math.abs(t)}{' '}
                 </span>
               </div>
             );
@@ -272,7 +326,7 @@ const Matches = () => {
           state,
           participants,
         );
-      } else if (matchFormat.value === 'teams') {
+      } else if (matchFormat.value === 'team') {
         res = functions.calculateBestBallTeams(state, teams);
       }
 
@@ -295,96 +349,34 @@ const Matches = () => {
     const CalculateMatchTotal = () => {
       let res = <div>Match not found</div>;
 
-      switch (matchType.value) {
-        case 'skins':
-          res = SkinsMatch();
-          break;
+      if (matchFormat.value.includes('skins')) res = SkinsMatch();
 
-        case 'nassau':
-          res = NassauMatch();
-          break;
+      if (matchFormat.value.includes('nassau')) res = NassauMatch();
 
-        case 'bestball':
-          res = BestBallMatch();
-          break;
-
-        default:
-          break;
-      }
+      if (matchFormat.value.includes('bestball'))
+        res = BestBallMatch();
 
       return res;
-    };
-
-    const IndividualMatch = (props) => {
-      return (
-        <div className="d-flex">
-          {props.match.participants.map((p, i) => {
-            return (
-              <div
-                key={i}
-                className="d-flex"
-                style={{ fontSize: '13px' }}
-              >
-                <div className="mx-2">{p.label}</div>
-                {i + 1 < participants.length ? (
-                  <span className="text-light-dark">vs.</span>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      );
-    };
-
-    const TeamMatch = (props) => {
-      const { teams } = props.match;
-
-      const Team = (props) => {
-        const { players } = props;
-        return (
-          <div className="" style={{ fontSize: '13px' }}>
-            {players.map((p, i) => {
-              return (
-                <p key={i} className="m-0 mx-2">
-                  {p.label}
-                </p>
-              );
-            })}
-          </div>
-        );
-      };
-
-      return (
-        <div className="d-flex flex-row">
-          {Object.keys(teams).map((t, i) => {
-            return (
-              <div key={i} className="d-flex align-items-center">
-                <Team players={teams[t]} />
-                {i + 1 < Object.keys(teams).length ? (
-                  <span className="text-light-dark">vs.</span>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      );
     };
 
     return (
       <div className="bg-light d-flex flex-column p-2 rounded m-1 flex-grow flex-fill col-12 col-lg-3">
         <div className="d-flex justify-content-between">
-          <p className="m-0">
-            <strong className="m-0">{matchType.label}</strong>{' '}
-            (<span>{matchFormat.label}</span>{' - '}
-            <span>{scoringType.label}</span>)
-          </p>
+          <div className="m-0">
+            <strong className="m-0">{matchFormat.label}</strong>
+            {matchFormat.value.includes('individual') ? (
+              <ListParticipants participants={participants} />
+            ) : (
+              <ListTeams teams={teams} />
+            )}
+          </div>
           <BsFillTrashFill
             size="18"
             onClick={() => deleteMatch(props.index)}
             style={{ color: 'grey' }}
           />
         </div>
-        <hr className="m-0 mt-1"/>
+        <hr className="m-0 mt-1 mb-2" />
         <div>
           <CalculateMatchTotal match={props.match} />
         </div>
@@ -415,27 +407,22 @@ const Matches = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <div className="p-1">
-            <strong>Format</strong>
+          <div className="p-1 mb-3">
+            <strong>Select Match Format</strong>
             <Select
               className="flex-fill"
               value={matchFormat}
               onChange={setMatchFormat}
-              options={DATA.MATCH_FORMAT_OPTIONS}
+              options={MATCH_DATA}
             />
           </div>
-          <div className="d-flex">
-            <MatchTypeDropdown
-              matchType={matchType}
-              setMatchType={setMatchType}
-            />
-            <ScoringDropdown />
-          </div>
-          {matchFormat?.value === 'individual' ? (
-            <ParticipantSelection />
-          ) : (
-            <Teams />
-          )}
+          {matchFormat !== null ? (
+            matchFormat.value.includes('individual') ? (
+              <ParticipantSelection />
+            ) : (
+              <Teams />
+            )
+          ) : null}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
@@ -443,7 +430,7 @@ const Matches = () => {
           </Button>
           <Button
             variant="success"
-            disabled={!matchType || !scoringType}
+            disabled={!matchFormat}
             onClick={saveMatch}
           >
             Save Match
