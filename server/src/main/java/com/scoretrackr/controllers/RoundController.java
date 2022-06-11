@@ -35,13 +35,4 @@ public class RoundController {
         }
         return ErrorResponse.build(result);
     }
-
-    @PutMapping("/{roundId}")
-    public ResponseEntity<Object> update(@PathVariable int roundId, @RequestBody Round round){
-        Result<Round> result = service.update(round);
-        if (result.isSuccess()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-    }
 }

@@ -28,36 +28,6 @@ public class RoundService {
         return result;
     }
 
-    public Result<Round> update(Round round) {
-        Result<Round> result = validate(round);
-        if (!result.isSuccess()) {
-            return result;
-        }
-
-        boolean success = repository.update(round);
-        if (!result.isSuccess()) {
-            result.addErrorMessage("Could not update round with Round ID: " + round.getRoundId());
-        }
-
-        return result;
-    }
-
-    // THE CHANGE FUNCTION BELOW MIGHT NOT BE NEEDED
-
-    public Result<Round> changeRoundType(Round round) {
-        Result<Round> result = validate(round);
-        if (!result.isSuccess()) {
-            return result;
-        }
-
-        boolean success = repository.changeRoundType(round);
-        if (!success) {
-            result.addErrorMessage("Could not change round type of Round ID: " + round.getRoundId());
-        }
-
-        return result;
-    }
-
     private Result<Round> validate(Round course) {
         Result<Round> result = new Result<>();
 

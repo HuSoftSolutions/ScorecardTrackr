@@ -19,21 +19,17 @@ public class RoundRepository {
     public RoundRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
     public Round findByRoundId(String roundId) {
-        final String sql = "select * "
-                        + "from `round` r "
-                        + "inner join round_type rt on r.round_type_id = rt.round_type_id "
-                        + "where r.round_id = '" + roundId + "';";
+        final String sql = "select * from `round` where round_id = `" + roundId + "`;";
         return jdbcTemplate.queryForObject(sql, new RoundMapper());
     }
 
     public Round add(Round round) {
-        final String sql = "insert into `round` (round_id, round_type_id) values (?, ?);";
+        final String sql = "insert into `round` (round_id) values (?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, round.getRoundId());
-            statement.setString(2, round.getRoundType().getRoundTypeId());
             return statement;
         }, keyHolder);
 
@@ -42,25 +38,5 @@ public class RoundRepository {
         }
 
         return round;
-    }
-
-    public boolean update(Round round) {
-        final String sql = "update round set "
-                + "round_type_id = ? "
-                + "where round_id = ?;";
-
-        int rowsAffected = jdbcTemplate.update(sql,
-                round.getRoundType().getRoundTypeId(),
-                round.getRoundId());
-
-        return rowsAffected > 0;
-    }
-
-    // THE CHANGE FUNCTION BELOW MIGHT NOT BE NEEDED
-
-    public boolean changeRoundType(Round round) {
-        final String sql = "update `round` set round_type_id = ? where round_id = ?;";
-        int rowsAffected = jdbcTemplate.update(sql, round.getRoundType().getRoundTypeId(), round.getRoundId());
-        return rowsAffected > 0;
     }
 }
