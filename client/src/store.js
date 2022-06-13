@@ -16,10 +16,10 @@ const INITIAL_STATE = {
   round_id: null,
   course: '',
   current_hole_index: 0,
-  players: [],
-  matches: [],
-  card: { holes: [], hcdp: [], par: [], yards: [] },
-  side_games: [],
+  players: [], // { name: '', handicap: 0, uid: uuidv4(), score: [], hdcpHoles: [] }
+  matches: [], // { matchFormat: [], teams?: [], participants?: []}
+  card: { holes: [], hdcp: [], par: [], yards: [] },
+  side_games: [], // TODO: build out
 
   /* General */
   showNewRoundModal: false,

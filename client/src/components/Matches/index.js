@@ -360,7 +360,7 @@ const Matches = () => {
     };
 
     return (
-      <div className="bg-light d-flex flex-column p-2 rounded m-1 flex-grow flex-fill col-12 col-lg-3">
+      <div className="bg-light d-flex flex-column p-2 rounded m-1 col-12 col-lg-3">
         <div className="d-flex justify-content-between">
           <div className="m-0">
             <strong className="m-0">{matchFormat.label}</strong>
@@ -387,7 +387,7 @@ const Matches = () => {
   return (
     <div
       className="p-3 d-flex flex-column matches-container"
-      style={{ height: (height || 120) - 120, overflowX: 'auto' }}
+      style={{ height: (height || 140) - 140, overflowX: 'auto' }}
     >
       <div className="d-flex justify-content-between align-items-center text-dark">
         <h3 className="m-0">Current Matches</h3>

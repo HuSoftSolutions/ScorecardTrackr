@@ -1,4 +1,3 @@
-/* HELPERS start *************************************************** */
 export function generateBlankScorecard(nines) {
   let scorecard = [];
   nines.forEach((n) => {
@@ -9,36 +8,96 @@ export function generateBlankScorecard(nines) {
 
   return scorecard;
 }
+/*
+
+
+
+
+*/
+// export function getPlayerScoreForHole(uid, hole_index, players) {
+//   return players.find((p) => p.uid === uid).score?.[hole_index];
+// }
 
 export function getPlayerScoreForHole(uid, hole_index, players) {
-  return players.find((p) => p.uid === uid).score?.[hole_index];
-}
+  const player = players.find((p) => p.uid === uid);
+  const raw = player.score[hole_index];
+  const hdcpToApply = player?.hdcpHoles[hole_index];
+  const net = hdcpToApply !== 0 ? raw - hdcpToApply : raw;
 
-export function assignPlayerHandicap(uid, players, card) {
+  return { raw, hdcpToApply, net };
 }
+/*
 
+
+
+
+*/
+export function assignPlayerHandicap(player, card, blankCard) {
+  let { handicap } = { ...player };
+
+  const isPositiveHandicap = handicap > 0;
+
+  let handicapAbs = Math.abs(handicap);
+  const hdcpHoles = blankCard;
+
+  let hdcpTemp = [...card.hdcp];
+  let handicapTemp = handicapAbs;
+
+  while (handicapTemp > 0) {
+    const minVal = Math.min(...hdcpTemp);
+    const minIndexTemp = hdcpTemp.indexOf(minVal);
+    const minIndexOrig = card.hdcp.indexOf(minVal);
+
+    if (isPositiveHandicap) hdcpHoles[minIndexOrig]++;
+    else hdcpHoles[minIndexOrig]--;
+
+    handicapTemp--;
+
+    hdcpTemp.splice(minIndexTemp, 1);
+
+    if (hdcpTemp.length === 0) hdcpTemp = [...card.hdcp];
+  }
+  console.log(hdcpHoles);
+  return hdcpHoles;
+}
+/*
+
+
+
+
+*/
 export function getPlayerScorecard(uid, players) {
-  return players.find((p) => p.uid === uid).score;
+  const netScores = [];
+  const rawScores = [];
+  const player = players.find((p) => p.uid === uid);
+  player.score.forEach((h, i) => {
+    const netScore = getPlayerScoreForHole(uid, i, players).net;
+    const rawScore = getPlayerScoreForHole(uid, i, players).raw;
+    netScores.push(netScore);
+    rawScores.push(rawScore);
+  });
+
+  return {netScores, rawScores};
 }
-/* HELPERS end *************************************************** */
+/*
 
 
 
 
-
-/* SKINS start *************************************************** */
+*/
 export function calculateSkinsIndividual(state, participants) {
   const skins = [];
 
   state.card.holes.forEach((h, hole_index) => {
     let holeScores = {};
     participants?.forEach((p, player_index) => {
-      const playerScore = getPlayerScoreForHole(
+      const { raw, hdcpToApply, net } = getPlayerScoreForHole(
         p.value,
         hole_index,
         state.players,
       );
-      holeScores[player_index] = playerScore;
+      console.log(net);
+      holeScores[player_index] = net;
     });
 
     let lowScore = Math.min(...Object.values(holeScores));
@@ -63,7 +122,12 @@ export function calculateSkinsIndividual(state, participants) {
 
   return skins;
 }
+/*
 
+
+
+
+*/
 export function calculateSkinsTeams(state, teams) {
   const skins = [];
   const teamNames = Object.keys(teams);
@@ -82,13 +146,13 @@ export function calculateSkinsTeams(state, teams) {
       let players = teams[team_name];
 
       players.forEach((p, i) => {
-        const playerScore = getPlayerScoreForHole(
+        const { raw, hdcpToApply, net } = getPlayerScoreForHole(
           p.value,
           hole_index,
           state.players,
         );
-        // console.log('Player', i, playerScore)
-        teamScoresForHole.push(playerScore);
+        // console.log('Player', i, net)
+        teamScoresForHole.push(net);
       });
 
       // get low player score for team
@@ -121,15 +185,13 @@ export function calculateSkinsTeams(state, teams) {
 
   return skins;
 }
-/* SKINS end *************************************************** */
+/*
 
 
 
 
-
-/* NASSAU start *************************************************** */
+*/
 export function calculateNassauIndividual(state, match) {
-
   const { matchFormat, participants } = match;
   const results = [];
   const scores = [];
@@ -141,7 +203,7 @@ export function calculateNassauIndividual(state, match) {
     const playerScorecard = getPlayerScorecard(
       p.value,
       state.players,
-    );
+    ).netScores;
     scores.push(playerScorecard);
   });
 
@@ -193,7 +255,12 @@ export function calculateNassauIndividual(state, match) {
 
   return results;
 }
+/*
 
+
+
+
+*/
 export function calculateNassauTeams(state, match) {
   // match between Team 1 and Team 2
   // check stroke or match play
@@ -220,7 +287,7 @@ export function calculateNassauTeams(state, match) {
           p.value,
           hi,
           state.players,
-        );
+        ).net;
         if (lowHoleScore === 0) lowHoleScore = playerScore;
         else if (playerScore < lowHoleScore)
           lowHoleScore = playerScore;
@@ -281,14 +348,17 @@ export function calculateNassauTeams(state, match) {
 
   return results;
 }
-/* NASSAU end *************************************************** */
+/*
 
 
 
 
-
-/* BESTBALL start *************************************************** */
+*/
 export function calculateBestBallIndividual(state, participants) {}
+/*
 
+
+
+
+*/
 export function calculateBestBallTeams(state, teams) {}
-/* BESTBALL end *************************************************** */

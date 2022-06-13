@@ -46,11 +46,13 @@ const NewRoundModal = (props) => {
     setPlayers([]);
   }
 
-  function initializePlayerScorecards(players) {
+  function initializePlayerScorecards(players, card) {
     let p = [...players];
 
     players.forEach((player, playerIndex) => {
-      player.score = FUNCTIONS.generateBlankScorecard(nines);
+      const blankCard = FUNCTIONS.generateBlankScorecard(nines);
+      player.score = [...blankCard];
+      player.hdcpHoles = FUNCTIONS.assignPlayerHandicap(player, card, [...blankCard])
     });
 
     return p;
@@ -61,13 +63,13 @@ const NewRoundModal = (props) => {
   function handleStartRound() {
     const ID = uuidv4();
     const card = combineNines();
-    const p = initializePlayerScorecards(players);
+    const p = initializePlayerScorecards(players, card);
     const { name } = state?.selected_course;
     dispatch({
       type: 'start_new_round',
       round_id: ID,
       created_at: new Date(),
-      owner: auth.currentUser.uid,
+      owner: auth?.currentUser?.uid,
       players: p,
       card,
       course: name,
@@ -88,7 +90,7 @@ const NewRoundModal = (props) => {
   }
 
   function updatePlayer(uid, key, value) {
-    console.log(`updating player ${uid} ${key} ${value}`);
+    // console.log(`updating player ${uid} ${key} ${value}`);
     let index = players.findIndex((p) => p.uid === uid);
     let players_ = [...players];
     players_[index][key] = value;
@@ -214,32 +216,49 @@ const NewRoundModal = (props) => {
                   size={35}
                   className="text-success"
                   onClick={() =>
-                    setPlayers([...players, { name: '', hdcp: 0, uid: uuidv4(), score: [] }])
+                    setPlayers([
+                      ...players,
+                      {
+                        name: '',
+                        handicap: 0,
+                        uid: uuidv4(),
+                        score: [],
+                        hdcpHoles: [],
+                      },
+                    ])
                   }
                 />
               </div>
             </div>
             {players?.map((p, i) => {
               return (
-                <div key={i} className="d-flex flex-fill w-100 mt-2">
-                  <input
-                    className="w-50 mx-1 border-0 rounded p-1 px-4 small flex-fill"
-                    placeholder="Player Name"
-                    type="text"
-                    value={p.name}
-                    onChange={(e) => {
-                      updatePlayer(p.uid, 'name', e.target.value);
-                    }}
-                  />
-                  <input
-                    className="mx-1 text-dark border-0 rounded p-1 px-4 w-25 small text-center"
-                    placeholder="Player Handicap"
-                    type="number"
-                    value={p.hdcp}
-                    onChange={(e) => {
-                      updatePlayer(p.uid, 'hdcp', e.target.value);
-                    }}
-                  />
+                <div key={i} className="d-flex flex-fill mt-2 align-items-end">
+                  <div className="mx-1 d-flex flex-column flex-fill">
+                  <label style={{fontSize: 13}}>name</label>
+                    <input
+                      className="d-flex border-0 rounded p-1 px-4 small flex-fill"
+                      type="text"
+                      value={p.name}
+                      onChange={(e) => {
+                        updatePlayer(p.uid, 'name', e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className="mx-1 d-flex flex-column w-25">
+                    <label style={{fontSize: 13}}>handicap</label>
+                    <input
+                      className=" text-dark border-0 rounded p-1 px-4 d-flex small text-center"
+                      type="number"
+                      value={p.handicap}
+                      onChange={(e) => {
+                        updatePlayer(
+                          p.uid,
+                          'handicap',
+                          parseInt(e.target.value),
+                        );
+                      }}
+                    />
+                  </div> 
                   <div>
                     <HiUserRemove
                       size={35}
