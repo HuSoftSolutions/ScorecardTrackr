@@ -7,6 +7,7 @@ $light: #dcdcdc;
 $warning: #FFA900;
 $booking: #31aa4c;
 $primary-dark: #0c49aa;
+$primary-light: #d2e3ff;
 $light-tr: #dcdcdcbd;
 $light-dark: #b8b8b8;
 // $no-show: $light;
@@ -16,7 +17,8 @@ $theme-colors: (
   "danger": $danger,
   "success": $success,
   "primary": $primary,
-  "primary-dark": $primary,
+  "primary-dark": $primary-dark,
+  "primary-light": $primary-light,
   "light-dark": $light-dark,
   "secondary": $secondary,
   "dark": $dark,

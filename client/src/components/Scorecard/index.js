@@ -122,8 +122,8 @@ const ScorecardTable = (props) => {
 
           let bg =
             (playerIndex + 2) % 2 === 0
-              ? 'bg-white'
-              : 'bg-light-dark';
+              ? ' bg-white '
+              : ' bg-light-dark ';
 
           const { hdcpHoles } = player;
 
@@ -137,6 +137,9 @@ const ScorecardTable = (props) => {
                 let resetNine = i % 9 === 0;
 
                 const hdcpToApply = hdcpHoles[i];
+                console.log(hdcpHoles, i)
+                
+
 
                 const netScore =
                   rawScore === 0 ? rawScore : rawScore - hdcpToApply;
@@ -148,7 +151,7 @@ const ScorecardTable = (props) => {
 
                 return (
                   <React.Fragment key={i + 'PAR'}>
-                    <th key={i} className={`${bg}`}>
+                    <th key={i} className={hdcpToApply === 0 ? `${bg}` : `bg-primary-light`}>
                       <span className={hdcpToApply !== 0 ? "text-primary me-1" : ""}>{rawScore !== 0 ? netScore : ''}</span>
                       <span>{hdcpToApply !== 0 && rawScore !== 0 ? <>({rawScore})</> : ''}</span>
                     </th>
