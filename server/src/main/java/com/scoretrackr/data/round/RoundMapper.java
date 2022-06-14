@@ -1,6 +1,5 @@
 package com.scoretrackr.data.round;
 
-import com.scoretrackr.data.round_type.RoundTypeMapper;
 import com.scoretrackr.models.Round;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -14,8 +13,6 @@ public class RoundMapper implements RowMapper<Round> {
         Round round = new Round();
 
         round.setRoundId(rs.getString("round_id"));
-        RoundTypeMapper roundTypeMapper = new RoundTypeMapper();
-        round.setRoundType(roundTypeMapper.mapRow(rs, rowNum));
 
         return round;
     }
