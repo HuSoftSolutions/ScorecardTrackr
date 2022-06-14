@@ -22,8 +22,8 @@ export function getPlayerScoreForHole(uid, hole_index, players) {
   const player = players.find((p) => p.uid === uid);
   const raw = player.score[hole_index];
   const hdcpToApply = player?.hdcpHoles[hole_index];
-  const net = hdcpToApply !== 0 ? raw - hdcpToApply : raw;
-
+  const net = hdcpToApply !== 0 && raw !== 0 ? (raw - hdcpToApply) : raw;
+  console.log(raw, hdcpToApply, net)
   return { raw, hdcpToApply, net };
 }
 /*
