@@ -6,11 +6,16 @@ import com.scoretrackr.domain.result.Result;
 import com.scoretrackr.domain.result.ResultType;
 import com.scoretrackr.models.Course;
 import com.scoretrackr.models.Score;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ScoreService {
     private final ScoreRepository repository;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     public ScoreService(ScoreRepository repository) { this.repository = repository; }
 
@@ -30,6 +35,9 @@ public class ScoreService {
 
         score = repository.add(score);
         result.setPayload(score);
+
+        simpMessagingTemplate.convertAndSend("/topic/scores/", score);
+
         return result;
     }
 
