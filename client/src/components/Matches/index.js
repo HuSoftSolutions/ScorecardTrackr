@@ -3,6 +3,7 @@ import { useStore } from '../../store';
 import { Button, Modal } from 'react-bootstrap';
 import Select from 'react-select';
 import { BsFillTrashFill } from 'react-icons/bs';
+import { VscTriangleDown, VscTriangleUp } from 'react-icons/vsc';
 import ConfirmDeleteModal from '../../modals/ConfirmDeleteModal';
 import * as functions from '../../helpers/functions';
 import useWindowSize from '../../hooks/useWindowSize';
@@ -34,24 +35,24 @@ const MATCH_DATA = [
   },
   {
     label: 'Nassau Individual Match Play',
-    value: ['nassau', 'individual', 'stroke'],
+    value: ['nassau', 'individual', 'match'],
   },
-  // {
-  //   label: 'Best Ball Team Stroke Play',
-  //   value: ['bestball', 'team', 'stroke'],
-  // },
-  // {
-  //   label: 'Best Ball Team Match Play',
-  //   value: ['bestball', 'team', 'match'],
-  // },
-  // {
-  //   label: 'Best Ball Individual Stroke Play',
-  //   value: ['bestball', 'individual', 'stroke'],
-  // },
-  // {
-  //   label: 'Best Ball Individual Match Play',
-  //   value: ['bestball', 'individual', 'match'],
-  // },
+  {
+    label: 'Best Ball Team Stroke Play',
+    value: ['bestball', 'team', 'stroke'],
+  },
+  {
+    label: 'Best Ball Team Match Play',
+    value: ['bestball', 'team', 'match'],
+  },
+  {
+    label: 'Best Ball Individual Stroke Play',
+    value: ['bestball', 'individual', 'stroke'],
+  },
+  {
+    label: 'Best Ball Individual Match Play',
+    value: ['bestball', 'individual', 'match'],
+  },
 ];
 
 const INIT_TEAMS = { 'Team 1': [], 'Team 2': [] };
@@ -130,7 +131,7 @@ const Matches = () => {
     return (
       <div>
         {Object.keys(teams).map((t, i) => (
-          <div key={i}>
+          <div key={i} style={{ fontSize: '13px' }}>
             <TeamSelection name={t} />
             {i < Object.keys(teams).length - 1 ? (
               <span>vs.</span>
@@ -232,7 +233,7 @@ const Matches = () => {
       <div className="d-flex flex-row">
         {Object.keys(teams).map((t, i) => {
           return (
-            <div key={i} className="d-flex align-items-center">
+            <div key={i} className="d-flex align-items-center" style={{ fontSize: '13px' }}>
               <Team players={teams[t]} />
               {i + 1 < Object.keys(teams).length ? (
                 <span className="text-light-dark">vs.</span>
@@ -293,23 +294,47 @@ const Matches = () => {
           {res.map((match, i) => {
             const { f, b, t } = match.status;
 
-            let fSign = f > 0 ? '+' : f < 0 ? '-' : 'AS';
-            let bSign = b > 0 ? '+' : b < 0 ? '-' : 'AS';
-            let tSign = t > 0 ? '+' : t < 0 ? '-' : 'AS';
+            let fSign =
+              f > 0 ? (
+                <VscTriangleDown className="text-danger" size={20} />
+              ) : f < 0 ? (
+                <VscTriangleUp className="text-success" size={20} />
+              ) : (
+                <span className="mb-0 fw-bold">AS</span>
+              );
+            let bSign =
+              b > 0 ? (
+                <VscTriangleDown className="text-danger" size={20} />
+              ) : b < 0 ? (
+                <VscTriangleUp className="text-success" size={20} />
+              ) : (
+                <span className="mb-0 fw-bold">AS</span>
+              );
+            let tSign =
+              t > 0 ? (
+                <VscTriangleDown className="text-danger" size={20} />
+              ) : t < 0 ? (
+                <VscTriangleUp className="text-success" size={20} />
+              ) : (
+                <span className="mb-0 fw-bold">AS</span>
+              );
 
             return (
               <div key={i} className="d-flex flex-column p-2 ">
                 <span className="fw-bold">{match.name}</span>
-                <span>
-                  Front: {fSign}
-                  {f === 0 ? '' : Math.abs(f)}{' '}
+                <span className="d-flex align-items-center">
+                  Front:
+                  <span className="mx-2">{fSign}</span>
+                  {f === 0 ? '' : Math.abs(f)}
                 </span>
-                <span>
-                  Back: {bSign}
+                <span className="d-flex align-items-center">
+                  Back: 
+                  <span className="mx-2">{bSign}</span>
                   {b === 0 ? '' : Math.abs(b)}{' '}
                 </span>
-                <span>
-                  Total: {tSign}
+                <span className="d-flex align-items-center">
+                  Total: 
+                  <span className="mx-2">{tSign}</span>
                   {t === 0 ? '' : Math.abs(t)}{' '}
                 </span>
               </div>
@@ -321,24 +346,35 @@ const Matches = () => {
 
     const BestBallMatch = () => {
       let res = [];
-      if (matchFormat.value === 'individual') {
-        res = functions.calculateBestBallIndividual(
-          state,
-          participants,
-        );
-      } else if (matchFormat.value === 'team') {
-        res = functions.calculateBestBallTeams(state, teams);
+      if (matchFormat.value.includes('individual')) {
+        res = functions.calculateBestBallIndividual(state, props.match);
+      } else if (matchFormat.value.includes('team')) {
+        res = functions.calculateBestBallTeams(state, props.match);
       }
 
       return (
-        <div>
+        <div className="font-monospace" style={{ fontSize: '13px' }}>
           {res.map((match, i) => {
+            const { t } = match.status;
+
+      
+            let tSign =
+              t > 0 ? (
+                <VscTriangleDown className="text-danger" size={20} />
+              ) : t < 0 ? (
+                <VscTriangleUp className="text-success" size={20} />
+              ) : (
+                <span className="mb-0 fw-bold">AS</span>
+              );
+
             return (
-              <div>
-                <span>{match.name}</span>
-                <span>Front {match.status.f} </span>
-                <span>Back {match.status.b} </span>
-                <span>Total {match.status.t} </span>
+              <div key={i} className="d-flex flex-column p-2 ">
+                <span className="fw-bold">{match.name}</span>
+                <span className="d-flex align-items-center">
+                  Total: 
+                  <span className="mx-2">{tSign}</span>
+                  {t === 0 ? '' : Math.abs(t)}{' '}
+                </span>
               </div>
             );
           })}

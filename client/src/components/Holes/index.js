@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiMinus, FiPlus } from 'react-icons/fi';
+import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { useStore } from '../../store';
 import * as functions from './functions';
 import './index.scss';
@@ -18,7 +19,7 @@ const Holes = () => {
     <div>
       <div className="d-flex">
         <div>
-          <FiMinus
+          <BsArrowLeft
             className="p-1 bg-dark text-light rounded"
             size="50"
             onClick={() => {
@@ -36,7 +37,7 @@ const Holes = () => {
           </h1>
         </div>
         <div>
-          <FiPlus
+          <BsArrowRight
             className="p-1 bg-dark text-light rounded"
             size="50"
             onClick={() => {

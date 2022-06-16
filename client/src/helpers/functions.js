@@ -105,7 +105,7 @@ export function calculateSkinsIndividual(state, participants) {
       (s) => s === lowScore,
     );
 
-    if (lowScores.length === 1 && !lowScores.includes(0)) {
+    if (lowScores.length === 1 ) {
       const playerIndex = Object.values(holeScores).findIndex(
         (s) => s === lowScore,
       );
@@ -169,7 +169,7 @@ export function calculateSkinsTeams(state, teams) {
       (s) => s === lowScore,
     );
 
-    if (lowScores.length === 1 && !lowScores.includes(0)) {
+    if (lowScores.length === 1 ) {
       const team_index = Object.values(holeScores).findIndex(
         (s) => s === lowScore,
       );
@@ -227,7 +227,6 @@ export function calculateNassauIndividual(state, match) {
         const score_a = scores_a[ii];
         const score_b = scores_b[ii];
 
-        if (score_a !== 0 && score_b !== 0) {
           const nineIndex = ii < 9 ? 'f' : 'b';
           const difference_stroke = score_a - score_b;
 
@@ -244,7 +243,6 @@ export function calculateNassauIndividual(state, match) {
             matchStatus[nineIndex] += difference_match;
             matchStatus.t += difference_match;
           }
-        }
       }
       results.push({
         name: player_a + ' vs ' + player_b,
@@ -320,7 +318,6 @@ export function calculateNassauTeams(state, match) {
         const score_a = scores_a[ii];
         const score_b = scores_b[ii];
 
-        if (score_a !== 0 && score_b !== 0) {
           const nineIndex = ii < 9 ? 'f' : 'b';
           const difference_stroke = score_a - score_b;
 
@@ -337,7 +334,6 @@ export function calculateNassauTeams(state, match) {
             matchStatus[nineIndex] += difference_match;
             matchStatus.t += difference_match;
           }
-        }
       }
       results.push({
         name: player_a + ' vs ' + player_b,
@@ -354,11 +350,145 @@ export function calculateNassauTeams(state, match) {
 
 
 */
-export function calculateBestBallIndividual(state, participants) {}
+export function calculateBestBallIndividual(state, match) {
+  const { matchFormat, participants } = match;
+  const results = [];
+  const scores = [];
+  const scoring = matchFormat.value.includes('stroke')
+    ? 'stroke'
+    : 'match';
+
+  participants.forEach((p) => {
+    const playerScorecard = getPlayerScorecard(
+      p.value,
+      state.players,
+    ).netScores;
+    scores.push(playerScorecard);
+  });
+
+  for (let i = 0; i < scores.length - 1; i++) {
+    for (let j = i + 1; j < scores.length; j++) {
+      const scores_a = scores[i];
+      const scores_b = scores[j];
+
+      const player_a = participants[i]?.label || '';
+      const player_b = participants[j]?.label || '';
+
+      const holes = scores_a?.length || 0;
+      const matchStatus = {
+        t: 0,
+        scoring,
+      };
+
+      for (let ii = 0; ii < holes; ii++) {
+        const score_a = scores_a[ii];
+        const score_b = scores_b[ii];
+
+          const difference_stroke = score_a - score_b;
+
+          if (scoring === 'stroke') {
+            matchStatus.t += difference_stroke;
+          } else {
+            const difference_match =
+              difference_stroke > 0
+                ? 1
+                : difference_stroke < 0
+                ? -1
+                : 0;
+            matchStatus.t += difference_match;
+          }
+      }
+      results.push({
+        name: player_a + ' vs ' + player_b,
+        status: matchStatus,
+      });
+    }
+  }
+
+  return results;
+}
 /*
 
 
 
 
 */
-export function calculateBestBallTeams(state, teams) {}
+export function calculateBestBallTeams(state, match) {
+
+  const { matchFormat, teams } = match;
+  const results = [];
+  const scores = []; // each team's scores
+  const teamNames = Object.keys(teams);
+  const scoring = matchFormat.value.includes('stroke')
+    ? 'stroke'
+    : 'match';
+
+  // iterate over teams
+  teamNames.forEach((team_name, team_index) => {
+    const teamScore = [];
+
+    // get players on team
+    let players = teams[team_name];
+
+    state.card.holes.forEach((h, hi) => {
+      let lowHoleScore = 0;
+      players.forEach((p, pi) => {
+        const playerScore = getPlayerScoreForHole(
+          p.value,
+          hi,
+          state.players,
+        ).net;
+        if (lowHoleScore === 0) lowHoleScore = playerScore;
+        else if (playerScore < lowHoleScore)
+          lowHoleScore = playerScore;
+      });
+      teamScore.push(lowHoleScore);
+    });
+
+    scores.push(teamScore);
+  });
+
+  console.log(scores);
+
+  for (let i = 0; i < scores.length - 1; i++) {
+    for (let j = i + 1; j < scores.length; j++) {
+      const scores_a = scores[i];
+      const scores_b = scores[j];
+
+      const player_a = Object.keys(teams)[i] || '';
+      const player_b = Object.keys(teams)[j] || '';
+
+      const holes = scores_a?.length || 0;
+      const matchStatus = {
+        t: 0,
+        scoring,
+      };
+
+      for (let ii = 0; ii < holes; ii++) {
+        const score_a = scores_a[ii];
+        const score_b = scores_b[ii];
+
+          const difference_stroke = score_a - score_b;
+
+          if (scoring === 'stroke') {
+            matchStatus.t += difference_stroke;
+          } else {
+            const difference_match =
+              difference_stroke > 0
+                ? 1
+                : difference_stroke < 0
+                ? -1
+                : 0;
+            matchStatus.t += difference_match;
+          }
+      }
+      results.push({
+        name: player_a + ' vs ' + player_b,
+        status: matchStatus,
+      });
+    }
+  }
+
+  return results;
+
+}

@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Navigate,
+  Routes,
+} from 'react-router-dom';
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
 import SignUpPage from '../SignUp';
@@ -19,7 +24,6 @@ const App = () => (
     <Router>
       <Navigation />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
         <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />
         <Route path={ROUTES.SIGN_IN} element={<SignInPage />} />
         <Route path={ROUTES.HISTORY} element={<HistroyPage />} />
@@ -28,7 +32,7 @@ const App = () => (
         <Route path={ROUTES.ADMIN} element={<AdminPage />} />
         <Route path={ROUTES.ACTIVE_ROUND} element={<ActiveRound />} />
         <Route path={ROUTES.RESET} element={<Reset />} />
-        <Route path="*" element={<ErrorPage />} />
+        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />}/> 
       </Routes>
     </Router>
   </div>
