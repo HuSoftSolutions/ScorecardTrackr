@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
-@RequestMapping("/scoretrackr/matchType")
+@RequestMapping("/scoretrackr/type")
 public class MatchTypeController {
 
     private final MatchTypeService service;

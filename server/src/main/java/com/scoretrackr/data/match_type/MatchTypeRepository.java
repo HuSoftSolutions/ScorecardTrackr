@@ -24,7 +24,7 @@ public class MatchTypeRepository {
     }
 
     public MatchType findByMatchTypeId(String matchTypeId) {
-        final String sql = "select * from match_type where match_type_id = " + matchTypeId + ";";
+        final String sql = "select * from match_type where match_type_id = '" + matchTypeId + "';";
         return jdbcTemplate.queryForObject(sql, new MatchTypeMapper());
     }
 

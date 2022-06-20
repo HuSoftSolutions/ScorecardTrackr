@@ -1,5 +1,5 @@
 @host = http://localhost:8080
-@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOiJkNWUyZDY0YS1kZmI3LTExZWMtOWQ2NC0wMjQyYWMxMjAwMDIiLCJhdXRob3JpdGllcyI6IkFETUlOIiwiZXhwIjoxNjU1NjU4MjI3fQ.aE15bGd-8lZ49PFUAxLRAXKfJ3RmrDN_Q-OlL_Ma24Q
+@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOiJkNWUyZDY0YS1kZmI3LTExZWMtOWQ2NC0wMjQyYWMxMjAwMDIiLCJhdXRob3JpdGllcyI6IkFETUlOIiwiZXhwIjoxNjU1NjkxNTY5fQ.jU77c9mH8_YXyy3n34ANBG3UFHIAyw-aFQw9JBz915E
 
 ### --- USER HTTP REQUESTS --- ###
 
@@ -236,8 +236,115 @@ Authorization: Bearer {{jwt}}
 
 
 
+
 ### --- MATCH FORMAT HTTP REQUESTS --- ###
-GET {{host}}/scoretrackr/matchFormat HTTP/1.1
+
+### GET ALL MATCH FORMATS
+GET {{host}}/scoretrackr/mFormat HTTP/1.1
+
+### GET BY MATCH FORMAT ID
+GET {{host}}/scoretrackr/mFormat/9119dabe-e781-11ec-8fea-0242ac120002 HTTP/1.1
+
+### ADD MATCH FORMAT
+POST {{host}}/scoretrackr/mFormat HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "matchFormatId": "3996904c-f038-11ec-8ea0-0242ac120002",
+  "name": "TEST MATCH FORMAT"
+}
+
+
+
+
+
+
+### --- MATCH TYPE HTTP REQUESTS --- ###
+
+### GET ALL MATCH TYPES
+GET {{host}}/scoretrackr/type HTTP/1.1
+
+### GET BY MATCH TYPE ID
+GET {{host}}/scoretrackr/type/99e5669a-e781-11ec-8fea-0242ac120002 HTTP/1.1
+
+### ADD MATCH TYPE
+POST {{host}}/scoretrackr/type HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "matchTypeId": "a67bbd2c-f038-11ec-8ea0-0242ac120002",
+  "name": "TEST MATCH TYPE"
+}
+
+
+
+
+
+
+
+
+### --- SCORING TYPE HTTP REQUESTS --- ###
+
+### GET ALL SCORING TYPES
+GET {{host}}/scoretrackr/sType HTTP/1.1
+
+### GET BY SCORING TYPE ID
+GET {{host}}/scoretrackr/sType/d341e34e-dfb8-11ec-9d64-0242ac120002 HTTP/1.1
+
+### ADD SCORING TYPE
+POST {{host}}/scoretrackr/sType HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "scoringTypeId": "5e04e18c-f03c-11ec-8ea0-0242ac120002",
+  "name": "TEST SCORING TYPE"
+}
+
+
+
+
+
+
+
+### --- TEAM HTTP REQUESTS --- ###
+
+### GET BY TEAM ID 19767cd6-e783-11ec-8fea-0242ac120002
+GET {{host}}/scoretrackr/team/19767cd6-e783-11ec-8fea-0242ac120002 HTTP/1.1
+
+### ADD TEAM
+POST {{host}}/scoretrackr/team HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "teamId": "0230741a-f03d-11ec-8ea0-0242ac120002",
+  "match": {
+    "matchId": "5bf7140e-e782-11ec-8fea-0242ac120002",
+    "round": {
+      "roundId": "d8cdc288-dfb8-11ec-9d64-0242ac120002"
+    },
+    "scoringType": {
+      "scoringTypeId": "d341e34e-dfb8-11ec-9d64-0242ac120002",
+      "name": "STROKE"
+    },
+    "matchFormat": {
+      "matchFormatId": "9119dabe-e781-11ec-8fea-0242ac120002",
+      "name": "INDIVIDUAL"
+    },
+    "matchType": {
+      "matchTypeId": "99e5669a-e781-11ec-8fea-0242ac120002",
+      "name": "BEST BALL"
+    }
+  }
+}
+
 
 
 
