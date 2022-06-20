@@ -1,10 +1,5 @@
 @host = http://localhost:8080
-@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOiJkNWUyZDY0YS1kZmI3LTExZWMtOWQ2NC0wMjQyYWMxMjAwMDIiLCJhdXRob3JpdGllcyI6IkFETUlOIiwiZXhwIjoxNjUzODg1MjE5fQ.cZ5Y077jclHFazs0azmWe9mFQQx8zHcXtLPoqWG8PTk
-
-
-
-
-
+@jwt = eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzY29yZXRyYWNrciIsInN1YiI6InJhbnNlbGxAZ21haWwuY29tIiwiaWQiOiJkNWUyZDY0YS1kZmI3LTExZWMtOWQ2NC0wMjQyYWMxMjAwMDIiLCJhdXRob3JpdGllcyI6IkFETUlOIiwiZXhwIjoxNjU1NjU4MjI3fQ.aE15bGd-8lZ49PFUAxLRAXKfJ3RmrDN_Q-OlL_Ma24Q
 
 ### --- USER HTTP REQUESTS --- ###
 
@@ -196,6 +191,53 @@ Authorization: Bearer {{jwt}}
         }
     }
 }
+
+
+
+
+
+
+### --- MATCH HTTP REQUESTS --- ###
+
+### GET BY MATCH ID 5bf7140e-e782-11ec-8fea-0242ac120002
+GET {{host}}/scoretrackr/match/5bf7140e-e782-11ec-8fea-0242ac120002 HTTP/1.1
+
+### ADD MATCH
+POST {{host}}/scoretrackr/match HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "matchId": "e0bdb29c-efed-11ec-8ea0-0242ac120002",
+  "round": {
+    "roundId": "d8cdc288-dfb8-11ec-9d64-0242ac120002"
+  },
+  "scoringType": {
+    "scoringTypeId": "d5ccbb0c-dfb8-11ec-9d64-0242ac120002",
+    "name": "MATCH"
+  },
+  "matchFormat": {
+    "matchFormatId": "9119dabe-e781-11ec-8fea-0242ac120002",
+    "name": "INDIVIDUAL"
+  },
+  "matchType": {
+    "matchTypeId": "99e5669a-e781-11ec-8fea-0242ac120002",
+    "name": "BEST BALL"
+  }
+}
+
+### DELETE MATCH BY ID
+DELETE {{host}}/scoretrackr/match/e0bdb29c-efed-11ec-8ea0-0242ac120002 HTTP/1.1
+Authorization: Bearer {{jwt}}
+
+
+
+
+
+
+### --- MATCH FORMAT HTTP REQUESTS --- ###
+GET {{host}}/scoretrackr/matchFormat HTTP/1.1
 
 
 

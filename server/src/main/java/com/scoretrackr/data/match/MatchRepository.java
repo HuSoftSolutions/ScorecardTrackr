@@ -17,7 +17,7 @@ public class MatchRepository {
     public MatchRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
     public Match findByMatchId(String matchId) {
-        final String sql = "select * from `match` where match_id = `" + matchId + "`;";
+        final String sql = "select * from `match` where match_id = '" + matchId + "';";
         return jdbcTemplate.queryForObject(sql, new MatchMapper());
     }
 
@@ -44,8 +44,8 @@ public class MatchRepository {
     }
 
     public boolean deleteByMatchId(String matchId) {
-        final String sql = "delete from `match` where match_id = `" + matchId + "`;";
-        int rowsAffected = jdbcTemplate.update(sql, matchId);
+        final String sql = "delete from `match` where match_id = '" + matchId + "';";
+        int rowsAffected = jdbcTemplate.update(sql);
         return rowsAffected > 0;
     }
 
