@@ -25,7 +25,7 @@ public class MatchFormatRepository {
     }
 
     public MatchFormat findByMatchFormatId(String matchFormatId) {
-        final String sql = "select * from match_format where match_format_id = " + matchFormatId + ";";
+        final String sql = "select * from match_format where match_format_id = '" + matchFormatId + "';";
         return jdbcTemplate.queryForObject(sql, new MatchFormatMapper());
     }
 

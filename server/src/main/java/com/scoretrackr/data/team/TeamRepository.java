@@ -19,9 +19,9 @@ public class TeamRepository {
 
     public Team findByTeamId(String teamId) {
         final String sql = "select * "
-                    + "from team t"
-                    + "inner join match m on t.match_id = m.match_id "
-                    + "where t.team_id = `" + teamId + "`;";
+                    + "from team t "
+                    + "inner join `match` m on t.match_id = m.match_id "
+                    + "where t.team_id = '" + teamId + "';";
         return jdbcTemplate.queryForObject(sql, new TeamMapper());
     }
 
