@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
-@RequestMapping("/scoretrackr/matchFormat")
+@RequestMapping("/scoretrackr/mFormat")
 public class MatchFormatController {
 
     private final MatchFormatService service;
@@ -21,9 +21,9 @@ public class MatchFormatController {
     @GetMapping
     public List<MatchFormat> findAll() { return service.findAll(); }
 
-    @GetMapping("/{matchFormatId}")
-    public ResponseEntity<MatchFormat> findByMatchFormatId(@PathVariable String matchFormatId){
-        MatchFormat round = service.findByMatchFormatId(matchFormatId);
+    @GetMapping("/{mFormatId}")
+    public ResponseEntity<MatchFormat> findByMatchFormatId(@PathVariable String mFormatId){
+        MatchFormat round = service.findByMatchFormatId(mFormatId);
         if (round == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

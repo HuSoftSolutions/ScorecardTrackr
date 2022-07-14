@@ -23,7 +23,7 @@ public class ScoringTypeRepository {
     }
 
     public ScoringType findByScoringTypeId(String scoringTypeId) {
-        final String sql = "select * from scoring_type where scoring_type_id = " + scoringTypeId + ";";
+        final String sql = "select * from scoring_type where scoring_type_id = '" + scoringTypeId + "';";
         return jdbcTemplate.queryForObject(sql, new ScoringTypeMapper());
     }
 
