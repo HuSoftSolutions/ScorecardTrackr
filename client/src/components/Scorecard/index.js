@@ -280,7 +280,10 @@ const Scorecard = () => {
         className="bold large p-3 text-white m-0 d-flex justify-content-between align-items-center"
         style={{ backgroundColor: '#262626' }}
       >
-        <h3 className="m-0">{state.course}</h3>
+        <div>
+          <h3 className="m-0">{state.course}</h3>
+          <p className="m-0 text-muted fw-bold">{state.card.holes.length} Hole Round</p>
+        </div>
         <div className="d-flex flex-column">
           {teeboxIDs.map((teebox, i) => {
             const teeboxObj = state?.card?.allTees?.find(

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../../store';
-import { useParams } from 'react-router-dom';
-import { Tabs, Tab } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import useWindowSize from '../../hooks/useWindowSize';
@@ -17,7 +17,7 @@ const ActiveRound = () => {
   const [key, setKey] = useState('home');
   const { width, height } = useWindowSize();
 
-  // let navigate = useNavigate();
+  let navigate = useNavigate();
   // let location = useLocation();
   let params = useParams();
 
@@ -39,30 +39,23 @@ const ActiveRound = () => {
   }, []);
 
   return (
-    <div className="round-page" style={{height: (height || 50) - 50}}>
-      {/* <Tabs
-        activeKey={key}
-        onSelect={(k) => {
-          setKey(k);
-        }}
-      >
-        <Tab eventKey="home" title="Scorecard">
-          <Scorecard />
-        </Tab>
-        <Tab
-          eventKey="profile"
-          title="Hole"
-          className="hole-container p-3"
-        >
-          <Holes />
-        </Tab>
-        <Tab eventKey="matches" title="Matches" className="">
-          <Matches />
-        </Tab>
-      </Tabs> */}
+    <div
+      className="round-page"
+      style={{ height: (height || 50) - 50 }}
+    >
       <Holes />
       <Scorecard />
-      <Matches matches={state.matches}/>
+      <Button
+        className="mb-3"
+        variant="danger"
+        onClick={() => {
+          dispatch({ type: `reset_active_round` });
+          navigate("/home")
+        }}
+      >
+        End Current Round
+      </Button>
+      <Matches matches={state.matches} />
     </div>
   );
 };

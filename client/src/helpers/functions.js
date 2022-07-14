@@ -108,7 +108,7 @@ export function assignPlayerHandicap(player, card, blankCard) {
       hdcpTemp = [...card.teeboxes[teebox.value].hdcp];
   }
   console.log(hdcpHoles);
-  return hdcpHoles;
+  return {hdcpHoles, hcap};
 }
 /*
 

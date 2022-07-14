@@ -13,6 +13,7 @@ import {
   getDocs,
   query,
   where,
+  orderBy,
 } from 'firebase/firestore';
 import { db } from '../../firebase.js';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -46,6 +47,7 @@ const RoundHistory = () => {
       const ref = query(
         collection(db, 'rounds'),
         where('owner', '==', uid),
+        orderBy('created_at')
       );
       const snapshot = await getDocs(ref);
       const r = [];
@@ -71,7 +73,7 @@ const RoundHistory = () => {
         <h4 className="m-0">Round History</h4>
         <p className="m-0">Click round to load</p>
       </div>
-      <div className="pe-2 d-flex flex-column" style={{overflowY: 'scroll', height: height - 250 }}>
+      <div className=" d-flex flex-column rounds-list" style={{overflowY: 'scroll', height: height - 250 }}>
         {rounds.map((round, i) => {
           return (
             <div

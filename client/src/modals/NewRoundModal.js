@@ -99,11 +99,13 @@ const NewRoundModal = (props) => {
     players.forEach((player, playerIndex) => {
       const blankCard = FUNCTIONS.generateBlankScorecard(nines);
       player.score = [...blankCard];
-      player.hdcpHoles = FUNCTIONS.assignPlayerHandicap(
+      const handicap_data = FUNCTIONS.assignPlayerHandicap(
         player,
         card,
         [...blankCard],
       );
+      player.hdcpHoles = handicap_data.hdcpHoles;
+      player.handicap = handicap_data.hcap;
     });
 
     return p;

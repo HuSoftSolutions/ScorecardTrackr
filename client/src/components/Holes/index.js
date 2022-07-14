@@ -58,15 +58,16 @@ const Holes = () => {
           return (
             <div
               key={i}
-              className="d-flex bg-light p-2 my-1 align-items-center rounded"
+              className="d-flex bg-light-dark p-2 my-1 align-items-center rounded"
             >
               <div className="w-50 d-flex align-items-center">
-                <p className="mb-0 mr-4">{p.name}</p>
-                <BsCircleFill
-                  size="10"
+              <BsCircleFill
+                  size="15"
                   className={`text-${p.teebox.value} mx-2`}
                 />
-                <p className="mb-0 text-light-dark" style={{"fontSize":"small"}}>({p.handicap} HDCP)</p>
+                <p className="mb-0 me-2">{p.name}</p>
+
+                <p className="mb-0 text-light fw-bold" style={{"fontSize":"small"}}>{p.handicap} HDCP</p>
               </div>
               <div>
                 <FiMinus

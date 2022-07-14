@@ -478,12 +478,12 @@ const Matches = (props) => {
       {/* <div className="d-flex justify-content-end align-items-center text-dark"> */}
       {/* <h3 className="m-0">Current Matches</h3> */}
       <Button
-        className="d-flex w-100"
+        className="d-flex w-100 justify-content-center"
         onClick={() => {
           setShowNewMatchModal(true);
         }}
       >
-        New Match
+        Start New Match
       </Button>
       {/* </div> */}
       {/* <hr /> */}
