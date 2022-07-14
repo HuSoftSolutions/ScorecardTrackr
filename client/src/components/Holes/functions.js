@@ -5,7 +5,7 @@ export const returnScore = (id, state) => {
   // console.log(currentPlayer);
   let score = currentPlayer?.score?.[state.current_hole_index] || 0;
 
-  return <h1 className="mb-0">{score}</h1>;
+  return score;
 };
 
 export function decreaseScore(id, state) {

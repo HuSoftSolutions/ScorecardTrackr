@@ -9,6 +9,7 @@ import * as functions from '../../helpers/functions';
 import useWindowSize from '../../hooks/useWindowSize';
 import './index.scss';
 import { RESET } from '../../constants/routes';
+import { v4 as uuidv4 } from 'uuid';
 
 /* CONSTANTS */
 
@@ -45,23 +46,15 @@ const MATCH_DATA = [
     label: 'Best Ball Team Match Play',
     value: ['bestball', 'team', 'match'],
   },
-  {
-    label: 'Best Ball Individual Stroke Play',
-    value: ['bestball', 'individual', 'stroke'],
-  },
-  {
-    label: 'Best Ball Individual Match Play',
-    value: ['bestball', 'individual', 'match'],
-  },
 ];
 
 const INIT_TEAMS = { 'Team 1': [], 'Team 2': [] };
 
 /* MATCHES COMPONENT */
 
-const Matches = () => {
+const Matches = (props) => {
   const { state, dispatch } = useStore();
-  const { width, height } = useWindowSize();
+  // const { width, height } = useWindowSize();
 
   const [showNewMatchModal, setShowNewMatchModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
@@ -86,7 +79,7 @@ const Matches = () => {
   }
 
   function saveMatch() {
-    const matches = [...state.matches];
+    const matches = [...props.matches];
     const newMatch = getMatchDetails();
 
     const matchFormat = newMatch.matchFormat;
@@ -102,6 +95,8 @@ const Matches = () => {
       matchFormat,
       teams,
       participants,
+      presses: {}, // key: match.name (Cody vs Tom : [4, 6]) press on holes 4 and 6
+      id: uuidv4(),
     };
   }
 
@@ -119,7 +114,7 @@ const Matches = () => {
       setMatchToDelete(index);
     } else {
       setMatchToDelete(null);
-      let m = [...state.matches];
+      let m = [...props.matches];
       m.splice(index, 1);
       dispatch({ type: 'update-matches', matches: m });
     }
@@ -174,11 +169,11 @@ const Matches = () => {
     );
   };
 
-  const Matches = () => {
+  const Matches = (props) => {
     return (
-      <div className="d-flex flex-wrap">
-        {state.matches.map((match, i) => {
-          return <Match index={i} key={i} match={match} />;
+      <div className="d-flex flex-column">
+        {props.matches.map((match, i) => {
+          return <Match index={i} key={i} match={match} {...props} />;
         })}
       </div>
     );
@@ -233,7 +228,11 @@ const Matches = () => {
       <div className="d-flex flex-row">
         {Object.keys(teams).map((t, i) => {
           return (
-            <div key={i} className="d-flex align-items-center" style={{ fontSize: '13px' }}>
+            <div
+              key={i}
+              className="d-flex align-items-center"
+              style={{ fontSize: '13px' }}
+            >
               <Team players={teams[t]} />
               {i + 1 < Object.keys(teams).length ? (
                 <span className="text-light-dark">vs.</span>
@@ -247,6 +246,7 @@ const Matches = () => {
 
   const Match = (props) => {
     const { matchFormat, participants, teams } = props.match;
+    const [canPress, setCanPress] = useState(false);
 
     const SkinsMatch = () => {
       let res = [];
@@ -281,18 +281,30 @@ const Matches = () => {
       );
     };
 
+    // function canPress(){
+    //   let res = false;
+
+    //   const playerScoresForHole = functions.getAllPlayerScoresForHole(state.current_hole_index, state.players)
+
+    //   return res;
+    // }
+
     const NassauMatch = () => {
       let res = [];
+      const { match } = props;
+      console.log(props)
       if (matchFormat.value.includes('individual')) {
-        res = functions.calculateNassauIndividual(state, props.match);
+        res = functions.calculateNassauIndividual(state, match);
       } else if (matchFormat.value.includes('team')) {
-        res = functions.calculateNassauTeams(state, props.match);
+        res = functions.calculateNassauTeams(state, match);
       }
+
+      // const canPress = props.match.presses?.includes(state.current_hole_index)
 
       return (
         <div className="font-monospace" style={{ fontSize: '13px' }}>
-          {res.map((match, i) => {
-            const { f, b, t } = match.status;
+          {res.map((m, i) => {
+            const { f, b, t } = m.status;
 
             let fSign =
               f > 0 ? (
@@ -320,23 +332,64 @@ const Matches = () => {
               );
 
             return (
-              <div key={i} className="d-flex flex-column p-2 ">
-                <span className="fw-bold">{match.name}</span>
-                <span className="d-flex align-items-center">
-                  Front:
-                  <span className="mx-2">{fSign}</span>
-                  {f === 0 ? '' : Math.abs(f)}
-                </span>
-                <span className="d-flex align-items-center">
-                  Back: 
-                  <span className="mx-2">{bSign}</span>
-                  {b === 0 ? '' : Math.abs(b)}{' '}
-                </span>
-                <span className="d-flex align-items-center">
-                  Total: 
-                  <span className="mx-2">{tSign}</span>
-                  {t === 0 ? '' : Math.abs(t)}{' '}
-                </span>
+              <div
+                key={i}
+                className="d-flex justify-content-between p-2 "
+              >
+                <div>
+                  <span className="fw-bold">{m.name}</span>
+                  <span className="d-flex align-items-center">
+                    Front:
+                    <span className="mx-2">{fSign}</span>
+                    {f === 0 ? '' : Math.abs(f)}
+                  </span>
+                  <span className="d-flex align-items-center">
+                    Back:
+                    <span className="mx-2">{bSign}</span>
+                    {b === 0 ? '' : Math.abs(b)}{' '}
+                  </span>
+                  <span className="d-flex align-items-center">
+                    Total:
+                    <span className="mx-2">{tSign}</span>
+                    {t === 0 ? '' : Math.abs(t)}{' '}
+                  </span>
+                </div>
+                <div>
+                  <Button
+                    className="bg-light-dark border-light-dark text-dark"
+                    size="sm"
+                    disabled={false}
+                    onClick={() => {
+                      const presses = {...match?.presses}
+                      const playerPresses = presses[m.name] || {}
+                      console.log('presses', presses, playerPresses)
+                      if (playerPresses[state.current_hole_index]) {
+                        console.log(
+                          `Already pressed hole ${
+                            state.current_hole_index + 1
+                          }`,
+                        );
+                      } else {
+                        console.log(
+                          `pressing ${m.name} hole ${
+                            state.current_hole_index + 1
+                          }`,
+                        );
+                        playerPresses[state.current_hole_index] = true;
+
+                        let matchIndex = props.matches.findIndex(
+                          (m) => m.id === match.id,
+                        );
+                        const matches = [...props.matches];
+                        matches[matchIndex].presses[m.name] = playerPresses;
+
+                        dispatch({ type: 'update-matches', matches:matches });
+                      }
+                    }}
+                  >
+                    Press Hole {state.current_hole_index + 1}
+                  </Button>
+                </div>
               </div>
             );
           })}
@@ -346,9 +399,7 @@ const Matches = () => {
 
     const BestBallMatch = () => {
       let res = [];
-      if (matchFormat.value.includes('individual')) {
-        res = functions.calculateBestBallIndividual(state, props.match);
-      } else if (matchFormat.value.includes('team')) {
+      if (matchFormat.value.includes('team')) {
         res = functions.calculateBestBallTeams(state, props.match);
       }
 
@@ -357,7 +408,6 @@ const Matches = () => {
           {res.map((match, i) => {
             const { t } = match.status;
 
-      
             let tSign =
               t > 0 ? (
                 <VscTriangleDown className="text-danger" size={20} />
@@ -371,7 +421,7 @@ const Matches = () => {
               <div key={i} className="d-flex flex-column p-2 ">
                 <span className="fw-bold">{match.name}</span>
                 <span className="d-flex align-items-center">
-                  Total: 
+                  Total:
                   <span className="mx-2">{tSign}</span>
                   {t === 0 ? '' : Math.abs(t)}{' '}
                 </span>
@@ -396,7 +446,7 @@ const Matches = () => {
     };
 
     return (
-      <div className="bg-light d-flex flex-column p-2 rounded m-1 col-12 col-lg-3">
+      <div className="bg-light d-flex flex-column p-2 rounded my-1">
         <div className="d-flex justify-content-between">
           <div className="m-0">
             <strong className="m-0">{matchFormat.label}</strong>
@@ -422,21 +472,22 @@ const Matches = () => {
 
   return (
     <div
-      className="p-3 d-flex flex-column matches-container"
-      style={{ height: (height || 140) - 140, overflowX: 'auto' }}
+    // className="p-3 d-flex flex-column matches-container"
+    // style={{ height: (height || 140) - 140, overflowX: 'auto' }}
     >
-      <div className="d-flex justify-content-between align-items-center text-dark">
-        <h3 className="m-0">Current Matches</h3>
-        <Button
-          onClick={() => {
-            setShowNewMatchModal(true);
-          }}
-        >
-          New Match
-        </Button>
-      </div>
-      <hr />
-      <Matches />
+      {/* <div className="d-flex justify-content-end align-items-center text-dark"> */}
+      {/* <h3 className="m-0">Current Matches</h3> */}
+      <Button
+        className="d-flex w-100"
+        onClick={() => {
+          setShowNewMatchModal(true);
+        }}
+      >
+        New Match
+      </Button>
+      {/* </div> */}
+      {/* <hr /> */}
+      <Matches {...props}/>
       <Modal show={showNewMatchModal} backdrop="static">
         <Modal.Header>
           <Modal.Title>Create New Match</Modal.Title>

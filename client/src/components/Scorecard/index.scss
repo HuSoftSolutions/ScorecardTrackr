@@ -6,7 +6,7 @@
   // height: 100%;
   // width: 500px;
   overflow-x: auto;
-  font-size: large;
+  font-size: x-small;
   overflow-y: auto;
   // height: 100vh - 30;
   // background-color: $dark;
@@ -36,7 +36,15 @@
   input {
     .player-score:hover {
       cursor: pointer;
-      border: 1px solid $secondary;
+      // border: 1px solid $secondary;
+    }
+  }
+
+  tr.player-row {
+      border-top: 0.25px solid $secondary;
+    th {
+    border-right: 0.5px black solid;
+      
     }
   }
 
@@ -45,7 +53,8 @@
   }
 
   th {
-    border: 0.5px black solid;
+    // border-right: 0.5px black solid;
+    // border-bottom: 0.5px black solid;
   }
 
   .sticky-row {
@@ -59,7 +68,7 @@
     left: 0;
     min-width: 100px;
     max-width: 100px;
-    width: 200px;
+    width: 100px;
     // background-color: $dark;
     color: white;
   }
@@ -103,8 +112,9 @@ table {
     font-size: x-small;
 
     .sticky {
-      min-width: 70px;
-      max-width: 70px;
+      // min-width: 100px;
+      // max-width: 100px;
+      // width: 100px;
     }
 
     th,

@@ -18,7 +18,7 @@ const INITIAL_STATE = {
   current_hole_index: 0,
   players: [], // { name: '', handicap: 0, uid: uuidv4(), score: [], hdcpHoles: [] }
   matches: [], // { matchFormat: [], teams?: [], participants?: []}
-  card: { holes: [], hdcp: [], par: [], yards: [] },
+  card: { holes: [], hdcp: [], par: [], yards: [], teeboxes: {} },
   side_games: [], // TODO: build out
 
   /* General */

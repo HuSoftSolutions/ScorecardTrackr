@@ -22,9 +22,24 @@ export function getPlayerScoreForHole(uid, hole_index, players) {
   const player = players.find((p) => p.uid === uid);
   const raw = player.score[hole_index];
   const hdcpToApply = player?.hdcpHoles[hole_index];
-  const net = hdcpToApply !== 0 && raw !== 0 ? (raw - hdcpToApply) : raw;
-  console.log(raw, hdcpToApply, net)
+  const net =
+    hdcpToApply !== 0 && raw !== 0 ? raw - hdcpToApply : raw;
+  // console.log(raw, hdcpToApply, net)
   return { raw, hdcpToApply, net };
+}
+
+export function getAllPlayerScoresForHole(hole_index, players) {
+  let scores = [];
+  players.forEach((p, i) => {
+    const { raw, hdcpToApply, net } = getPlayerScoreForHole(
+      p.value,
+      hole_index,
+      players,
+    );
+    scores.push(net);
+  });
+
+  return scores;
 }
 /*
 
@@ -32,21 +47,55 @@ export function getPlayerScoreForHole(uid, hole_index, players) {
 
 
 */
-export function assignPlayerHandicap(player, card, blankCard) {
-  let { handicap } = { ...player };
 
+function calculateHandicap(card, player) {
+  const { handicap, teebox } = player;
+  console.log('calculating course handicap', handicap, teebox);
+
+  /* Course Handicap = Handicap Index x (Slope Rating / 113) + (Course Rating – par)
+
+  This number is rounded to the nearest whole number when applying net double bogey or net par adjustments. 
+  Otherwise, the unrounded result is retained and used to calculate a Playing Handicap.
+
+  Playing Handicap = Course Handicap x handicap allowance */
+
+
+  return handicap;
+}
+
+export function assignPlayerHandicap(player, card, blankCard) {
+  const { handicap, teebox } = player;
   const isPositiveHandicap = handicap > 0;
 
-  let handicapAbs = Math.abs(handicap);
-  const hdcpHoles = blankCard;
+  const nines_played = card.holes.length / 9;
+  console.log(nines_played, card.holes.length)
+  let hcap = Math.round(handicap);
+  if(nines_played === 1){
+    hcap = Math.round(handicap / 2);
+    console.log(hcap)
+  }
+  else if(nines_played === 3){
+    hcap = Math.round(handicap * 1.5)
+  }
+  else if(nines_played === 4){
+    hcap = Math.round(handicap * 2)
+  }
 
-  let hdcpTemp = [...card.hdcp];
+  let handicapAbs = Math.abs(hcap);
+
+  let hdcp = calculateHandicap(card, player);
+
+  const hdcpHoles = blankCard;
+  console.log(card);
+  let hdcpTemp = [...card.teeboxes[teebox.value].hdcp];
+  console.log(`hdcpTemp ${hdcpTemp}`);
   let handicapTemp = handicapAbs;
 
   while (handicapTemp > 0) {
     const minVal = Math.min(...hdcpTemp);
     const minIndexTemp = hdcpTemp.indexOf(minVal);
-    const minIndexOrig = card.hdcp.indexOf(minVal);
+    const minIndexOrig =
+      card.teeboxes[teebox.value].hdcp.indexOf(minVal);
 
     if (isPositiveHandicap) hdcpHoles[minIndexOrig]++;
     else hdcpHoles[minIndexOrig]--;
@@ -55,7 +104,8 @@ export function assignPlayerHandicap(player, card, blankCard) {
 
     hdcpTemp.splice(minIndexTemp, 1);
 
-    if (hdcpTemp.length === 0) hdcpTemp = [...card.hdcp];
+    if (hdcpTemp.length === 0)
+      hdcpTemp = [...card.teeboxes[teebox.value].hdcp];
   }
   console.log(hdcpHoles);
   return hdcpHoles;
@@ -77,7 +127,7 @@ export function getPlayerScorecard(uid, players) {
     rawScores.push(rawScore);
   });
 
-  return {netScores, rawScores};
+  return { netScores, rawScores };
 }
 /*
 
@@ -96,7 +146,6 @@ export function calculateSkinsIndividual(state, participants) {
         hole_index,
         state.players,
       );
-      console.log(net);
       holeScores[player_index] = net;
     });
 
@@ -105,7 +154,7 @@ export function calculateSkinsIndividual(state, participants) {
       (s) => s === lowScore,
     );
 
-    if (lowScores.length === 1 ) {
+    if (lowScores.length === 1) {
       const playerIndex = Object.values(holeScores).findIndex(
         (s) => s === lowScore,
       );
@@ -117,8 +166,6 @@ export function calculateSkinsIndividual(state, participants) {
       });
     }
   });
-
-  console.log(skins);
 
   return skins;
 }
@@ -169,7 +216,7 @@ export function calculateSkinsTeams(state, teams) {
       (s) => s === lowScore,
     );
 
-    if (lowScores.length === 1 ) {
+    if (lowScores.length === 1) {
       const team_index = Object.values(holeScores).findIndex(
         (s) => s === lowScore,
       );
@@ -191,6 +238,15 @@ export function calculateSkinsTeams(state, teams) {
 
 
 */
+export function setupNassuaIndividualSubMatches(state, match) {
+  const { matchFormat, participants } = match;
+  const results = [];
+  const scores = [];
+  const scoring = matchFormat.value.includes('stroke')
+    ? 'stroke'
+    : 'match';
+}
+
 export function calculateNassauIndividual(state, match) {
   const { matchFormat, participants } = match;
   const results = [];
@@ -227,22 +283,22 @@ export function calculateNassauIndividual(state, match) {
         const score_a = scores_a[ii];
         const score_b = scores_b[ii];
 
-          const nineIndex = ii < 9 ? 'f' : 'b';
-          const difference_stroke = score_a - score_b;
+        const nineIndex = ii < 9 ? 'f' : 'b';
+        const difference_stroke = score_a - score_b;
 
-          if (scoring === 'stroke') {
-            matchStatus[nineIndex] += difference_stroke;
-            matchStatus.t += difference_stroke;
-          } else {
-            const difference_match =
-              difference_stroke > 0
-                ? 1
-                : difference_stroke < 0
-                ? -1
-                : 0;
-            matchStatus[nineIndex] += difference_match;
-            matchStatus.t += difference_match;
-          }
+        if (scoring === 'stroke') {
+          matchStatus[nineIndex] += difference_stroke;
+          matchStatus.t += difference_stroke;
+        } else {
+          const difference_match =
+            difference_stroke > 0
+              ? 1
+              : difference_stroke < 0
+              ? -1
+              : 0;
+          matchStatus[nineIndex] += difference_match;
+          matchStatus.t += difference_match;
+        }
       }
       results.push({
         name: player_a + ' vs ' + player_b,
@@ -318,22 +374,22 @@ export function calculateNassauTeams(state, match) {
         const score_a = scores_a[ii];
         const score_b = scores_b[ii];
 
-          const nineIndex = ii < 9 ? 'f' : 'b';
-          const difference_stroke = score_a - score_b;
+        const nineIndex = ii < 9 ? 'f' : 'b';
+        const difference_stroke = score_a - score_b;
 
-          if (scoring === 'stroke') {
-            matchStatus[nineIndex] += difference_stroke;
-            matchStatus.t += difference_stroke;
-          } else {
-            const difference_match =
-              difference_stroke > 0
-                ? 1
-                : difference_stroke < 0
-                ? -1
-                : 0;
-            matchStatus[nineIndex] += difference_match;
-            matchStatus.t += difference_match;
-          }
+        if (scoring === 'stroke') {
+          matchStatus[nineIndex] += difference_stroke;
+          matchStatus.t += difference_stroke;
+        } else {
+          const difference_match =
+            difference_stroke > 0
+              ? 1
+              : difference_stroke < 0
+              ? -1
+              : 0;
+          matchStatus[nineIndex] += difference_match;
+          matchStatus.t += difference_match;
+        }
       }
       results.push({
         name: player_a + ' vs ' + player_b,
@@ -346,75 +402,12 @@ export function calculateNassauTeams(state, match) {
 }
 /*
 
-
-
-
-*/
-export function calculateBestBallIndividual(state, match) {
-  const { matchFormat, participants } = match;
-  const results = [];
-  const scores = [];
-  const scoring = matchFormat.value.includes('stroke')
-    ? 'stroke'
-    : 'match';
-
-  participants.forEach((p) => {
-    const playerScorecard = getPlayerScorecard(
-      p.value,
-      state.players,
-    ).netScores;
-    scores.push(playerScorecard);
-  });
-
-  for (let i = 0; i < scores.length - 1; i++) {
-    for (let j = i + 1; j < scores.length; j++) {
-      const scores_a = scores[i];
-      const scores_b = scores[j];
-
-      const player_a = participants[i]?.label || '';
-      const player_b = participants[j]?.label || '';
-
-      const holes = scores_a?.length || 0;
-      const matchStatus = {
-        t: 0,
-        scoring,
-      };
-
-      for (let ii = 0; ii < holes; ii++) {
-        const score_a = scores_a[ii];
-        const score_b = scores_b[ii];
-
-          const difference_stroke = score_a - score_b;
-
-          if (scoring === 'stroke') {
-            matchStatus.t += difference_stroke;
-          } else {
-            const difference_match =
-              difference_stroke > 0
-                ? 1
-                : difference_stroke < 0
-                ? -1
-                : 0;
-            matchStatus.t += difference_match;
-          }
-      }
-      results.push({
-        name: player_a + ' vs ' + player_b,
-        status: matchStatus,
-      });
-    }
-  }
-
-  return results;
-}
-/*
 
 
 
 
 */
 export function calculateBestBallTeams(state, match) {
-
   const { matchFormat, teams } = match;
   const results = [];
   const scores = []; // each team's scores
@@ -468,19 +461,19 @@ export function calculateBestBallTeams(state, match) {
         const score_a = scores_a[ii];
         const score_b = scores_b[ii];
 
-          const difference_stroke = score_a - score_b;
+        const difference_stroke = score_a - score_b;
 
-          if (scoring === 'stroke') {
-            matchStatus.t += difference_stroke;
-          } else {
-            const difference_match =
-              difference_stroke > 0
-                ? 1
-                : difference_stroke < 0
-                ? -1
-                : 0;
-            matchStatus.t += difference_match;
-          }
+        if (scoring === 'stroke') {
+          matchStatus.t += difference_stroke;
+        } else {
+          const difference_match =
+            difference_stroke > 0
+              ? 1
+              : difference_stroke < 0
+              ? -1
+              : 0;
+          matchStatus.t += difference_match;
+        }
       }
       results.push({
         name: player_a + ' vs ' + player_b,
@@ -490,5 +483,4 @@ export function calculateBestBallTeams(state, match) {
   }
 
   return results;
-
 }

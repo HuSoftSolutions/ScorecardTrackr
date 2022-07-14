@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Tabs, Tab } from 'react-bootstrap';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import useWindowSize from '../../hooks/useWindowSize';
 
 import Scorecard from '../Scorecard';
 import Matches from '../Matches';
@@ -14,6 +15,7 @@ import './index.scss';
 const ActiveRound = () => {
   const { state, dispatch } = useStore();
   const [key, setKey] = useState('home');
+  const { width, height } = useWindowSize();
 
   // let navigate = useNavigate();
   // let location = useLocation();
@@ -37,8 +39,8 @@ const ActiveRound = () => {
   }, []);
 
   return (
-    <div className="round-page">
-      <Tabs
+    <div className="round-page" style={{height: (height || 50) - 50}}>
+      {/* <Tabs
         activeKey={key}
         onSelect={(k) => {
           setKey(k);
@@ -57,7 +59,10 @@ const ActiveRound = () => {
         <Tab eventKey="matches" title="Matches" className="">
           <Matches />
         </Tab>
-      </Tabs>
+      </Tabs> */}
+      <Holes />
+      <Scorecard />
+      <Matches matches={state.matches}/>
     </div>
   );
 };

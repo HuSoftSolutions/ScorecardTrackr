@@ -3,6 +3,7 @@ import { useStore } from '../../store';
 import NewRoundModal from '../../modals/NewRoundModal';
 import './index.scss';
 import frjConfig from '../../configs/foxrungolfclub.json';
+import accConfig from '../../configs/albanycountryclub.json';
 import {
   doc,
   setDoc,
@@ -113,8 +114,8 @@ const HomePage = (props) => {
     // generate scorecards
 
     // TODO: get scorecards from db
-    dispatch({ type: 'set_courses', courses: [frjConfig] });
-  }, [frjConfig]);
+    dispatch({ type: 'set_courses', courses: [frjConfig, accConfig] });
+  }, [frjConfig, accConfig]);
 
   const GoToActiveRound = ({ id, navigate }) => {
     function onClick() {
