@@ -18,7 +18,7 @@ const ScorecardTable = (props) => {
         });
       }, 500);
     };
-  });
+  }, [props.state.current_hole_index]);
 
   let yardageTotal = 0;
   let nineYardageTotal = 0;
