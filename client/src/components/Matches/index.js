@@ -56,6 +56,8 @@ const Matches = (props) => {
   const { state, dispatch } = useStore();
   // const { width, height } = useWindowSize();
 
+  const [matches, setMatches] = useState([]);
+
   const [showNewMatchModal, setShowNewMatchModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
 
@@ -69,6 +71,12 @@ const Matches = (props) => {
     else setParticipants(getPlayerOptions());
   }, [state.players]);
 
+  useEffect(() => {
+    if(!state.matches) return;
+    else setMatches(state.matches);
+
+  }, [state.matches])
+
   /* HELLPER FUNCTIONS */
 
   function closeModal() {
@@ -79,7 +87,7 @@ const Matches = (props) => {
   }
 
   function saveMatch() {
-    const matches = [...props.matches];
+    const matches = [...matches];
     const newMatch = getMatchDetails();
 
     const matchFormat = newMatch.matchFormat;
@@ -114,7 +122,7 @@ const Matches = (props) => {
       setMatchToDelete(index);
     } else {
       setMatchToDelete(null);
-      let m = [...props.matches];
+      let m = [...matches];
       m.splice(index, 1);
       dispatch({ type: 'update-matches', matches: m });
     }
@@ -172,7 +180,7 @@ const Matches = (props) => {
   const Matches = (props) => {
     return (
       <div className="d-flex flex-column">
-        {props.matches.map((match, i) => {
+        {matches.map((match, i) => {
           return <Match index={i} key={i} match={match} {...props} />;
         })}
       </div>
@@ -377,13 +385,12 @@ const Matches = (props) => {
                         );
                         playerPresses[state.current_hole_index] = true;
 
-                        let matchIndex = props.matches.findIndex(
+                        let matchIndex = matches.findIndex(
                           (m) => m.id === match.id,
                         );
-                        const matches = [...props.matches];
                         matches[matchIndex].presses[m.name] = playerPresses;
 
-                        dispatch({ type: 'update-matches', matches:matches });
+                        dispatch({ type: 'update-matches', matches });
                       }
                     }}
                   >

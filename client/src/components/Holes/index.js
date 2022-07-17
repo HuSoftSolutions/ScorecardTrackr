@@ -6,7 +6,6 @@ import * as functions from './functions';
 import './index.scss';
 import { BsCircleFill } from 'react-icons/bs';
 
-
 const Holes = () => {
   const { state, dispatch } = useStore();
 
@@ -20,7 +19,7 @@ const Holes = () => {
   return (
     <div className="bg-dark p-1">
       <div className="d-flex">
-        <div>
+        <div className="d-flex flex-column align-items-center ms-2">
           <BsArrowLeft
             className="p-1 bg-dark text-light rounded"
             size="50"
@@ -32,13 +31,14 @@ const Holes = () => {
               setCurrentHole(score);
             }}
           />
+          <p className="p-0 text-muted small">Prev Hole</p>
         </div>
         <div className="d-flex flex-fill rounded text-light justify-content-center align-items-center mx-1">
           <h1 className="mb-0 align-font-center">
             Hole {state.card.holes[state.current_hole_index]}
           </h1>
         </div>
-        <div>
+        <div className="d-flex flex-column align-items-center me-2">
           <BsArrowRight
             className="p-1 bg-dark text-light rounded"
             size="50"
@@ -51,6 +51,7 @@ const Holes = () => {
               setCurrentHole(score);
             }}
           />
+          <p className="p-0 text-muted small">Next Hole</p>
         </div>
       </div>
       <div className="d-flex flex-column my-1 rounded">
@@ -61,17 +62,22 @@ const Holes = () => {
               className="d-flex bg-light-dark p-2 my-1 align-items-center rounded"
             >
               <div className="w-50 d-flex align-items-center">
-              <BsCircleFill
+                <BsCircleFill
                   size="15"
                   className={`text-${p.teebox.value} mx-2`}
                 />
                 <p className="mb-0 me-2">{p.name}</p>
 
-                <p className="mb-0 text-light fw-bold" style={{"fontSize":"small"}}>{p.handicap} HDCP</p>
+                <p
+                  className="mb-0 text-light fw-bold"
+                  style={{ fontSize: 'small' }}
+                >
+                  {p.handicap} HDCP
+                </p>
               </div>
-              <div>
+              <div className="d-flex flex-column align-items-center">
                 <FiMinus
-                  className="p-1 rounded"
+                  className="px-1 rounded"
                   size="30"
                   onClick={() =>
                     dispatch({
@@ -80,13 +86,16 @@ const Holes = () => {
                     })
                   }
                 />
+                <p style={{'fontSize':10}} className="m-0 text-muted">minus</p>
               </div>
               <div className="m-0 rounded mx-1 flex-fill text-center h-100 d-flex justify-content-center align-items-center">
-                <p className="mb-0">{functions.returnScore(p.uid, state)}</p>
+                <p className="mb-0">
+                  {functions.returnScore(p.uid, state)}
+                </p>
               </div>
-              <div>
+              <div className="d-flex flex-column align-items-center">
                 <FiPlus
-                  className="p-1 rounded"
+                  className="px-1 rounded"
                   size="30"
                   onClick={() =>
                     dispatch({
@@ -95,6 +104,8 @@ const Holes = () => {
                     })
                   }
                 />
+                <p style={{'fontSize':10}} className="m-0 text-muted">plus</p>
+
               </div>
             </div>
           );

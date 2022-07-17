@@ -38,7 +38,7 @@ const NewRoundModal = (props) => {
   const [players, setPlayers] = useState([
     {
       name: '',
-      handicap: 0,
+      handicap: 0.0,
       uid: uuidv4(),
       score: [],
       hdcpHoles: [],
@@ -46,7 +46,7 @@ const NewRoundModal = (props) => {
     },
     {
       name: '',
-      handicap: 0,
+      handicap: 0.0,
       uid: uuidv4(),
       score: [],
       hdcpHoles: [],
@@ -54,7 +54,7 @@ const NewRoundModal = (props) => {
     },
     {
       name: '',
-      handicap: 0,
+      handicap: 0.0,
       uid: uuidv4(),
       score: [],
       hdcpHoles: [],
@@ -62,7 +62,7 @@ const NewRoundModal = (props) => {
     },
     {
       name: '',
-      handicap: 0,
+      handicap: 0.0,
       uid: uuidv4(),
       score: [],
       hdcpHoles: [],
@@ -371,15 +371,18 @@ const NewRoundModal = (props) => {
                             borderBottom: '1px solid #ccc',
                           }}
                           type="number"
-                          placeholder="0"
+                          // placeholder="0"
                           aria-label="Handicap"
                           aria-describedby="basic-addon1"
+                          step={0.1}
+                          precision={1}
                           value={p.handicap}
                           onChange={(e) => {
+                            console.log(e.target.value)
                             updatePlayer(
                               p.uid,
                               'handicap',
-                              parseInt(e.target.value),
+                              Math.round(parseFloat(e.target.value || 0) * 10) / 10,
                             );
                           }}
                         />

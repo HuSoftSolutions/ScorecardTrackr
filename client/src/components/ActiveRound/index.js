@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useStore } from '../../store';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -50,12 +50,13 @@ const ActiveRound = () => {
         variant="danger"
         onClick={() => {
           dispatch({ type: `reset_active_round` });
-          navigate("/home")
+          navigate('/home');
         }}
       >
         End Current Round
       </Button>
-      <Matches matches={state.matches} />
+      {/* <Matches /> */}
+      {Matches()}
     </div>
   );
 };

@@ -66,7 +66,7 @@ const NavigationAuth = ({ authUser, state, navigate }) => (
   <Navbar className="navigation w-100" bg="dark" expand="lg">
     <Container fluid>
       <Navbar.Brand as={Link} to={ROUTES.HOME} className="text-white small">
-        scoretrackr <span className="small text-gold">beta</span>
+        press <span className="small text-gold">beta</span>
       </Navbar.Brand>
       <Navbar.Toggle className="bg-white text-dark" aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
