@@ -58,7 +58,7 @@ const Holes = () => {
         {state.players.map((p, i) => {
           return (
             <div
-              key={i}
+              key={p.uid}
               className="d-flex bg-light-dark p-2 my-1 align-items-center rounded"
             >
               <div className="w-50 d-flex align-items-center">

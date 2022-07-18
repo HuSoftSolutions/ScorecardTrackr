@@ -13,7 +13,7 @@ const ScorecardTable = (props) => {
         const el = document.getElementById('current_hole');
         el?.scrollIntoView({
           behavior: 'smooth',
-          block: 'center',
+          block: 'nearest',
           inline: 'center',
         });
       }, 500);
@@ -78,7 +78,7 @@ const ScorecardTable = (props) => {
           nineYardageTotal = 0;
 
           return (
-            <>
+            <React.Fragment key={teeboxID}>
               <tr>
                 <th className="sticky ">
                   {' '}
@@ -178,7 +178,7 @@ const ScorecardTable = (props) => {
                 })}
                 <th className="bold bg-light-tr">{parTotal}</th>
               </tr>
-            </>
+            </React.Fragment>
           );
         })}
       </thead>

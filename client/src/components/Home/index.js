@@ -77,7 +77,7 @@ const RoundHistory = () => {
         {rounds.map((round, i) => {
           return (
             <div
-              key={i}
+              key={round.round_id}
               className="bg-light rounded p-2 text-dark d-flex flex-column my-1"
               onClick={() => handleLoadRound(round)}
             >
