@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store';
 import NewRoundModal from '../../modals/NewRoundModal';
 import './index.scss';
-import frjConfig from '../../configs/foxrungolfclub.json';
-import accConfig from '../../configs/albanycountryclub.json';
+
 import {
   doc,
   setDoc,
@@ -47,7 +46,7 @@ const RoundHistory = () => {
       const ref = query(
         collection(db, 'rounds'),
         where('owner', '==', uid),
-        orderBy('created_at')
+        orderBy('created_at', 'desc')
       );
       const snapshot = await getDocs(ref);
       const r = [];
@@ -112,12 +111,7 @@ const HomePage = (props) => {
   const [selectedScorecard, setSelectedScorecard] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // generate scorecards
 
-    // TODO: get scorecards from db
-    dispatch({ type: 'set_courses', courses: [frjConfig, accConfig] });
-  }, [frjConfig, accConfig]);
 
   const GoToActiveRound = ({ id, navigate }) => {
     function onClick() {

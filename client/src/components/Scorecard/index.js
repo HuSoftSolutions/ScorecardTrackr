@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store';
-import frjConfig from '../../configs/foxrungolfclub.json';
 import './index.scss';
 import { BsCircleFill } from 'react-icons/bs';
 
@@ -70,7 +69,6 @@ const ScorecardTable = (props) => {
 
         {teeboxIDs.map((teeboxID) => {
           const teebox = teeboxes[teeboxID];
-          console.log(teeboxID, teebox);
 
           parTotal = 0;
           nineParTotal = 0;
@@ -282,14 +280,13 @@ const Scorecard = () => {
       >
         <div>
           <h3 className="m-0">{state.course}</h3>
-          <p className="m-0 text-muted fw-bold">{state.card.holes.length} Hole Round</p>
+          <p className="m-0 text-muted fw-bold">{state.card?.holes?.length} Hole Round</p>
         </div>
         <div className="d-flex flex-column">
           {teeboxIDs.map((teebox, i) => {
             const teeboxObj = state?.card?.allTees?.find(
               (t) => t.value === teebox,
             );
-            console.log(teeboxObj, state);
 
             return (
               <div

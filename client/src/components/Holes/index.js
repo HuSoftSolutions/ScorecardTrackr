@@ -35,7 +35,7 @@ const Holes = () => {
         </div>
         <div className="d-flex flex-fill rounded text-light justify-content-center align-items-center mx-1">
           <h1 className="mb-0 align-font-center">
-            Hole {state.card.holes[state.current_hole_index]}
+            Hole {state.card.holes?.[state?.current_hole_index]}
           </h1>
         </div>
         <div className="d-flex flex-column align-items-center me-2">
@@ -72,7 +72,7 @@ const Holes = () => {
                   className="mb-0 text-light fw-bold"
                   style={{ fontSize: 'small' }}
                 >
-                  {p.handicap} HDCP
+                  {p.handicapAdjusted} HDCP
                 </p>
               </div>
               <div className="d-flex flex-column align-items-center">

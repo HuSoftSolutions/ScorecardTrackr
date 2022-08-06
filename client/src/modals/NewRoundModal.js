@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useStore } from '../store';
+import React, { useEffect, useState } from "react";
+import { useStore } from "../store";
 import {
   Button,
   Col,
@@ -8,104 +8,127 @@ import {
   Modal,
   InputGroup,
   Form,
-} from 'react-bootstrap';
-import { HiUserRemove, HiUserAdd } from 'react-icons/hi';
-import { MdOutlineClose } from 'react-icons/md';
-import { v4 as uuidv4 } from 'uuid';
-import {
-  useParams,
-  useNavigate,
-  useLocation,
-} from 'react-router-dom';
-import * as ROUTES from '../constants/routes';
-import * as FUNCTIONS from '../helpers/functions.js';
-import './newRoundModal.scss';
-import { db, auth } from '../firebase.js';
-import Select from 'react-select';
+} from "react-bootstrap";
+import { HiUserRemove, HiUserAdd } from "react-icons/hi";
+import { MdOutlineClose } from "react-icons/md";
+import { v4 as uuidv4 } from "uuid";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import * as ROUTES from "../constants/routes";
+import * as FUNCTIONS from "../helpers/functions.js";
+import "./newRoundModal.scss";
+import { db, auth } from "../firebase.js";
+import Select from "react-select";
 
 /* Static Text */
 const DATA = {
-  TITLE: 'New Round',
-  SUBTITLE: 'Click each button to toggle selection',
-  PLAYER_ADD: 'Add Players to Continue',
-  SELECT_NINES: 'Choose Course and Select Nines to Continue',
+  SUBTITLE: "Click each button to toggle selection",
+  PLAYER_ADD: "Add Players to Continue",
+  SELECT_NINES: "Choose Course and Select Nines to Continue",
 };
+
+const INIT_PLAYERS = [
+  {
+    name: "",
+    handicap: 0.0,
+    uid: uuidv4(),
+    score: [],
+    hdcpHoles: [],
+    teebox: "",
+  },
+  {
+    name: "",
+    handicap: 0.0,
+    uid: uuidv4(),
+    score: [],
+    hdcpHoles: [],
+    teebox: "",
+  },
+  {
+    name: "",
+    handicap: 0.0,
+    uid: uuidv4(),
+    score: [],
+    hdcpHoles: [],
+    teebox: "",
+  },
+  {
+    name: "",
+    handicap: 0.0,
+    uid: uuidv4(),
+    score: [],
+    hdcpHoles: [],
+    teebox: "",
+  },
+];
 
 const NewRoundModal = (props) => {
   /* Hooks */
   const { state, dispatch } = useStore();
   const navigate = useNavigate();
-  const [players, setPlayers] = useState([
-    {
-      name: '',
-      handicap: 0.0,
-      uid: uuidv4(),
-      score: [],
-      hdcpHoles: [],
-      teebox: '',
-    },
-    {
-      name: '',
-      handicap: 0.0,
-      uid: uuidv4(),
-      score: [],
-      hdcpHoles: [],
-      teebox: '',
-    },
-    {
-      name: '',
-      handicap: 0.0,
-      uid: uuidv4(),
-      score: [],
-      hdcpHoles: [],
-      teebox: '',
-    },
-    {
-      name: '',
-      handicap: 0.0,
-      uid: uuidv4(),
-      score: [],
-      hdcpHoles: [],
-      teebox: '',
-    },
-  ]);
+
+  const [players, setPlayers] = useState([]);
+
   const [nines, setNines] = useState([]);
+
+  const [selected_course, set_selected_course] = useState(null);
+
+  const [matches, setMatches] = useState([]);
+
+  useEffect(() => {
+    refreshState();
+  }, [state.showNewRoundModal]);
 
   /* Functions */
   function isValid() {
     let errors = [];
 
-    if (!state.selected_course) errors.push('Please select a course');
-    if (!players?.length)
-      errors.push('Please add players to begin the round');
-    if (players?.filter((p) => p.name === '').length)
-      errors.push('Please add players to begin the round');
-    if(!nines.length)
-      errors.push('')
+    if (!selected_course) errors.push("Please select a course");
+    if (!players?.length) errors.push("Please add players to begin the round");
+    if (players?.filter((p) => p.name === "" || p.teebox === "").length)
+      errors.push("Please add players to begin the round");
+    if (!nines.length) errors.push("");
 
     return !errors.length;
   }
 
+  function refreshState() {
+    const stateCopy = JSON.parse(JSON.stringify(state));
+
+    if (stateCopy.nines.length) setNines([...stateCopy.nines]);
+    else setNines([]);
+
+    if (stateCopy.players.length) setPlayers([...stateCopy.players]);
+    else setPlayers([...INIT_PLAYERS]);
+
+    if (stateCopy.selected_course)
+      set_selected_course(stateCopy.selected_course);
+    else set_selected_course(null);
+
+    if (stateCopy.matches) setMatches([...stateCopy.matches]);
+    else setMatches([]);
+  }
+
   function handleClose() {
-    dispatch({ type: 'close_new_match_modal' });
-    setPlayers([]);
+    dispatch({ type: "close_new_match_modal" });
   }
 
   function initializePlayerScorecards(players, card) {
-    let p = [...players].filter(
-      (p) => p.name.replace(/\s/g, '') !== '',
-    );
+    let p = [...players].filter((p) => p.name.replace(/\s/g, "") !== "");
 
-    players.forEach((player, playerIndex) => {
-      const blankCard = FUNCTIONS.generateBlankScorecard(nines);
-      player.score = [...blankCard];
-      const handicap_data = FUNCTIONS.assignPlayerHandicap(
-        player,
-        card,
-        [...blankCard],
-      );
-      player.hdcpHoles = handicap_data.hdcpHoles;
-      player.handicap = handicap_data.hcap;
+    p.forEach((player, playerIndex) => {
+        const blankCard = FUNCTIONS.generateBlankScorecard(nines);
+
+        p[playerIndex].score = p[playerIndex].startedRound
+          ? p[playerIndex].score
+          : [...blankCard];
+
+        const handicap_data = FUNCTIONS.assignPlayerHandicap(player, card, [
+          ...blankCard,
+        ]);
+        p[playerIndex].hdcpHoles = handicap_data.hdcpHoles;
+        p[playerIndex].handicapAdjusted = handicap_data.hcap;
+        p[playerIndex].startedRound = true;
+      
     });
 
     return p;
@@ -114,33 +137,31 @@ const NewRoundModal = (props) => {
   function handleStartRound() {
     const ID = uuidv4();
     const card = combineNines();
-    const p = initializePlayerScorecards(players, card);
-    const { name } = state?.selected_course;
+    const players_ = initializePlayerScorecards(players, card);
+    const { name } = selected_course;
 
-    console.log(p)
     dispatch({
-      type: 'start_new_round',
-      round_id: ID,
+      type: "start_new_round",
+      round_id: state.round_id || ID,
       created_at: new Date(),
       owner: auth?.currentUser?.uid,
-      players: p,
+      players: [...players_],
       card,
       course: name,
+      nines,
+      selected_course: selected_course,
+      matches,
+      showNewRoundModal: false,
     });
     navigate(ROUTES.ROUND + `/${ID}`);
-    handleClose();
   }
 
   function handleCourseSelection(course) {
-
-    players.forEach(p => {
-      updatePlayer(p.uid, 'teebox', null)
-    })
-
-    dispatch({
-      type: 'set_selected_course',
-      selected_course: course,
+    players.forEach((p) => {
+      updatePlayer(p.uid, "teebox", null);
     });
+
+    set_selected_course(course);
   }
 
   function removePlayer(p) {
@@ -148,11 +169,10 @@ const NewRoundModal = (props) => {
   }
 
   function updatePlayer(uid, key, value) {
-    // console.log(`updating player ${uid} ${key} ${value}`);
     let index = players.findIndex((p) => p.uid === uid);
     let players_ = [...players];
     players_[index][key] = value;
-    setPlayers(players_);
+    setPlayers([...players_]);
   }
 
   function updateSelectedNines(nine) {
@@ -174,39 +194,51 @@ const NewRoundModal = (props) => {
     setNines(newNines);
   }
 
-  function initializeTeeBoxes(tees){
-    let teeboxes = {}
-    tees.forEach(tee => {
+  function initializeTeeBoxes(tees) {
+    let teeboxes = {};
+    tees.forEach((tee) => {
       teeboxes[tee.value] = {
-        "yards": [],
-        "hdcp": [],
-        "par": []
-      }
-    })
-    console.log(teeboxes)
+        yards: [],
+        hdcp: [],
+        par: [],
+      };
+    });
+    // console.log(teeboxes)
     return teeboxes;
   }
 
   function combineNines() {
-    const {tees} = state.selected_course;
-    let holes = { holes: [], teeboxes: initializeTeeBoxes(tees), slope: 0, rating: 0, allTees: tees };
+    const { tees } = selected_course;
+    let holes = {
+      holes: [],
+      teeboxes: initializeTeeBoxes(tees),
+      slope: 0,
+      rating: 0,
+      allTees: tees,
+    };
     nines.forEach((nine) => {
       holes.holes = [...holes.holes, ...nine.holes];
-      const tees = Object.keys(nine?.tees)
+      const tees = Object.keys(nine?.tees);
       tees?.forEach((teebox) => {
-        holes.teeboxes[teebox]["yards"] = [...holes.teeboxes[teebox]["yards"], ...nine.tees[teebox].yards]
-        holes.teeboxes[teebox]["par"] = [...holes.teeboxes[teebox]["par"], ...nine.tees[teebox].par]
-        holes.teeboxes[teebox]["hdcp"] = [...holes.teeboxes[teebox]["hdcp"], ...nine.tees[teebox].hdcp]
-      })
-
+        holes.teeboxes[teebox]["yards"] = [
+          ...holes.teeboxes[teebox]["yards"],
+          ...nine.tees[teebox].yards,
+        ];
+        holes.teeboxes[teebox]["par"] = [
+          ...holes.teeboxes[teebox]["par"],
+          ...nine.tees[teebox].par,
+        ];
+        holes.teeboxes[teebox]["hdcp"] = [
+          ...holes.teeboxes[teebox]["hdcp"],
+          ...nine.tees[teebox].hdcp,
+        ];
+      });
     });
-    console.log(holes);
+    // console.log(holes);
     return holes;
   }
 
   function isNineSelected(nine) {
-    // let index = nines.findIndex(n => n.name === nine.name)
-
     let found = -1;
     nines.forEach((n, i) => {
       if (nine.name === n.name) found = i;
@@ -223,20 +255,18 @@ const NewRoundModal = (props) => {
 
         <Dropdown className="">
           <Dropdown.Toggle
+            disabled={state.round_id !== null}
             size="sm"
-            variant={state.selected_course ? 'dark' : 'light'}
+            variant={selected_course ? "dark" : "light"}
             id="dropdown-basic"
             style={{ width: 200 }}
           >
-            {state?.selected_course?.name || 'No Selection'}
+            {selected_course?.name || "No Selection"}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            {state.courses.map((c, i) => (
-              <Dropdown.Item
-                key={i}
-                onClick={() => handleCourseSelection(c)}
-              >
+            {state?.courses.map((c, i) => (
+              <Dropdown.Item key={i} onClick={() => handleCourseSelection(c)}>
                 {c.name}
               </Dropdown.Item>
             ))}
@@ -247,11 +277,12 @@ const NewRoundModal = (props) => {
   };
 
   const NinesSelection = () => {
-    return state.selected_course ? (
+    return selected_course ? (
       <div className="d-flex flex-row justify-content-end pb-3">
-        {state.selected_course.nines.map((nine, nineIndex) => (
+        {selected_course.nines.map((nine, nineIndex) => (
           <div key={nineIndex} className="form-check mx-2">
             <input
+              disabled={state.round_id !== null}
               type="checkbox"
               checked={isNineSelected(nine) !== -1}
               className="form-check-input"
@@ -268,15 +299,7 @@ const NewRoundModal = (props) => {
   };
 
   return (
-    <Modal
-      centered
-      backdrop="static"
-      show={props.show}
-      onHide={handleClose}
-    >
-      <Modal.Header className=" d-flex flex-row m-0 header">
-        <Modal.Title>{DATA.TITLE}</Modal.Title>
-      </Modal.Header>
+    <Modal centered backdrop="static" show={props.show}>
       <Modal.Body className="">
         <CourseSelection />
 
@@ -297,12 +320,12 @@ const NewRoundModal = (props) => {
                   setPlayers([
                     ...players,
                     {
-                      name: '',
+                      name: "",
                       handicap: 0,
                       uid: uuidv4(),
                       score: [],
                       hdcpHoles: [],
-                      teebox: '',
+                      teebox: "",
                     },
                   ])
                 }
@@ -315,7 +338,7 @@ const NewRoundModal = (props) => {
                 <div
                   key={i}
                   className=" p-1 rounded my-2 border-1"
-                  style={{ border: '1px #ccc solid' }}
+                  style={{ border: "1px #ccc solid" }}
                 >
                   <div className="px-1 d-flex">
                     <Form.Group
@@ -326,19 +349,19 @@ const NewRoundModal = (props) => {
                         className="w-100 flex-fill"
                         style={{
                           borderRadius: 0,
-                          border: '0px',
-                          borderBottom: '1px solid #ccc',
+                          border: "0px",
+                          borderBottom: "1px solid #ccc",
                         }}
                         aria-label="name"
                         aria-describedby="basic-addon1"
                         onChange={(e) => {
-                          updatePlayer(p.uid, 'name', e.target.value);
+                          updatePlayer(p.uid, "name", e.target.value);
                         }}
                         value={p.name}
                       />
                       <Form.Text
                         id="passwordHelpBlock"
-                        style={{ fontSize: '10px' }}
+                        style={{ fontSize: "10px" }}
                         className="m-0"
                         muted
                       >
@@ -359,16 +382,13 @@ const NewRoundModal = (props) => {
                   </div>
                   <div className="d-flex">
                     <div className="px-1">
-                      <Form.Group
-                        className="d-flex flex-column"
-                        size="sm"
-                      >
+                      <Form.Group className="d-flex flex-column" size="sm">
                         <Form.Control
                           className="w-100"
                           style={{
                             borderRadius: 0,
-                            border: '0px',
-                            borderBottom: '1px solid #ccc',
+                            border: "0px",
+                            borderBottom: "1px solid #ccc",
                           }}
                           type="number"
                           // placeholder="0"
@@ -378,18 +398,18 @@ const NewRoundModal = (props) => {
                           precision={1}
                           value={p.handicap}
                           onChange={(e) => {
-                            console.log(e.target.value)
                             updatePlayer(
                               p.uid,
-                              'handicap',
-                              Math.round(parseFloat(e.target.value || 0) * 10) / 10,
+                              "handicap",
+                              Math.round(parseFloat(e.target.value || 0) * 10) /
+                                10
                             );
                           }}
                         />
                         <Form.Text
                           id="passwordHelpBlock"
                           className="m-0"
-                          style={{ fontSize: '10px' }}
+                          style={{ fontSize: "10px" }}
                           muted
                         >
                           GHIN Handicap
@@ -400,10 +420,10 @@ const NewRoundModal = (props) => {
                       {/* <Form.Group className="m-1" size="sm"> */}
                       <Select
                         placeholder="Tee Box"
-                        options={state.selected_course?.tees}
+                        options={selected_course?.tees}
                         value={p?.teebox}
                         onChange={(e) => {
-                          updatePlayer(p.uid, 'teebox', e);
+                          updatePlayer(p.uid, "teebox", e);
                         }}
                       />
                       {/* </Form.Group> */}
@@ -422,7 +442,7 @@ const NewRoundModal = (props) => {
           Cancel
         </Button>
         <Button
-          variant={!isValid() ? 'outline-dark' : 'outline-success'}
+          variant={!isValid() ? "outline-dark" : "outline-success"}
           disabled={!isValid()}
           onClick={handleStartRound}
         >

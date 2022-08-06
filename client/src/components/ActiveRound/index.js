@@ -5,7 +5,9 @@ import { Button } from "react-bootstrap";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import useWindowSize from "../../hooks/useWindowSize";
-
+import NewRoundModal from "../../modals/NewRoundModal";
+import { FiSettings } from "react-icons/fi";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import Scorecard from "../Scorecard";
 import Matches from "../Matches";
 import Holes from "../Holes";
@@ -26,7 +28,8 @@ const ActiveRound = () => {
       const ref = doc(db, "rounds", id);
       const round = await getDoc(ref);
       if (round.exists()) {
-        dispatch({ ...round.data(), type: "load_round" });
+        const r = round.data();
+        dispatch({ ...r, type: "load_round" });
       }
     }
 
@@ -39,16 +42,34 @@ const ActiveRound = () => {
 
   const EndRoundButton = () => {
     return (
-      <Button
-        className="mb-3"
+      <div
+        style={{ cursor: "pointer" }}
+        className="d-flex align-items-center justify-content-center"
         variant="danger"
         onClick={() => {
           dispatch({ type: `reset_active_round` });
           navigate("/home");
         }}
       >
-        End Current Round
-      </Button>
+        <AiOutlineCloseCircle className="mx-2" />
+        End Round
+      </div>
+    );
+  };
+
+  const EditRoundButton = () => {
+    return (
+      <div
+        style={{ cursor: "pointer" }}
+        className="d-flex align-items-center justify-content-center"
+        // variant="light"
+        onClick={() => {
+          dispatch({ type: `edit_match_modal` });
+          // navigate("/home");
+        }}
+      >
+        <FiSettings className="mx-2" /> Edit Round
+      </div>
     );
   };
 
@@ -56,8 +77,12 @@ const ActiveRound = () => {
     <div className="round-page" style={{ height: (height || 50) - 50 }}>
       <Holes />
       <Scorecard />
-      <EndRoundButton />
+      <div className="d-flex flex-row justify-content-around flex-md-row w-100 mb-3">
+        <EditRoundButton />
+        <EndRoundButton />
+      </div>
       <Matches />
+      <NewRoundModal show={state?.showNewRoundModal} />
     </div>
   );
 };
