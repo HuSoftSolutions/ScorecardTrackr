@@ -319,46 +319,49 @@ const Matches = (props) => {
 
             const presses = { ...match?.presses };
             const playerPresses = presses[m.name] || {};
-            const pressType = playerPresses[state.current_hole_index] || null;
+            const pressType = playerPresses[state.current_hole_index] || "";
 
             return (
-              <div key={i} className="d-flex justify-content-between p-2 ">
-                <div>
+              <div key={i} className="d-flex justify-content-between p-2 w-100">
+                <div
+                  className="flex-fill me-2"
+                  style={{ overflowX: "auto", width: "120px" }}
+                >
                   <span className="fw-bold">{m.name}</span>
-                  <span className="d-flex align-items-center">
+                  <span className="d-flex align-items-center my-1" >
                     Front:
                     {f.map((m, i) => {
                       let fSign = calculateNassauMatchSign(m);
 
                       return (
-                        <div key={i}>
-                          <span className="mx-2">{fSign}</span>
+                        <div key={i} className="d-flex align-items-center px-1 mx-1 rounded" style={{border: '1px solid gray'}}>
+                          <span className="">{fSign}</span>
                           {m === 0 ? "" : Math.abs(m)}
                         </div>
                       );
                     })}
                   </span>
-                  <span className="d-flex align-items-center">
-                  Back:
+                  <span className="d-flex align-items-center my-1">
+                    Back:
                     {b.map((m, i) => {
                       let fSign = calculateNassauMatchSign(m);
 
                       return (
-                        <div key={i}>
-                          <span className="mx-2">{fSign}</span>
+                        <div key={i} className="d-flex align-items-center px-1 mx-1 rounded" style={{border: '1px solid gray'}}>
+                          <span className="">{fSign}</span>
                           {m === 0 ? "" : Math.abs(m)}
                         </div>
                       );
                     })}
                   </span>
-                  <span className="d-flex align-items-center">
-                  Total:
+                  <span className="d-flex align-items-center my-1">
+                    Total:
                     {t.map((m, i) => {
                       let fSign = calculateNassauMatchSign(m);
 
                       return (
-                        <div key={i}>
-                          <span className="mx-2">{fSign}</span>
+                        <div key={i} className="d-flex align-items-center px-1 mx-1 rounded" style={{border: '1px solid gray'}}>
+                          <span className="">{fSign}</span>
                           {m === 0 ? "" : Math.abs(m)}
                         </div>
                       );
@@ -368,7 +371,7 @@ const Matches = (props) => {
                 <div>
                   <Button
                     className={
-                      pressType === null
+                      pressType === ""
                         ? "bg-success text-light border-success"
                         : "bg-light text-success border-success"
                     }
@@ -378,7 +381,7 @@ const Matches = (props) => {
                       setShowPressTypeModal(m.name);
                     }}
                   >
-                    {pressType === null ? (
+                    {pressType === "" ? (
                       <>PRESS</>
                     ) : (
                       <>Pressed {pressType.toUpperCase()}</>
