@@ -29,7 +29,7 @@ const DATA = {
 const INIT_PLAYERS = [
   {
     name: "",
-    handicap: 0.0,
+    handicap: "",
     uid: uuidv4(),
     score: [],
     hdcpHoles: [],
@@ -37,7 +37,7 @@ const INIT_PLAYERS = [
   },
   {
     name: "",
-    handicap: 0.0,
+    handicap: "",
     uid: uuidv4(),
     score: [],
     hdcpHoles: [],
@@ -45,7 +45,7 @@ const INIT_PLAYERS = [
   },
   {
     name: "",
-    handicap: 0.0,
+    handicap: "",
     uid: uuidv4(),
     score: [],
     hdcpHoles: [],
@@ -53,7 +53,7 @@ const INIT_PLAYERS = [
   },
   {
     name: "",
-    handicap: 0.0,
+    handicap: "",
     uid: uuidv4(),
     score: [],
     hdcpHoles: [],
@@ -116,19 +116,18 @@ const NewRoundModal = (props) => {
     let p = [...players].filter((p) => p.name.replace(/\s/g, "") !== "");
 
     p.forEach((player, playerIndex) => {
-        const blankCard = FUNCTIONS.generateBlankScorecard(nines);
+      const blankCard = FUNCTIONS.generateBlankScorecard(nines);
 
-        p[playerIndex].score = p[playerIndex].startedRound
-          ? p[playerIndex].score
-          : [...blankCard];
+      p[playerIndex].score = p[playerIndex].startedRound
+        ? p[playerIndex].score
+        : [...blankCard];
 
-        const handicap_data = FUNCTIONS.assignPlayerHandicap(player, card, [
-          ...blankCard,
-        ]);
-        p[playerIndex].hdcpHoles = handicap_data.hdcpHoles;
-        p[playerIndex].handicapAdjusted = handicap_data.hcap;
-        p[playerIndex].startedRound = true;
-      
+      const handicap_data = FUNCTIONS.assignPlayerHandicap(player, card, [
+        ...blankCard,
+      ]);
+      p[playerIndex].hdcpHoles = handicap_data.hdcpHoles;
+      p[playerIndex].handicapAdjusted = handicap_data.hcap;
+      p[playerIndex].startedRound = true;
     });
 
     return p;
@@ -145,7 +144,9 @@ const NewRoundModal = (props) => {
       round_id: state.round_id || ID,
       created_at: new Date(),
       owner: auth?.currentUser?.uid,
-      players: [...players_],
+      players: [...players_].map((p) => {
+        return { ...p, handicap: p.handicap == "" ? 0 : p.handicap };
+      }),
       card,
       course: name,
       nines,
@@ -321,7 +322,7 @@ const NewRoundModal = (props) => {
                     ...players,
                     {
                       name: "",
-                      handicap: 0,
+                      handicap: null,
                       uid: uuidv4(),
                       score: [],
                       hdcpHoles: [],
@@ -391,18 +392,20 @@ const NewRoundModal = (props) => {
                             borderBottom: "1px solid #ccc",
                           }}
                           type="number"
-                          // placeholder="0"
+                          placeholder="0"
                           aria-label="Handicap"
                           aria-describedby="basic-addon1"
                           step={0.1}
                           precision={1}
-                          value={p.handicap}
+                          value={p.handicap || ""}
                           onChange={(e) => {
                             updatePlayer(
                               p.uid,
                               "handicap",
-                              Math.round(parseFloat(e.target.value || 0) * 10) /
-                                10
+                              e.target.value
+                                ? Math.round(parseFloat(e.target.value) * 10) /
+                                    10
+                                : e.target.value
                             );
                           }}
                         />
